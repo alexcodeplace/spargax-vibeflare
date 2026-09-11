@@ -157,13 +157,23 @@ export interface AuthMethods {
   mode: 'standalone' | 'cf_access';
   passkey: boolean;
   github: boolean;
+  github_flow: 'none' | 'device' | 'oauth' | 'bootstrap';
   cf_access: boolean;
   setup_required: boolean;
 }
 
 export async function getAuthMethods(): Promise<AuthMethods> {
   const res = await fetch('/auth/methods', { credentials: 'same-origin' });
-  if (!res.ok) return { mode: 'standalone', passkey: true, github: false, cf_access: false, setup_required: false };
+  if (!res.ok) {
+    return {
+      mode: 'standalone',
+      passkey: true,
+      github: false,
+      github_flow: 'none',
+      cf_access: false,
+      setup_required: false,
+    };
+  }
   return res.json() as Promise<AuthMethods>;
 }
 
@@ -331,6 +341,25 @@ export function createPrompt(label: string, content: string): Promise<PromptReco
 
 export function deletePrompt(id: string): Promise<void> {
   return apiFetch(`/admin/prompts/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+// ── Zero-config GitHub setup ─────────────────────────────────────────────────
+
+export interface GithubBootstrapStartResult {
+  action: string;
+  manifest: string;
+}
+
+export async function githubBootstrapStart(): Promise<GithubBootstrapStartResult> {
+  const res = await fetch('/auth/setup/github/bootstrap/start', {
+    method: 'POST',
+    credentials: 'same-origin',
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`GitHub setup start failed: ${text}`);
+  }
+  return res.json() as Promise<GithubBootstrapStartResult>;
 }
 
 // ── GitHub Device Flow ────────────────────────────────────────────────────────

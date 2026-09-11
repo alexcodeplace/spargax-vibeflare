@@ -3,6 +3,7 @@ import { getAuthMethods, meOrNull, type AuthMethods } from '../../lib/api';
 import { Card } from '../primitives/Card';
 import { PasskeyButton } from './PasskeyButton';
 import { GithubDeviceLogin } from './GithubDeviceLogin';
+import { GithubWebLogin } from './GithubWebLogin';
 import { Spinner } from '../primitives/Spinner';
 import { HydratedIsland } from '../HydratedIsland';
 
@@ -76,11 +77,15 @@ function LoginPageInner() {
               />
             )}
 
-            {methods.github && (
+            {methods.github && methods.github_flow === 'device' && (
               <GithubDeviceLogin
                 mode="auth"
                 onSuccess={() => { window.location.href = '/'; }}
               />
+            )}
+
+            {methods.github && methods.github_flow === 'oauth' && (
+              <GithubWebLogin mode="auth" flow="oauth" />
             )}
 
             {!methods.passkey && !methods.github && (

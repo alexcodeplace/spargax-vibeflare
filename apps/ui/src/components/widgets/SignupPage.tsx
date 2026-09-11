@@ -4,6 +4,7 @@ import { Spinner } from '../primitives/Spinner';
 import { Button } from '../primitives/Button';
 import { PasskeyButton } from './PasskeyButton';
 import { GithubDeviceLogin } from './GithubDeviceLogin';
+import { GithubWebLogin } from './GithubWebLogin';
 import { HydratedIsland } from '../HydratedIsland';
 import { validateInvite, getAuthMethods, type AuthMethods } from '../../lib/api';
 
@@ -56,11 +57,14 @@ function SignupPageInner() {
             onSuccess={() => { window.location.href = '/'; }}
           />
         )}
-        {methods?.github && (
+        {methods?.github && methods.github_flow === 'device' && (
           <GithubDeviceLogin
             mode="register-invite"
             onSuccess={() => { window.location.href = '/'; }}
           />
+        )}
+        {methods?.github && methods.github_flow === 'oauth' && (
+          <GithubWebLogin mode="register-invite" flow="oauth" />
         )}
         {methods?.cf_access && (
           <Button

@@ -4,6 +4,7 @@ import { Card } from '../primitives/Card';
 import { Tabs } from '../primitives/Tabs';
 import { PasskeyButton } from './PasskeyButton';
 import { GithubDeviceLogin } from './GithubDeviceLogin';
+import { GithubWebLogin } from './GithubWebLogin';
 import { Spinner } from '../primitives/Spinner';
 import { HydratedIsland } from '../HydratedIsland';
 
@@ -83,12 +84,19 @@ function SetupPageInner() {
             content: (
               <div className="space-y-4">
                 <p className="text-sm text-[var(--color-muted)]">
-                  Sign in with your GitHub account to become the owner.
+                  Sign in with GitHub to become the owner. Zero-config installs create a small GitHub App owned by your account, so no deployment secret is required.
                 </p>
-                <GithubDeviceLogin
-                  mode="register"
-                  onSuccess={() => { window.location.href = '/'; }}
-                />
+                {methods?.github_flow === 'device' ? (
+                  <GithubDeviceLogin
+                    mode="register"
+                    onSuccess={() => { window.location.href = '/'; }}
+                  />
+                ) : (
+                  <GithubWebLogin
+                    mode="register"
+                    flow={methods?.github_flow === 'oauth' ? 'oauth' : 'bootstrap'}
+                  />
+                )}
               </div>
             ),
           },

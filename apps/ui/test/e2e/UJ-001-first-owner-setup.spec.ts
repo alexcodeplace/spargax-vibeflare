@@ -12,10 +12,9 @@ test('UJ-001 H1/A1 — first owner setup is durable and cannot be repeated', asy
   try {
     const methods = await page.request.get('/auth/methods');
     expect(methods.status()).toBe(200);
-    expect(await methods.json()).toEqual({ mode: 'standalone', passkey: true, github: false, cf_access: false, setup_required: true });
+    expect(await methods.json()).toEqual({ mode: 'standalone', passkey: true, github: true, github_flow: 'bootstrap', cf_access: false, setup_required: true });
 
-    // A brand-new installation must guide the user to owner setup instead of
-    // leaving them on the returning-user sign-in screen.
+    // A fresh install must guide the user to owner setup instead of the returning-user login.
     await page.goto('/');
     await page.waitForURL(/\/setup(?:\/|$|\?)/, { timeout: 20_000 });
 

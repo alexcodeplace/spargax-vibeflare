@@ -43,21 +43,87 @@ describe('/auth/methods single-owner browser authentication', () => {
   beforeEach(async () => {
     await testEnv.DB.prepare('DELETE FROM auth_credentials').run();
     await testEnv.DB.prepare('DELETE FROM auth_users').run();
+    await testEnv.DB.prepare("DELETE FROM settings WHERE key LIKE 'github.oauth_%' OR key = 'github.app_slug'").run();
   });
 
-  it('advertises app session methods and first-run setup state in standalone mode', async () => {
+  it('advertises Device Flow when an env client id overrides zero-config GitHub', async () => {
     const app = authRouter();
     const bindings = withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: 'github-client' });
     const beforeSetup = await app.request('/methods', undefined, bindings);
     expect(beforeSetup.status).toBe(200);
-    expect(await beforeSetup.json()).toEqual({ mode: 'standalone', passkey: true, github: true, cf_access: false, setup_required: true });
+    expect(await beforeSetup.json()).toEqual({
+      mode: 'standalone',
+      passkey: true,
+      github: true,
+      github_flow: 'device',
+      cf_access: false,
+      setup_required: true,
+    });
 
     await testEnv.DB.prepare(
       "INSERT INTO auth_users (id, email, github_login, role, created_at) VALUES ('owner-a', 'owner@example.com', NULL, 'owner', 0)",
     ).run();
     const afterSetup = await app.request('/methods', undefined, bindings);
     expect(afterSetup.status).toBe(200);
-    expect(await afterSetup.json()).toEqual({ mode: 'standalone', passkey: true, github: true, cf_access: false, setup_required: false });
+    expect(await afterSetup.json()).toEqual({
+      mode: 'standalone',
+      passkey: true,
+      github: true,
+      github_flow: 'device',
+      cf_access: false,
+      setup_required: false,
+    });
+  });
+
+  it('offers zero-config GitHub bootstrap on a fresh standalone deployment', async () => {
+    const app = authRouter();
+    const res = await app.request('/methods', undefined, withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      mode: 'standalone',
+      passkey: true,
+      github: true,
+      github_flow: 'bootstrap',
+      cf_access: false,
+      setup_required: true,
+    });
+  });
+
+  it('starts a per-origin GitHub App manifest bootstrap without deployment env', async () => {
+    const app = authRouter();
+    const res = await app.request(
+      'https://vibeflare.example.workers.dev/setup/github/bootstrap/start',
+      { method: 'POST' },
+      withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }),
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('set-cookie')).toContain('vf_gh_manifest_state=');
+    const body = await res.json<{ action: string; manifest: string }>();
+    expect(body.action).toMatch(/^https:\/\/github\.com\/settings\/apps\/new\?state=/);
+    expect(JSON.parse(body.manifest)).toMatchObject({
+      redirect_url: 'https://vibeflare.example.workers.dev/auth/setup/github/manifest/callback',
+      callback_urls: ['https://vibeflare.example.workers.dev/auth/github/oauth/callback'],
+      public: true,
+      request_oauth_on_install: false,
+      default_permissions: {},
+      default_events: [],
+    });
+  });
+
+  it('advertises web OAuth after a per-deployment GitHub App is stored', async () => {
+    await testEnv.DB.prepare("INSERT INTO settings (key, value, updated_at) VALUES ('github.oauth_client_id', 'Iv1.test', 0), ('github.oauth_client_secret', 'secret', 0)").run();
+    await testEnv.DB.prepare("INSERT INTO auth_users (id, email, github_login, role, created_at) VALUES ('owner-a', NULL, 'octocat', 'owner', 0)").run();
+    const app = authRouter();
+    const res = await app.request('/methods', undefined, withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      mode: 'standalone',
+      passkey: true,
+      github: true,
+      github_flow: 'oauth',
+      cf_access: false,
+      setup_required: false,
+    });
   });
 
   it('advertises only Cloudflare Access in cf_access mode', async () => {
@@ -69,7 +135,14 @@ describe('/auth/methods single-owner browser authentication', () => {
       CF_ACCESS_AUD: 'aud',
     }));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ mode: 'cf_access', passkey: false, github: false, cf_access: true, setup_required: false });
+    expect(await res.json()).toEqual({
+      mode: 'cf_access',
+      passkey: false,
+      github: false,
+      github_flow: 'none',
+      cf_access: true,
+      setup_required: false,
+    });
   });
 
   it('blocks passkey and GitHub app login endpoints in cf_access mode', async () => {

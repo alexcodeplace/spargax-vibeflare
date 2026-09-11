@@ -30,8 +30,25 @@ import { withCache } from '../lib/cache';
 import { ensureModelCatalog, refreshModelCatalog } from '../models/catalog';
 import adminInvites from './admin.invites';
 import { startRegistration, finishRegistration } from '../auth/passkey';
+import { GITHUB_PRIVATE_SETTING_KEYS } from '../auth/github_web';
 
 type HonoApp = { Bindings: Env; Variables: Variables };
+
+export const PRIVATE_SETTING_KEYS = new Set<string>([
+  'system.session_secret',
+  'models.catalog.ready',
+  ...GITHUB_PRIVATE_SETTING_KEYS,
+]);
+
+export function publicSettingsObject(
+  settings: Array<{ key: string; value: string }>,
+): Record<string, string> {
+  const visible: Record<string, string> = {};
+  for (const row of settings) {
+    if (!PRIVATE_SETTING_KEYS.has(row.key)) visible[row.key] = row.value;
+  }
+  return visible;
+}
 
 const admin = new Hono<HonoApp>();
 
@@ -227,9 +244,7 @@ admin.get('/cron', requireOwner, async (c) => {
 
 admin.get('/settings', async (c) => {
   const settings = await getAllSettings(c.env.DB);
-  const obj: Record<string, string> = {};
-  for (const row of settings) obj[row.key] = row.value;
-  return c.json({ settings: obj });
+  return c.json({ settings: publicSettingsObject(settings) });
 });
 
 // ── PUT /admin/settings ───────────────────────────────────────────────────────
@@ -238,7 +253,7 @@ admin.put('/settings', async (c) => {
   const body = await c.req.json<Record<string, string>>();
   const now = Date.now();
   for (const [key, value] of Object.entries(body)) {
-    if (typeof value !== 'string') continue;
+    if (typeof value !== 'string' || PRIVATE_SETTING_KEYS.has(key)) continue;
     await setSetting(c.env.DB, key, value, now);
   }
   return c.json({ ok: true });

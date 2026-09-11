@@ -1,4 +1,5 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import type { Env, Variables } from '../env';
 import {
   startRegistration,
@@ -11,9 +12,17 @@ import { linkAccessOnLogin } from '../auth/access_link';
 import { countUsers, getUserByGithubLogin, getUserById } from '../db/queries';
 import { checkAndRecord, checkRateLimit } from '../auth/ratelimit';
 import { startDeviceAuth, pollDeviceAuth, fetchUser } from '../auth/github';
-import { newId } from '../util/id';
+import { newId, nanoid } from '../util/id';
 import { getBrowserAuthMode } from '../auth/mode';
 import { resolveUser } from '../auth/middleware';
+import { clearInviteCookie, getValidInvite, readInviteCookie, redeemInviteAtomic } from '../auth/invites';
+import {
+  buildGithubAppManifest,
+  convertGithubAppManifest,
+  exchangeGithubOAuthCode,
+  getGithubWebConfig,
+  saveGithubWebConfig,
+} from '../auth/github_web';
 
 export interface AuthDeps {
   startRegistration: typeof startRegistration;
@@ -46,6 +55,29 @@ const auth = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 function getIp(c: { req: { header: (h: string) => string | undefined } }): string {
   return c.req.header('cf-connecting-ip') ?? '0.0.0.0';
+}
+
+const GH_MANIFEST_STATE_COOKIE = 'vf_gh_manifest_state';
+const GH_OAUTH_STATE_COOKIE = 'vf_gh_oauth_state';
+const GH_OAUTH_PURPOSE_COOKIE = 'vf_gh_oauth_purpose';
+const GH_FLOW_TTL_SEC = 10 * 60;
+
+function setFlowCookie(c: Context, name: string, value: string): void {
+  setCookie(c, name, value, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax',
+    path: '/',
+    maxAge: GH_FLOW_TTL_SEC,
+  });
+}
+
+function clearFlowCookie(c: Context, name: string): void {
+  deleteCookie(c, name, { path: '/' });
+}
+
+function requestOrigin(url: string): string {
+  return new URL(url).origin;
 }
 
 // ── Session status (public, never uses 401 as normal control flow) ────────────
@@ -156,6 +188,169 @@ auth.post('/logout', (c) => {
   return c.json({ ok: true });
 });
 
+// ── Zero-config GitHub App bootstrap + web OAuth ─────────────────────────────
+
+auth.post('/setup/github/bootstrap/start', async (c) => {
+  if (getBrowserAuthMode(c.env) !== 'standalone') {
+    return c.json({ error: { type: 'auth_mode', message: 'Cloudflare Access owns browser sign-in for this deployment' } }, 409);
+  }
+  if ((await countUsers(c.env.DB)) > 0) {
+    return c.json({ error: { type: 'forbidden', message: 'setup already complete' } }, 403);
+  }
+  if (c.env.GITHUB_CLIENT_ID?.trim()) {
+    return c.json({ error: { type: 'already_configured', message: 'GitHub Device Flow is configured for this deployment' } }, 409);
+  }
+
+  const state = nanoid(32);
+  setFlowCookie(c, GH_MANIFEST_STATE_COOKIE, state);
+  const origin = requestOrigin(c.req.url);
+  const manifest = buildGithubAppManifest(origin, `VibeFlare ${nanoid(8)}`);
+  return c.json({
+    action: `https://github.com/settings/apps/new?state=${encodeURIComponent(state)}`,
+    manifest: JSON.stringify(manifest),
+  });
+});
+
+auth.get('/setup/github/manifest/callback', async (c) => {
+  if (getBrowserAuthMode(c.env) !== 'standalone') {
+    return c.redirect('/login', 302);
+  }
+  const expectedState = getCookie(c, GH_MANIFEST_STATE_COOKIE);
+  clearFlowCookie(c, GH_MANIFEST_STATE_COOKIE);
+  const state = c.req.query('state');
+  const code = c.req.query('code');
+  if (!expectedState || !state || expectedState !== state || !code) {
+    return c.redirect('/setup?github=manifest_failed', 302);
+  }
+  if ((await countUsers(c.env.DB)) > 0) {
+    return c.redirect('/login', 302);
+  }
+
+  try {
+    const app = await convertGithubAppManifest(code);
+    const login = app.owner?.login?.trim();
+    const clientId = app.client_id?.trim();
+    const clientSecret = app.client_secret?.trim();
+    if (!login || !clientId || !clientSecret) {
+      return c.redirect('/setup?github=manifest_failed', 302);
+    }
+
+    const userId = newId();
+    const inserted = await c.env.DB.prepare(
+      `INSERT INTO auth_users (id, email, github_login, role, created_at)
+       SELECT ?, NULL, ?, 'owner', ?
+       WHERE NOT EXISTS (SELECT 1 FROM auth_users)`,
+    ).bind(userId, login, Date.now()).run();
+    if (inserted.meta.changes === 0) {
+      return c.redirect('/login', 302);
+    }
+
+    try {
+      await saveGithubWebConfig(c.env, {
+        clientId,
+        clientSecret,
+        appSlug: app.slug ?? null,
+      });
+    } catch (error) {
+      await c.env.DB.prepare('DELETE FROM auth_users WHERE id = ?').bind(userId).run();
+      throw error;
+    }
+
+    await issueSession(c, userId, 'owner');
+    return c.redirect('/', 302);
+  } catch {
+    return c.redirect('/setup?github=manifest_failed', 302);
+  }
+});
+
+auth.get('/github/oauth/start', async (c) => {
+  if (getBrowserAuthMode(c.env) !== 'standalone') {
+    return c.json({ error: { type: 'auth_mode', message: 'Cloudflare Access owns browser sign-in for this deployment' } }, 409);
+  }
+  const config = await getGithubWebConfig(c.env);
+  if (!config) {
+    return c.json({ error: { type: 'not_configured', message: 'GitHub web sign-in is not configured' } }, 501);
+  }
+  const purpose = c.req.query('purpose') === 'invite' ? 'invite' : 'login';
+  if (purpose === 'invite') {
+    const token = readInviteCookie(c);
+    if (!token || !(await getValidInvite(c.env.DB, token))) {
+      clearInviteCookie(c);
+      return c.redirect('/login?reason=invite_required', 302);
+    }
+  }
+
+  const state = nanoid(32);
+  setFlowCookie(c, GH_OAUTH_STATE_COOKIE, state);
+  setFlowCookie(c, GH_OAUTH_PURPOSE_COOKIE, purpose);
+  const redirectUri = `${requestOrigin(c.req.url)}/auth/github/oauth/callback`;
+  const authorize = new URL('https://github.com/login/oauth/authorize');
+  authorize.searchParams.set('client_id', config.clientId);
+  authorize.searchParams.set('redirect_uri', redirectUri);
+  authorize.searchParams.set('state', state);
+  return c.redirect(authorize.toString(), 302);
+});
+
+auth.get('/github/oauth/callback', async (c) => {
+  if (getBrowserAuthMode(c.env) !== 'standalone') {
+    return c.redirect('/login', 302);
+  }
+  const expectedState = getCookie(c, GH_OAUTH_STATE_COOKIE);
+  const purpose = getCookie(c, GH_OAUTH_PURPOSE_COOKIE);
+  clearFlowCookie(c, GH_OAUTH_STATE_COOKIE);
+  clearFlowCookie(c, GH_OAUTH_PURPOSE_COOKIE);
+  const state = c.req.query('state');
+  const code = c.req.query('code');
+  if (!expectedState || expectedState !== state || !code || (purpose !== 'login' && purpose !== 'invite')) {
+    return c.redirect('/login?reason=github_failed', 302);
+  }
+
+  try {
+    const config = await getGithubWebConfig(c.env);
+    if (!config) return c.redirect('/login?reason=github_failed', 302);
+    const redirectUri = `${requestOrigin(c.req.url)}/auth/github/oauth/callback`;
+    const accessToken = await exchangeGithubOAuthCode(config, code, redirectUri);
+    const ghUser = await deps.fetchUser(accessToken);
+
+    if (purpose === 'login') {
+      const user = await getUserByGithubLogin(c.env.DB, ghUser.login);
+      if (!user) return c.redirect('/login?reason=invite_required', 302);
+      await deps.linkAccessOnLogin(c, user.id);
+      await issueSession(c, user.id, user.role);
+      return c.redirect('/', 302);
+    }
+
+    const token = readInviteCookie(c);
+    if (!token || !(await getValidInvite(c.env.DB, token))) {
+      clearInviteCookie(c);
+      return c.redirect('/login?reason=invite_required', 302);
+    }
+    const existing = await getUserByGithubLogin(c.env.DB, ghUser.login);
+    if (existing) return c.redirect('/login', 302);
+
+    const userId = newId();
+    try {
+      await c.env.DB.prepare(
+        `INSERT INTO auth_users (id, email, github_login, role, created_at) VALUES (?, ?, ?, 'user', ?)`,
+      ).bind(userId, ghUser.email ?? null, ghUser.login, Date.now()).run();
+    } catch {
+      return c.redirect('/login', 302);
+    }
+    const redeemed = await redeemInviteAtomic(c.env.DB, token, userId);
+    if (!redeemed.ok) {
+      await c.env.DB.prepare('DELETE FROM auth_users WHERE id = ?').bind(userId).run();
+      clearInviteCookie(c);
+      return c.redirect('/login?reason=invite_required', 302);
+    }
+    clearInviteCookie(c);
+    await deps.linkAccessOnLogin(c, userId);
+    await issueSession(c, userId, 'user');
+    return c.redirect('/', 302);
+  } catch {
+    return c.redirect(purpose === 'invite' ? '/signup?reason=github_failed' : '/login?reason=github_failed', 302);
+  }
+});
+
 // ── GitHub Device Flow ────────────────────────────────────────────────────────
 
 auth.post('/github/device/start', async (c) => {
@@ -254,10 +449,21 @@ auth.post('/setup/github/poll', async (c) => {
 auth.get('/methods', async (c) => {
   const mode = getBrowserAuthMode(c.env);
   const setupRequired = mode === 'standalone' && (await countUsers(c.env.DB)) === 0;
+  const githubWeb = mode === 'standalone' ? await getGithubWebConfig(c.env) : null;
+  const githubFlow = mode !== 'standalone'
+    ? 'none'
+    : c.env.GITHUB_CLIENT_ID?.trim()
+      ? 'device'
+      : githubWeb
+        ? 'oauth'
+        : setupRequired
+          ? 'bootstrap'
+          : 'none';
   return c.json({
     mode,
     passkey: mode === 'standalone',
-    github: mode === 'standalone' && !!c.env.GITHUB_CLIENT_ID,
+    github: githubFlow !== 'none',
+    github_flow: githubFlow,
     cf_access: mode === 'cf_access',
     setup_required: setupRequired,
   });

@@ -8,7 +8,7 @@
 
 Click **Deploy to Cloudflare** above, choose your Cloudflare account, and accept the generated resource names. Cloudflare provisions the Worker, D1 database, R2 bucket, Workers AI binding, and Durable Objects, runs the database migrations, builds the UI, and deploys VibeFlare. No terminal, API token, or pre-generated session secret is required.
 
-When Cloudflare finishes, open the Worker URL and visit `/setup` to create your first passkey. That account becomes the owner.
+When Cloudflare finishes, open the Worker URL. A fresh install routes you to `/setup`, where you can become the owner with GitHub or a passkey. **GitHub requires no deployment environment variables or pre-created OAuth credentials**: VibeFlare uses GitHub's App Manifest flow to create a small GitHub App owned by your GitHub account, then stores that instance's generated OAuth credentials privately in D1.
 
 The zero-config deployment starts with a known-good Workers AI chat model. Advanced installs can optionally add a Workers AI Read token later to sync the full Cloudflare model catalog.
 
@@ -22,7 +22,7 @@ You deploy it to **your Cloudflare account**. You get:
 - a zero-config Workers AI model, with optional full catalog discovery;
 - chat history and private file storage;
 - usage and audit views;
-- passkey login by default, with optional GitHub login;
+- passkey login plus zero-config GitHub sign-in by default;
 - an optional Cloudflare Access mode for a custom domain;
 - `vf` commands for setup, health checks, updates, and safe uninstall.
 
@@ -259,15 +259,17 @@ You can also provide the Access values through `VIBEFLARE_CF_ACCESS_TEAM` and `V
 
 In Access mode, Cloudflare Access owns browser identity. VibeFlare deliberately does not mix Access login with passkey/GitHub browser login; this avoids the redirect-loop class of bug caused by competing authentication systems.
 
-## Optional GitHub login
+## GitHub login
 
-Passkeys work without GitHub. If you want GitHub Device Flow as an additional standalone login option, create a GitHub OAuth app that supports Device Flow and pass its client id during setup:
+Standalone deployments support GitHub without any deployment-time environment variable. On a fresh install, choose **Use GitHub** on `/setup`. VibeFlare sends you through GitHub's App Manifest flow, creates a least-privilege GitHub App owned by your GitHub account, stores that instance's generated OAuth client credentials privately in D1, and signs the creating GitHub account in as the VibeFlare owner. Subsequent owner/member GitHub logins use normal GitHub web OAuth.
+
+If you already operate your own GitHub OAuth application and prefer the older Device Flow, you can still override the zero-config path with its public client id:
 
 ```bash
 ./vf setup --github-client-id=YOUR_CLIENT_ID
 ```
 
-No GitHub client secret is required by VibeFlare's Device Flow.
+The Device Flow override still requires no GitHub client secret.
 
 ## Where does VibeFlare keep local state?
 
