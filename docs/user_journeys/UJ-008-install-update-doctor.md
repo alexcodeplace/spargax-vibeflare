@@ -9,7 +9,7 @@ goal: A member creates one receipt-owned Cloudflare installation, can inspect an
 trigger: Run vf setup --name=binary-test from a clean VibeFlare release.
 fixtures: [provider-simulator, clean-install-name, local-health-server, release-package]
 success_state:
-  visible: Setup prints Setup complete.; status prints State: installed and Health: healthy; doctor prints healthy installation/server checks; update prints Updated binary-test: 0.9.0 → 0.9.0.
+  visible: Setup prints Setup complete.; status prints State: installed and Health: healthy; doctor prints healthy installation/server checks; update prints Updated binary-test: 0.9.1 → 0.9.1.
   durable: An atomic install receipt records the selected account, exact Worker/D1/R2 ownership, auth origin, release, deployment, and every applied migration.
   persistence: Update reuses the same Worker/D1/R2 identities and preserves existing users, keys, chats, and files.
 source_specs: [apps/cli/src/lib/lifecycle.ts, apps/cli/src/lib/install-state.ts, apps/cli/src/lib/generated-wrangler.ts, apps/cli/src/lib/wrangler-provider.ts, apps/cli/src/commands/setup.ts, apps/cli/src/commands/status.ts, apps/cli/src/commands/doctor.ts, apps/cli/src/commands/update.ts]
@@ -32,11 +32,11 @@ blockers: []
 ## Happy path
 
 ### H1
-- Setup: No install receipt exists for `binary-test`; the selected Wrangler identity exposes account `acct-1`; provider health returns `{ "ok": true, "version": "0.9.0-test" }`.
+- Setup: No install receipt exists for `binary-test`; the selected Wrangler identity exposes account `acct-1`; provider health returns `{ "ok": true, "version": "0.9.1-test" }`.
 - Action: Run `vf setup --name=binary-test --origin=<health-url>`, then run `vf status --name=binary-test` and `vf doctor --name=binary-test`.
 - Request: N/A — lifecycle provisioning is a local CLI/provider workflow rather than an application HTTP endpoint.
 - Response: N/A — the CLI/provider workflow has no application HTTP response contract.
-- Visible: stdout contains `Setup complete.`, `State: installed`, `Health: healthy`, `✓ installation: installed v0.9.0`, and `✓ server: v0.9.0-test`.
+- Visible: stdout contains `Setup complete.`, `State: installed`, `Health: healthy`, `✓ installation: installed v0.9.1`, and `✓ server: v0.9.1-test`.
 - Durable: The receipt has status `installed`, owns Worker `binary-test`, D1 `binary-test-db`, R2 `binary-test-files`, and records applied migrations; its generated Wrangler file is installation-specific while the canonical template is unchanged.
 - Fresh read: A new `vf status --name=binary-test` process reads the receipt and prints `State: installed` and `D1: binary-test-db`.
 - Forbidden: Re-running setup for the installed receipt performs no provider mutation and a same-named unowned Worker or D1 is never adopted.
@@ -55,9 +55,9 @@ blockers: []
 - Action: Run `vf update --name=binary-test`.
 - Request: N/A — update is a local CLI/provider workflow rather than an application HTTP endpoint.
 - Response: N/A — the CLI/provider workflow has no application HTTP response contract.
-- Visible: stdout contains `Updated binary-test: 0.9.0 → 0.9.0`.
+- Visible: stdout contains `Updated binary-test: 0.9.1 → 0.9.1`.
 - Durable: The receipt returns to status `installed`, records the target release and newly applied migrations, and retains the same D1/R2 ownership records.
-- Fresh read: Reading the receipt after update returns the same application data fixture and the installed release remains `0.9.0`.
+- Fresh read: Reading the receipt after update returns the same application data fixture and the installed release remains `0.9.1`.
 - Forbidden: Update does not call D1 or R2 creation and does not advance the installed release when post-deploy health is unhealthy.
 - Evidence:
   - Setup: `apps/cli/src/lib/lifecycle.ts:209`

@@ -2,6 +2,11 @@
 
 All notable VibeFlare changes are documented here.
 
+## 0.9.1 - 2026-09-11
+
+- Route brand-new standalone deployments to `/setup` instead of the returning-user sign-in screen.
+- Expose first-run setup state through the public auth-methods probe and cover the root-to-setup flow in browser acceptance.
+
 ## 0.9.0 - 2026-09-11
 
 Initial standalone public release.
