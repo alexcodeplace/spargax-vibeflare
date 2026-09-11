@@ -4,6 +4,8 @@ All notable VibeFlare changes are documented here.
 
 ## Unreleased
 
+## 0.9.2 - 2026-09-11
+
 - **Use GitHub** now works with zero deployment environment variables by bootstrapping a per-deployment GitHub App through GitHub's App Manifest flow; generated OAuth credentials stay private in D1.
 - Existing `GITHUB_CLIENT_ID` / `--github-client-id` Device Flow configuration remains an explicit advanced override.
 

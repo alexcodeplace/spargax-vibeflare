@@ -11,7 +11,7 @@ import { getFile } from './files/r2';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-app.get('/health', (c) => c.json({ ok: true, version: '0.9.1' }));
+app.get('/health', (c) => c.json({ ok: true, version: '0.9.2' }));
 
 // Invite links must be handled at request time. The UI is statically built, so
 // signup.astro cannot stash query tokens into an httpOnly cookie at runtime.
