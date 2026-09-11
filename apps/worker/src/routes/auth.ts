@@ -251,13 +251,15 @@ auth.post('/setup/github/poll', async (c) => {
 
 // ── GET /auth/methods (public) ────────────────────────────────────────────────
 
-auth.get('/methods', (c) => {
+auth.get('/methods', async (c) => {
   const mode = getBrowserAuthMode(c.env);
+  const setupRequired = mode === 'standalone' && (await countUsers(c.env.DB)) === 0;
   return c.json({
     mode,
     passkey: mode === 'standalone',
     github: mode === 'standalone' && !!c.env.GITHUB_CLIENT_ID,
     cf_access: mode === 'cf_access',
+    setup_required: setupRequired,
   });
 });
 

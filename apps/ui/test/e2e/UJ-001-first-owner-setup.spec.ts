@@ -12,7 +12,12 @@ test('UJ-001 H1/A1 — first owner setup is durable and cannot be repeated', asy
   try {
     const methods = await page.request.get('/auth/methods');
     expect(methods.status()).toBe(200);
-    expect(await methods.json()).toEqual({ mode: 'standalone', passkey: true, github: false, cf_access: false });
+    expect(await methods.json()).toEqual({ mode: 'standalone', passkey: true, github: false, cf_access: false, setup_required: true });
+
+    // A brand-new installation must guide the user to owner setup instead of
+    // leaving them on the returning-user sign-in screen.
+    await page.goto('/');
+    await page.waitForURL(/\/setup(?:\/|$|\?)/, { timeout: 20_000 });
 
     const { credentialId } = await createFirstOwner(page);
     expect(page.url()).toMatch(/\/chat(?:\/|$|\?)/);

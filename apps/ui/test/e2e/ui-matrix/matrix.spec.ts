@@ -65,7 +65,7 @@ for (const entry of matrix) {
       test(`${entry.route} | ${role} | ${viewport.name}`, async ({ page, context, baseURL }) => {
         const base = baseURL ?? 'http://localhost:8788';
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
-        await applyAuth(context, role, base);
+        await applyAuth(context, role, base, entry.route);
 
         const consoleErrors: string[] = [];
         const failedRequests: string[] = [];
@@ -104,7 +104,7 @@ for (const entry of matrix) {
   for (const [role, denial] of Object.entries(entry.deniedRoles ?? {}) as Array<[MatrixRole, 'redirect' | '403']>) {
     test(`${entry.route} | ${role} | denied`, async ({ page, context, baseURL }) => {
       const base = baseURL ?? 'http://localhost:8788';
-      await applyAuth(context, role, base);
+      await applyAuth(context, role, base, entry.route);
       const response = await page.goto(`${base}${entry.route}`, { waitUntil: 'domcontentloaded' });
 
       if (denial === '403') {

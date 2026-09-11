@@ -26,7 +26,13 @@ function LoginPageInner() {
         window.location.href = '/';
         return;
       }
-      getAuthMethods().then(setMethods);
+      getAuthMethods().then((authMethods) => {
+        if (authMethods.setup_required) {
+          window.location.replace('/setup');
+          return;
+        }
+        setMethods(authMethods);
+      });
     });
   }, []);
 

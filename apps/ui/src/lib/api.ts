@@ -158,11 +158,12 @@ export interface AuthMethods {
   passkey: boolean;
   github: boolean;
   cf_access: boolean;
+  setup_required: boolean;
 }
 
 export async function getAuthMethods(): Promise<AuthMethods> {
   const res = await fetch('/auth/methods', { credentials: 'same-origin' });
-  if (!res.ok) return { mode: 'standalone', passkey: true, github: false, cf_access: false };
+  if (!res.ok) return { mode: 'standalone', passkey: true, github: false, cf_access: false, setup_required: false };
   return res.json() as Promise<AuthMethods>;
 }
 

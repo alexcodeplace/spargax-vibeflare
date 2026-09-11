@@ -43,7 +43,7 @@ describe('SignupPage', () => {
 
   it('shows passkey button when invite valid and passkey enabled', async () => {
     mockValidateInvite.mockResolvedValue({ ok: true, expires_at: Date.now() + 3600000 });
-    mockGetAuthMethods.mockResolvedValue({ mode: 'standalone', passkey: true, github: false, cf_access: false });
+    mockGetAuthMethods.mockResolvedValue({ mode: 'standalone', passkey: true, github: false, cf_access: false, setup_required: false });
     render(<SignupPage />);
     await waitFor(() => {
       expect(screen.getByText(/sign up with passkey/i)).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('SignupPage', () => {
 
   it('shows github button when invite valid and github enabled', async () => {
     mockValidateInvite.mockResolvedValue({ ok: true, expires_at: Date.now() + 3600000 });
-    mockGetAuthMethods.mockResolvedValue({ mode: 'standalone', passkey: false, github: true, cf_access: false });
+    mockGetAuthMethods.mockResolvedValue({ mode: 'standalone', passkey: false, github: true, cf_access: false, setup_required: false });
     render(<SignupPage />);
     await waitFor(() => {
       expect(screen.getByText(/sign up with github/i)).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe('SignupPage', () => {
 
   it('shows cloudflare access button when cf_access enabled', async () => {
     mockValidateInvite.mockResolvedValue({ ok: true, expires_at: Date.now() + 3600000 });
-    mockGetAuthMethods.mockResolvedValue({ mode: 'cf_access', passkey: false, github: false, cf_access: true });
+    mockGetAuthMethods.mockResolvedValue({ mode: 'cf_access', passkey: false, github: false, cf_access: true, setup_required: false });
     render(<SignupPage />);
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /cloudflare access/i })).toBeInTheDocument();
