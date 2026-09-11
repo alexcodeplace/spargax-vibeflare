@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-007",
+  "spec": "test/e2e/UJ-007-file-lifecycle.spec.ts",
+  "expectedBranches": ["H1", "H2", "A1", "P1"],
+  "executionClasses": ["local"],
+  "projects": ["chromium"],
+  "fixtures": ["standalone-owner", "invited-member", "small-text-file"],
+  "siblingCoverage": {}
+}

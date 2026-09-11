@@ -1,0 +1,16 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+minimumReleaseAge: 4320
+minimumReleaseAgeStrict: true
+
+allowBuilds:
+  '@astryxdesign/core': false
+  esbuild: true
+  workerd: true
+
+overrides:
+  svgo: 4.1.0
+  browserslist: 4.28.7
+  '@babel/core': 7.29.6

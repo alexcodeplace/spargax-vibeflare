@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { SignupPage } from '../components/widgets/SignupPage';
+
+---
+
+<Base
+  title="Sign up · VibeFlare"
+  bodyClass="min-h-screen flex items-center justify-center bg-[var(--color-bg)]"
+  noReferrer={true}
+>
+  <SignupPage client:load />
+</Base>

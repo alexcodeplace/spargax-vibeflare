@@ -1,0 +1,71 @@
+# Private planning / agent-only material
+plans/
+*.plan.md
+NOTES.md
+CLAUDE.md
+.claude/
+.internal/
+evaluate/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build artifacts
+dist/
+.astro/
+.wrangler/
+.dev.vars
+.dev.vars.*
+worker-configuration.d.ts
+
+# Env / secrets
+.env
+.env.*
+!.env.cli.example
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test output (test source is intentionally tracked)
+coverage/
+.nyc_output/
+*.lcov
+**/test-results/
+playwright-report/
+blob-report/
+
+# Local DB / cache
+*.sqlite
+*.sqlite-journal
+.cache/
+tmp/
+.tmp/
+
+# CLI build
+apps/cli/bin/
+apps/cli/*.exe
+apps/cli/package-lock.json
+
+# Wrangler local state
+.miniflare/
+wrangler.local.toml
+
+# Agent worktrees / sandboxes
+.claude/worktrees/
+.worktrees/
+
+# Release outputs
+release-artifacts/
+
+!apps/worker/local-secrets.example

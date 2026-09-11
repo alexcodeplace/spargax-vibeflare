@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import AppShell from '../components/layouts/AppShell.astro';
+import { ChatPage } from '../components/widgets/ChatPage';
+---
+<Base title="VibeFlare — Chat">
+  <AppShell title="Chat">
+    {/* client:only — auth-gated, no SEO; avoids SSR/CSR hydration mismatch from edge HTML transforms (CF auto-minify / beacon injection) */}
+    <ChatPage client:only="react" transition:persist transition:name="chat">
+      <div slot="fallback" class="flex items-center justify-center h-full text-sm text-[var(--color-muted)]">Loading chat…</div>
+    </ChatPage>
+  </AppShell>
+</Base>

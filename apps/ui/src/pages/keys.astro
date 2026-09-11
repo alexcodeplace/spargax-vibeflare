@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import AppShell from '../components/layouts/AppShell.astro';
+import { KeysPage } from '../components/widgets/KeysPage';
+---
+<Base title="VibeFlare — API Keys">
+  <AppShell title="API Keys">
+    <KeysPage client:load />
+  </AppShell>
+</Base>

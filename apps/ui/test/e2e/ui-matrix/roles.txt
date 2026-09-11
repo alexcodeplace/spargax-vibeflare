@@ -1,0 +1,5 @@
+# owner/user are persisted roles from packages/shared/src/types.ts and db schema.
+# anonymous is the real unauthenticated browser state enforced by auth/middleware.ts.
+anonymous
+owner
+user

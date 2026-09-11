@@ -1,0 +1,44 @@
+name = "vibeflare-vitest"
+main = "src/index.ts"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+
+[vars]
+RP_NAME = "VibeFlare Test"
+RP_ID = "localhost"
+RP_ORIGIN = "http://localhost"
+AUTH_MODE = "standalone"
+CF_ACCOUNT_ID = "test"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vibeflare-vitest"
+database_id = "00000000-0000-0000-0000-000000000002"
+migrations_dir = "src/db/migrations"
+
+[ai]
+binding = "AI"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "vibeflare-vitest-files"
+
+[durable_objects]
+bindings = [
+  { name = "QUOTA", class_name = "QuotaCounter" },
+  { name = "AUTH_RL", class_name = "AuthRateLimiter" },
+  { name = "CRON", class_name = "CronScheduler" },
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["QuotaCounter"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["AuthRateLimiter"]
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["CronScheduler"]

@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import AppShell from '../components/layouts/AppShell.astro';
+import { ChatHistoryPage } from '../components/widgets/ChatHistoryPage';
+---
+<Base title="VibeFlare — Chat History">
+  <AppShell title="Chat History">
+    <ChatHistoryPage client:load />
+  </AppShell>
+</Base>

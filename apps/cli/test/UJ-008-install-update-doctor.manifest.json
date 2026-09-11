@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-008",
+  "spec": "test/cli-lifecycle.test.ts",
+  "expectedBranches": ["H1", "H2", "A1", "P1"],
+  "executionClasses": ["provider-simulated", "wrangler-dry-run"],
+  "projects": ["cli"],
+  "fixtures": ["provider-simulator", "local-health-server", "install-receipt"],
+  "siblingCoverage": {"lifecycle-unit":"test/lifecycle.test.ts","provider-boundary":"test/wrangler-provider.test.ts"}
+}

@@ -1,0 +1,2 @@
+ALTER TABLE models ADD COLUMN probed_at INTEGER;
+ALTER TABLE models ADD COLUMN probe_error TEXT;

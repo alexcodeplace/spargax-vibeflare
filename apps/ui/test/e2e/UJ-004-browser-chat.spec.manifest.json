@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-004",
+  "spec": "test/e2e/UJ-004-browser-chat.spec.ts",
+  "expectedBranches": ["H1", "A1", "P1"],
+  "executionClasses": ["local"],
+  "projects": ["chromium"],
+  "fixtures": ["standalone-owner", "enabled-chat-model", "fake-workers-ai-boundary"],
+  "siblingCoverage": {}
+}

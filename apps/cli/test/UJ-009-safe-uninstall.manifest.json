@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-009",
+  "spec": "test/cli-lifecycle.test.ts",
+  "expectedBranches": ["H1", "H2", "A1", "P1"],
+  "executionClasses": ["provider-simulated"],
+  "projects": ["cli"],
+  "fixtures": ["install-receipt", "recorded-r2-file", "unrelated-same-prefix-resources"],
+  "siblingCoverage": {"lifecycle-unit":"test/lifecycle.test.ts","provider-boundary":"test/wrangler-provider.test.ts"}
+}

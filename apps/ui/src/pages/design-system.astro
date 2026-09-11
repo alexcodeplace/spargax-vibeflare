@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { DesignSystemGallery } from '../components/widgets/DesignSystemGallery';
+---
+<Base title="VibeFlare Design System" bodyClass="p-8 space-y-12 bg-[var(--color-bg)]">
+  <header>
+    <h1 class="text-2xl font-bold text-[var(--color-text)]">VibeFlare Design System</h1>
+    <p class="text-[var(--color-muted)] mt-1">Component gallery — all primitives and widgets in all variants</p>
+  </header>
+  <DesignSystemGallery client:idle />
+</Base>

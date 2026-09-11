@@ -1,0 +1,37 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  bodyClass?: string;
+  /** Emit <meta name="referrer" content="no-referrer"> to suppress Referer header (e.g. /signup). */
+  noReferrer?: boolean;
+}
+
+const { title = 'VibeFlare', bodyClass = 'h-screen overflow-hidden bg-[var(--color-bg)]', noReferrer = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en" data-astryx-theme="neutral" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  {noReferrer && <meta name="referrer" content="no-referrer" />}
+  <ClientRouter />
+  <!-- Restore theme on every navigation swap to avoid flash -->
+  <script>
+    function applyTheme() {
+      const mode = localStorage.getItem('vf-theme') ?? 'dark';
+      document.documentElement.setAttribute('data-astryx-theme', 'neutral');
+      document.documentElement.setAttribute('data-theme', mode === 'light' ? 'light' : 'dark');
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  </script>
+</head>
+<body class={bodyClass}>
+  <slot />
+</body>
+</html>

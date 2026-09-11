@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import AppShell from '../components/layouts/AppShell.astro';
+import { SettingsPage } from '../components/widgets/SettingsPage';
+---
+<Base title="VibeFlare — Settings">
+  <AppShell title="Settings">
+    <SettingsPage client:load />
+  </AppShell>
+</Base>

@@ -1,0 +1,101 @@
+[
+  {
+    "route": "/login",
+    "roles": ["anonymous"],
+    "deniedRoles": { "owner": "redirect", "user": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "login-page", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/setup",
+    "roles": ["anonymous"],
+    "deniedRoles": { "owner": "redirect", "user": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "setup-page", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/chat",
+    "roles": ["owner", "user"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "vibeflare-chat", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/history",
+    "roles": ["owner", "user"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "history-page", "state": "visible" },
+      { "testid": "history-empty", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/keys",
+    "roles": ["owner"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "keys-page", "state": "visible" },
+      { "testid": "create-key-button", "state": "enabled" },
+      { "testid": "admin-key-option", "state": "present", "count": 1 }
+    ]
+  },
+  {
+    "route": "/keys",
+    "roles": ["user"],
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "keys-page", "state": "visible" },
+      { "testid": "create-key-button", "state": "enabled" },
+      { "testid": "admin-key-option", "state": "absent", "count": 0 }
+    ]
+  },
+  {
+    "route": "/files",
+    "roles": ["owner", "user"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "files-page", "state": "visible" },
+      { "testid": "file-upload-input", "state": "present", "count": 1 },
+      { "testid": "files-empty", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/analytics",
+    "roles": ["owner", "user"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "analytics-page", "state": "visible" },
+      { "testid": "usage-summary", "state": "visible" },
+      { "testid": "audit-table", "state": "visible" }
+    ]
+  },
+  {
+    "route": "/settings",
+    "roles": ["owner"],
+    "deniedRoles": { "anonymous": "redirect" },
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "settings-page", "state": "visible" },
+      { "role": "tab", "name": "Invites", "state": "present", "count": 1 }
+    ]
+  },
+  {
+    "route": "/settings",
+    "roles": ["user"],
+    "expectStatus": 200,
+    "elements": [
+      { "testid": "settings-page", "state": "visible" },
+      { "role": "tab", "name": "Invites", "state": "absent", "count": 0 }
+    ]
+  }
+]

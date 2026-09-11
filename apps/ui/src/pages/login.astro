@@ -1,0 +1,7 @@
+---
+import Base from '../layouts/Base.astro';
+import { LoginPage } from '../components/widgets/LoginPage';
+---
+<Base title="VibeFlare — Sign in" bodyClass="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+  <LoginPage client:load />
+</Base>

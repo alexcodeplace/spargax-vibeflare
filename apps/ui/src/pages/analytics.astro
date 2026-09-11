@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import AppShell from '../components/layouts/AppShell.astro';
+import { AnalyticsPage } from '../components/widgets/AnalyticsPage';
+---
+<Base title="VibeFlare — Analytics">
+  <AppShell title="Analytics">
+    <AnalyticsPage client:load />
+  </AppShell>
+</Base>

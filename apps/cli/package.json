@@ -1,0 +1,25 @@
+{
+  "name": "@vibeflare/cli",
+  "version": "0.9.0",
+  "type": "module",
+  "bin": {
+    "vf": "./bin/vf",
+    "vibeflare": "./bin/vf"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --compile --outfile bin/vf",
+    "build:linux": "bun build src/index.ts --compile --target=bun-linux-x64 --outfile bin/vf-linux",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@vibeflare/shared": "workspace:*",
+    "citty": "^0.1.6",
+    "smol-toml": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.39",
+    "vitest": "^2.0.0"
+  },
+  "license": "MIT",
+  "private": true
+}

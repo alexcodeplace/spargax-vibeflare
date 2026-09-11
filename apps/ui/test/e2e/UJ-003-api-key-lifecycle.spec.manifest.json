@@ -1,0 +1,12 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-003",
+  "spec": "test/e2e/UJ-003-api-key-lifecycle.spec.ts",
+  "expectedBranches": ["H1", "H2", "P1"],
+  "executionClasses": ["local"],
+  "projects": ["chromium"],
+  "fixtures": ["standalone-owner", "enabled-chat-model"],
+  "siblingCoverage": {
+    "A1": "apps/worker/test/auth_routes.test.ts and admin key ownership route coverage"
+  }
+}

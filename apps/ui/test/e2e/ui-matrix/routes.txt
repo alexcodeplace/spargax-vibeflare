@@ -1,0 +1,12 @@
+# Derived from apps/ui/src/pages/*.astro
+/
+/analytics
+/chat
+/design-system
+/files
+/history
+/keys
+/login
+/settings
+/setup
+/signup

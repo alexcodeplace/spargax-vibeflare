@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-005",
+  "spec": "test/e2e/UJ-005-invite-second-user.spec.ts",
+  "expectedBranches": ["H1", "A1", "P1"],
+  "executionClasses": ["local"],
+  "projects": ["chromium"],
+  "fixtures": ["standalone-owner", "fresh-member-browser", "replay-browser"],
+  "siblingCoverage": {}
+}

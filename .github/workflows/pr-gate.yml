@@ -1,0 +1,72 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Full gate
+    # Self-hosted runner + pull_request = arbitrary code execution from a fork PR.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, vibeflare-gate]
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        with:
+          # action-setup installs into a fixed ~/setup-pnpm by default. Several repo-scoped
+          # runners share one box here, so concurrent jobs raced and left a truncated binary
+          # (exit 127) or EACCES. runner.temp is per-job, which removes the shared path.
+          dest: ${{ runner.temp }}/setup-pnpm
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+
+      - name: Workflow contract
+        run: node tools/check-offload-workflow.mjs .github/workflows/pr-gate.yml
+
+      # bun is installed once per CI box rather than fetched per job (the box is dedicated and the
+      # prime directive is to minimise total on-box compute). It is not on the runner's captured
+      # PATH, so the workspace packages that shell out to `bun test` / `bun build` need this.
+      - name: Put bun on PATH
+        run: echo "$HOME/.bun/bin" >> "$GITHUB_PATH"
+
+      - name: Install
+        # pnpm derives its store from PNPM_HOME, which the dest above moved into
+        # the per-job _temp dir — without this the store is wiped every run.
+        run: pnpm install --frozen-lockfile --store-dir "$RUNNER_TOOL_CACHE/pnpm-store"
+
+      # --with-deps is omitted deliberately: it needs sudo, which a user-scope runner does not have.
+      # The box already carries the playwright system libraries.
+      - name: Install Playwright browsers
+        run: pnpm --filter @vibeflare/ui exec playwright install chromium
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Validate generated Cloudflare config
+        run: pnpm validate:wrangler
+
+      - name: Audit production dependencies
+        run: pnpm security:audit
+
+      - name: Test
+        run: pnpm run test
+
+      # The playwright config self-starts the app via its webServer block, so no service needs to be
+      # stood up around this step.
+      - name: E2E
+        run: pnpm --filter @vibeflare/ui run test:e2e

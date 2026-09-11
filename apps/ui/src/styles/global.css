@@ -1,0 +1,46 @@
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Compatibility aliases while the remaining app-specific layout utilities
+       migrate onto Astryx semantic tokens. Astryx owns the actual palette. */
+    --color-bg: var(--color-background-body);
+    --color-surface: var(--color-background-surface);
+    --color-surface-hover: var(--color-background-muted);
+    --color-text: var(--color-text-primary);
+    --color-muted: var(--color-text-secondary);
+    --color-accent-text: var(--color-on-accent);
+    --color-warn: var(--color-warning);
+    --color-danger: var(--color-error);
+    --color-info: var(--color-text-blue);
+
+    --radius-sm: var(--radius-inner);
+    --radius-md: var(--radius-element);
+    --radius-lg: var(--radius-container);
+    --radius-xl: var(--radius-page);
+    --font-sans: var(--font-family-body);
+    --font-mono: var(--font-family-code);
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    background: var(--color-background-body);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-body);
+    position: relative;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+}

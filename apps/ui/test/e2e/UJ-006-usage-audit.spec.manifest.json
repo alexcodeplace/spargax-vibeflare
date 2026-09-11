@@ -1,0 +1,10 @@
+{
+  "version": "journey-e2e/v1",
+  "journey": "UJ-006",
+  "spec": "test/e2e/UJ-006-usage-audit.spec.ts",
+  "expectedBranches": ["H1", "A1", "P1"],
+  "executionClasses": ["local"],
+  "projects": ["chromium"],
+  "fixtures": ["standalone-owner", "durable-audit-event"],
+  "siblingCoverage": {}
+}

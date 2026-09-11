@@ -1,0 +1,57 @@
+# Deploy-to-Cloudflare template configuration.
+# Cloudflare's deploy button provisions D1/R2/AI from this file and rewrites
+# generated resource IDs/names in the user's cloned repository.
+name = "vibeflare"
+main = "apps/worker/src/index.ts"
+compatibility_date = "2026-09-11"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[vars]
+RP_NAME = "VibeFlare"
+AUTH_MODE = "standalone"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vibeflare-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "apps/worker/src/db/migrations"
+
+[ai]
+binding = "AI"
+
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "vibeflare-files"
+
+[assets]
+binding = "ASSETS"
+directory = "apps/ui/dist"
+not_found_handling = "none"
+run_worker_first = ["/signup", "/signup/*"]
+
+[durable_objects]
+bindings = [
+  { name = "QUOTA", class_name = "QuotaCounter" },
+  { name = "AUTH_RL", class_name = "AuthRateLimiter" },
+  { name = "CRON", class_name = "CronScheduler" },
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["QuotaCounter"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["AuthRateLimiter"]
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["CronScheduler"]
