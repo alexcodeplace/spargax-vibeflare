@@ -30,13 +30,16 @@ import { withCache } from '../lib/cache';
 import { ensureModelCatalog, refreshModelCatalog } from '../models/catalog';
 import adminInvites from './admin.invites';
 import { startRegistration, finishRegistration } from '../auth/passkey';
-import { GITHUB_PRIVATE_SETTING_KEYS } from '../auth/github_web';
+import { GITHUB_PRIVATE_SETTING_KEYS, isPrivateGithubSettingKey } from '../auth/github_web';
 
 type HonoApp = { Bindings: Env; Variables: Variables };
 
 export const PRIVATE_SETTING_KEYS = new Set<string>([
   'system.session_secret',
   'models.catalog.ready',
+  'system.model_catalog_ready',
+  'system.model_catalog_synced_at',
+  'system.builtin_model_catalog_version',
   ...GITHUB_PRIVATE_SETTING_KEYS,
 ]);
 
@@ -45,7 +48,7 @@ export function publicSettingsObject(
 ): Record<string, string> {
   const visible: Record<string, string> = {};
   for (const row of settings) {
-    if (!PRIVATE_SETTING_KEYS.has(row.key)) visible[row.key] = row.value;
+    if (!PRIVATE_SETTING_KEYS.has(row.key) && !isPrivateGithubSettingKey(row.key)) visible[row.key] = row.value;
   }
   return visible;
 }
@@ -201,7 +204,7 @@ admin.delete('/users/:id', (c, next) => requireOwner(c, next), async (c) => {
 
 admin.get('/quota', async (c) => {
   const quota = await peekQuota(c.env);
-  return withCache(c, quota, 'private, max-age=10');
+  return c.json(quota, 200, { 'Cache-Control': 'private, no-store' });
 });
 
 // ── GET /admin/models ─────────────────────────────────────────────────────────
@@ -211,7 +214,7 @@ admin.get('/models', async (c) => {
   try {
     await ensureModelCatalog(c.env);
     const models = await listModels(c.env.DB, task);
-    return withCache(c, { models }, 'private, max-age=300, stale-while-revalidate=3600');
+    return c.json({ models }, 200, { 'Cache-Control': 'private, no-store' });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'model discovery failed';
     console.error('[models/bootstrap] error:', error);
@@ -221,7 +224,7 @@ admin.get('/models', async (c) => {
 
 // ── POST /admin/models/sync ───────────────────────────────────────────────────
 
-admin.post('/models/sync', requireOwner, async (c) => {
+admin.post('/models/sync', async (c) => {
   try {
     const result = await refreshModelCatalog(c.env);
     return c.json({ synced: result.count, delisted: result.delisted, rearmed: result.rearmed });
@@ -253,7 +256,7 @@ admin.put('/settings', async (c) => {
   const body = await c.req.json<Record<string, string>>();
   const now = Date.now();
   for (const [key, value] of Object.entries(body)) {
-    if (typeof value !== 'string' || PRIVATE_SETTING_KEYS.has(key)) continue;
+    if (typeof value !== 'string' || PRIVATE_SETTING_KEYS.has(key) || isPrivateGithubSettingKey(key)) continue;
     await setSetting(c.env.DB, key, value, now);
   }
   return c.json({ ok: true });

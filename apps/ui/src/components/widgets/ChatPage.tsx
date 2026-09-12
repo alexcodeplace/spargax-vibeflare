@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { redirectToLoginOnce } from '../../lib/api';
+import { getChatMessages, notifyQuotaChanged, redirectToLoginOnce, uploadFile } from '../../lib/api';
 import {
   ChatComposer,
   ChatComposerDrawer,
@@ -24,7 +24,6 @@ import { Tabs } from '../primitives/Tabs';
 import { Toast } from '../primitives/Toast';
 import { HydratedIsland } from '../HydratedIsland';
 import { Spinner } from '../primitives/Spinner';
-import { getChatMessages, uploadFile } from '../../lib/api';
 
 let msgCounter = 0;
 function nextId() { return `msg-${++msgCounter}`; }
@@ -231,6 +230,7 @@ function ChatPageInner() {
           }
         }
       }
+      notifyQuotaChanged();
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         setMessages((previous) => previous.map((message) =>
@@ -289,6 +289,7 @@ function ChatPageInner() {
       }
       setGeneratedImages((previous) => [...previous, ...newImages]);
       setImagePrompt('');
+      notifyQuotaChanged();
     } catch (error) {
       if (!(error instanceof Error && error.name === 'AbortError')) {
         setImageError(error instanceof Error ? error.message : 'Image generation failed');

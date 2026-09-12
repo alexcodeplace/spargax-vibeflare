@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { getModel } from '../db/queries';
 import { peekQuota, chargeQuota } from '../quota/client';
 import { audit } from '../audit/log';
-import { estimateNeurons } from '../ai/neurons';
+import { actualNeuronsFromOutput, estimateNeurons } from '../ai/neurons';
 import { imageReqToWai, extractImageBuffer } from './translator';
 import { runner } from '../ai/dispatch';
 import { classifyUpstreamError } from '../ai/errors';
@@ -60,10 +60,15 @@ export async function handle(c: C): Promise<Response> {
   const host = new URL(c.req.url).host;
 
   const results: { url?: string; b64_json?: string }[] = [];
+  let measuredNeurons = 0;
+  let hasMeasuredNeurons = true;
 
   try {
     for (let i = 0; i < n; i++) {
       const out = await runner(env, body.model, waiInput);
+      const measured = actualNeuronsFromOutput(out);
+      if (measured == null) hasMeasuredNeurons = false;
+      else measuredNeurons += measured;
       const imgBuf = await extractImageBuffer(out);
 
       const forceUrl = body.response_format === 'url' || imgBuf.byteLength > INLINE_SIZE_LIMIT;
@@ -93,7 +98,9 @@ export async function handle(c: C): Promise<Response> {
     return c.json({ error: { type: failure.type, message: failure.message } }, failure.status);
   }
 
-  const neurons = estimateNeurons(modelRow, Math.ceil(body.prompt.length / 4), 0) * n;
+  const neurons = hasMeasuredNeurons
+    ? measuredNeurons
+    : estimateNeurons(modelRow, Math.ceil(body.prompt.length / 4), 0) * n;
   await chargeQuota(env, neurons);
   await audit(env, {
     userId, apiKeyId,

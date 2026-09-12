@@ -10,7 +10,7 @@ Click **Deploy to Cloudflare** above, choose your Cloudflare account, and accept
 
 When Cloudflare finishes, open the Worker URL. A fresh install routes you to `/setup`, where you can become the owner with GitHub or a passkey. **GitHub requires no deployment environment variables or pre-created OAuth credentials**: VibeFlare uses GitHub's App Manifest flow to create a small GitHub App owned by your GitHub account, then stores that instance's generated OAuth credentials privately in D1.
 
-The zero-config deployment starts with a curated Workers AI set: multiple text models plus image-generation models. Advanced installs can optionally add a Workers AI Read token later to sync the full Cloudflare model catalog.
+VibeFlare loads the full public Workers AI catalog directly from Cloudflare with no API token. The catalog refreshes lazily when models are opened after 24 hours, and **Refresh models** forces an immediate sync. Known-good models are ranked first, with `@cf/meta/llama-3.2-3b-instruct` as the default text model.
 
 VibeFlare is for people building with AI who want one private place for Cloudflare Workers AI instead of wiring authentication, API keys, model lists, usage tracking, files, and chat history into every project themselves.
 
@@ -19,7 +19,7 @@ You deploy it to **your Cloudflare account**. You get:
 - a browser chat UI;
 - an OpenAI-compatible `/v1` API for apps and coding tools;
 - API keys you can create and revoke;
-- a useful zero-config Workers AI model set for text and image generation, with optional full catalog discovery;
+- the full public Workers AI model catalog with automatic daily lazy refresh and preferred-model ranking;
 - chat history and private file storage;
 - usage and audit views;
 - passkey login plus zero-config GitHub sign-in by default;
@@ -48,7 +48,7 @@ You do **not** need to read or edit the source code to use VibeFlare.
 
 ## What does it cost?
 
-Cloudflare currently includes **10,000 Workers AI Neurons per day at no charge** on both Free and Paid Workers plans. Some models require a paid billing method even while free Neurons remain; Cloudflare currently allows those through Workers Paid or prepaid AI Gateway credits.
+Cloudflare currently includes **10,000 Workers AI Neurons per day at no charge** on both Free and Paid Workers plans. VibeFlare shows the live neuron count consumed through that VibeFlare installation against the daily allocation and refreshes it after inference. The Cloudflare allocation is account-wide, so usage from other Workers AI apps in the same account is not visible to a zero-config VibeFlare install. Some models require a paid billing method even while free Neurons remain; Cloudflare currently allows those through Workers Paid or prepaid AI Gateway credits.
 
 VibeFlare also uses Cloudflare Workers, D1, and R2. Those services have their own free allocations, limits, and paid pricing. VibeFlare itself does not add a usage fee; your Cloudflare plan and actual usage determine your Cloudflare bill.
 
@@ -103,23 +103,9 @@ If `pnpm` is available only through Corepack, use:
 corepack pnpm exec wrangler login
 ```
 
-### 4. Create one small Cloudflare API token
+### 4. No model-catalog token required
 
-VibeFlare needs a token **only to read the Workers AI model catalog from inside your deployed Worker**. The token does not need to be your broad account token.
-
-Create a Cloudflare API token and give it the account permission **Workers AI Read**. Restrict it to the account where you are installing VibeFlare.
-
-Cloudflare token guide:
-
-https://developers.cloudflare.com/fundamentals/api/get-started/create-token/
-
-Then put the token in your terminal for setup:
-
-```bash
-export VIBEFLARE_CF_API_TOKEN='your-token-here'
-```
-
-This keeps the token out of your shell command history. `vf setup` sends it to Cloudflare as a Worker secret; it is not written into the VibeFlare install receipt.
+VibeFlare reads Cloudflare's public Workers AI catalog directly. You do **not** need to create a Workers AI Read token, set an account-model secret, or maintain a model list yourself. The catalog is refreshed lazily once it is 24 hours old, and the UI includes **Refresh models** for an immediate sync.
 
 ### 5. Deploy
 

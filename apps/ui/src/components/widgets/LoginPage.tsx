@@ -14,12 +14,17 @@ import { HydratedIsland } from '../HydratedIsland';
 function LoginPageInner() {
   const [methods, setMethods] = useState<AuthMethods | null>(null);
   const [showInviteRequired, setShowInviteRequired] = useState(false);
+  const [githubMessage, setGithubMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('reason') === 'invite_required') {
-        setShowInviteRequired(true);
+      const reason = params.get('reason');
+      if (reason === 'invite_required') setShowInviteRequired(true);
+      if (reason === 'github_owner_mismatch') {
+        setGithubMessage('GitHub sign-in repair must be completed by the existing VibeFlare owner account.');
+      } else if (reason === 'github_failed') {
+        setGithubMessage('GitHub sign-in failed. Try again.');
       }
     }
     meOrNull().then((user) => {
@@ -58,6 +63,10 @@ function LoginPageInner() {
         </p>
       )}
 
+      {githubMessage && (
+        <p className="text-sm text-[var(--color-warn)]">{githubMessage}</p>
+      )}
+
       <div className="space-y-3">
         {methods.cf_access ? (
           <div data-testid="cf-access-account-required" className="space-y-2">
@@ -86,6 +95,10 @@ function LoginPageInner() {
 
             {methods.github && methods.github_flow === 'oauth' && (
               <GithubWebLogin mode="auth" flow="oauth" />
+            )}
+
+            {methods.github && methods.github_flow === 'bootstrap' && (
+              <GithubWebLogin mode="auth" flow="bootstrap" />
             )}
 
             {!methods.passkey && !methods.github && (

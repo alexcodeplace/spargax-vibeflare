@@ -160,9 +160,6 @@ export async function setupInstallation(context: LifecycleContext, input: SetupI
       }, now(context)));
     }
     const secrets = input.secrets ?? {};
-    if (!existingOwnedWorkerIsDeployed && Object.keys(secrets).length === 0) {
-      throw new Error('setup secrets are required because the owned Worker has not been deployed yet');
-    }
     let deployment = context.provider.deploy(configPath, context.repoRoot, secrets);
 
     // For workers.dev, the account subdomain is not known before first deploy.

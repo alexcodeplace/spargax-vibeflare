@@ -4,7 +4,8 @@ All notable VibeFlare changes are documented here.
 
 ## Unreleased
 
-- Zero-config model bootstrap now includes five text models and three image-generation models, and automatically backfills existing one-model installations on upgrade.
+- Zero-config installs now load Cloudflare's full public Workers AI catalog with a 24-hour lazy refresh, an explicit Refresh models action, known-good models ranked first, and Llama 3.2 3B as the default text model.
+- Workers AI usage now records `usage.neurons` returned by Cloudflare, and the header shows the live neuron count against the 10,000-neuron daily free allocation instead of only a rounded percentage.
 ## 0.9.2 - 2026-09-11
 
 - **Use GitHub** now works with zero deployment environment variables by bootstrapping a per-deployment GitHub App through GitHub's App Manifest flow; generated OAuth credentials stay private in D1.

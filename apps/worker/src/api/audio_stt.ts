@@ -3,7 +3,7 @@ import type { Env, Variables } from '../env';
 import { getModel } from '../db/queries';
 import { peekQuota, chargeQuota } from '../quota/client';
 import { audit } from '../audit/log';
-import { estimateNeurons } from '../ai/neurons';
+import { actualNeuronsFromOutput, estimateNeurons } from '../ai/neurons';
 import { sttReqToWai, sttOutToOpenAI } from './translator';
 import { runner } from '../ai/dispatch';
 import { classifyUpstreamError } from '../ai/errors';
@@ -64,7 +64,8 @@ export async function handle(c: C): Promise<Response> {
     return c.json({ error: { type: failure.type, message: failure.message } }, failure.status);
   }
 
-  const neurons = estimateNeurons(modelRow, Math.ceil(audio.byteLength / 1000), 0);
+  const neurons = actualNeuronsFromOutput(out)
+    ?? estimateNeurons(modelRow, Math.ceil(audio.byteLength / 1000), 0);
   await chargeQuota(env, neurons);
   await audit(env, {
     userId, apiKeyId,

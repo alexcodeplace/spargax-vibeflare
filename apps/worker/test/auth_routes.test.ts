@@ -111,7 +111,7 @@ describe('/auth/methods single-owner browser authentication', () => {
   });
 
   it('advertises web OAuth after a per-deployment GitHub App is stored', async () => {
-    await testEnv.DB.prepare("INSERT INTO settings (key, value, updated_at) VALUES ('github.oauth_client_id', 'Iv1.test', 0), ('github.oauth_client_secret', 'secret', 0)").run();
+    await testEnv.DB.prepare("INSERT INTO settings (key, value, updated_at) VALUES ('github.oauth_client_id', 'Iv1.test', 0), ('github.oauth_client_secret', 'secret', 0), ('github.oauth_origin', 'http://localhost', 0)").run();
     await testEnv.DB.prepare("INSERT INTO auth_users (id, email, github_login, role, created_at) VALUES ('owner-a', NULL, 'octocat', 'owner', 0)").run();
     const app = authRouter();
     const res = await app.request('/methods', undefined, withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }));
@@ -123,6 +123,31 @@ describe('/auth/methods single-owner browser authentication', () => {
       github_flow: 'oauth',
       cf_access: false,
       setup_required: false,
+    });
+  });
+
+  it('offers a safe GitHub rebind when a reused D1 has credentials for another hostname', async () => {
+    await testEnv.DB.prepare("INSERT INTO settings (key, value, updated_at) VALUES ('github.oauth_client_id', 'Iv1.old', 0), ('github.oauth_client_secret', 'secret', 0), ('github.oauth_origin', 'https://old.example.workers.dev', 0)").run();
+    await testEnv.DB.prepare("INSERT INTO auth_users (id, email, github_login, role, created_at) VALUES ('owner-a', NULL, 'octocat', 'owner', 0)").run();
+    const app = authRouter();
+    const methods = await app.request(
+      'https://new.example.workers.dev/methods',
+      undefined,
+      withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }),
+    );
+    expect(methods.status).toBe(200);
+    expect(await methods.json()).toMatchObject({ github: true, github_flow: 'bootstrap', setup_required: false });
+
+    const bootstrap = await app.request(
+      'https://new.example.workers.dev/setup/github/bootstrap/start',
+      { method: 'POST' },
+      withBindings({ AUTH_MODE: 'standalone', GITHUB_CLIENT_ID: undefined }),
+    );
+    expect(bootstrap.status).toBe(200);
+    const body = await bootstrap.json<{ manifest: string }>();
+    expect(JSON.parse(body.manifest)).toMatchObject({
+      redirect_url: 'https://new.example.workers.dev/auth/setup/github/manifest/callback',
+      callback_urls: ['https://new.example.workers.dev/auth/github/oauth/callback'],
     });
   });
 

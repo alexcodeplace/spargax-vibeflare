@@ -38,7 +38,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 export interface QuotaInfo {
   used: number;
   limit: number;
-  reset_at: string;
+  day?: string;
 }
 
 export interface ModelInfo {
@@ -116,15 +116,21 @@ export interface Setting {
 
 // ── Quota ────────────────────────────────────────────────────────────────────
 
+export const QUOTA_CHANGED_EVENT = 'vibeflare:quota-changed';
+
+export function notifyQuotaChanged(): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(QUOTA_CHANGED_EVENT));
+}
+
 export function getQuota(): Promise<QuotaInfo> {
-  return apiFetch('/admin/quota');
+  return apiFetch('/admin/quota', { cache: 'no-store' });
 }
 
 // ── Models ───────────────────────────────────────────────────────────────────
 
 export async function listModels(task?: string): Promise<ModelInfo[]> {
   const qs = task ? `?task=${encodeURIComponent(task)}` : '';
-  const r = await apiFetch<{ models: ModelInfo[] }>(`/admin/models${qs}`);
+  const r = await apiFetch<{ models: ModelInfo[] }>(`/admin/models${qs}`, { cache: 'no-store' });
   return r.models;
 }
 

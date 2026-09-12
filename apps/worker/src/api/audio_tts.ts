@@ -12,7 +12,7 @@ import { nanoid } from 'nanoid';
 import { getModel } from '../db/queries';
 import { peekQuota, chargeQuota } from '../quota/client';
 import { audit } from '../audit/log';
-import { estimateNeurons, estimateTokens } from '../ai/neurons';
+import { actualNeuronsFromOutput, estimateNeurons, estimateTokens } from '../ai/neurons';
 import { ttsReqToWai, ttsOutToBinary } from './translator';
 import { runner } from '../ai/dispatch';
 import { classifyUpstreamError } from '../ai/errors';
@@ -57,9 +57,10 @@ export async function handle(c: C): Promise<Response> {
 
   const waiInput = ttsReqToWai(body);
   let audioBuf: ArrayBuffer;
+  let aiOut: unknown;
   try {
-    const out = await runner(env, body.model, waiInput);
-    audioBuf = await ttsOutToBinary(out);
+    aiOut = await runner(env, body.model, waiInput);
+    audioBuf = await ttsOutToBinary(aiOut);
   } catch (e: unknown) {
     const failure = classifyUpstreamError(e);
     await audit(env, {
@@ -74,7 +75,8 @@ export async function handle(c: C): Promise<Response> {
   const responseFormat = body.response_format ?? 'mp3';
   const mime = responseFormat === 'wav' ? 'audio/wav' : 'audio/mpeg';
 
-  const neurons = estimateNeurons(modelRow, estimateTokens(body.input), 0);
+  const neurons = actualNeuronsFromOutput(aiOut)
+    ?? estimateNeurons(modelRow, estimateTokens(body.input), 0);
   await chargeQuota(env, neurons);
   await audit(env, {
     userId, apiKeyId,

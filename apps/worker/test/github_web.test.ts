@@ -32,16 +32,19 @@ describe('zero-config GitHub web auth', () => {
   });
 
   it('persists the generated client credentials in D1 for subsequent logins', async () => {
-    expect(await getGithubWebConfig(testEnv)).toBeNull();
+    expect(await getGithubWebConfig(testEnv, 'https://vf.example.workers.dev')).toBeNull();
     await saveGithubWebConfig(testEnv, {
       clientId: 'Iv1.zero-config',
       clientSecret: 'secret-value',
       appSlug: 'vibeflare-instance',
+      origin: 'https://vf.example.workers.dev',
     });
-    expect(await getGithubWebConfig(testEnv)).toEqual({
+    expect(await getGithubWebConfig(testEnv, 'https://vf.example.workers.dev')).toEqual({
       clientId: 'Iv1.zero-config',
       clientSecret: 'secret-value',
       appSlug: 'vibeflare-instance',
+      origin: 'https://vf.example.workers.dev',
     });
+    expect(await getGithubWebConfig(testEnv, 'https://other.example.workers.dev')).toBeNull();
   });
 });

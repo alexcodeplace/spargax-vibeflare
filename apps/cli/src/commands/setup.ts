@@ -2,7 +2,6 @@ import { defineCommand } from 'citty';
 import { setupInstallation } from '../lib/lifecycle.js';
 import { readInstallReceipt, type InstallReceipt } from '../lib/install-state.js';
 import {
-  generatedSessionSecret,
   lifecycleContext,
   normalizeOrigin,
   promptText,
@@ -64,62 +63,36 @@ export default defineCommand({
       }
       const rpId = existing?.browserAuth.rpId ?? (origin ? rpIdFromOrigin(origin) : '');
 
-      // A partial receipt with a recorded Worker may already have deployed secrets.
-      // First try to resume without replacing them; lifecycle verifies the Worker
-      // actually exists before allowing a secretless deploy.
+      // Standalone installs need no Worker secrets: session signing self-initializes
+      // in D1, the model catalog is public, and GitHub can bootstrap itself.
+      // Cloudflare Access still needs its deployment-specific identity values.
       const mayReuseExistingSecrets = Boolean(existing?.resources.worker);
       let secrets: Record<string, string> | undefined;
       if (!mayReuseExistingSecrets) {
-        const cfApiToken = process.env.VIBEFLARE_CF_API_TOKEN?.trim()
-          || await promptText('Cloudflare API token for Workers AI model discovery: ', { hidden: true });
-        if (!cfApiToken) throw new Error('Cloudflare API token is required (or set VIBEFLARE_CF_API_TOKEN)');
-        secrets = {
-          SESSION_SECRET: process.env.VIBEFLARE_SESSION_SECRET?.trim() || generatedSessionSecret(),
-          CF_API_TOKEN: cfApiToken,
-        };
-
+        const initialSecrets: Record<string, string> = {};
         const githubClientId = optionalArg(args['github-client-id']) || process.env.VIBEFLARE_GITHUB_CLIENT_ID?.trim() || '';
-        if (githubClientId) secrets.GITHUB_CLIENT_ID = githubClientId;
+        if (githubClientId) initialSecrets.GITHUB_CLIENT_ID = githubClientId;
         if (mode === 'cf_access') {
           const team = optionalArg(args['access-team']) || process.env.VIBEFLARE_CF_ACCESS_TEAM?.trim()
             || await promptText('Cloudflare Access team name: ');
           const aud = optionalArg(args['access-aud']) || process.env.VIBEFLARE_CF_ACCESS_AUD?.trim()
             || await promptText('Cloudflare Access AUD tag: ');
           if (!team || !aud) throw new Error('Cloudflare Access team and AUD are required in cf-access mode');
-          secrets.CF_ACCESS_TEAM = team;
-          secrets.CF_ACCESS_AUD = aud;
+          initialSecrets.CF_ACCESS_TEAM = team;
+          initialSecrets.CF_ACCESS_AUD = aud;
         }
+        if (Object.keys(initialSecrets).length > 0) secrets = initialSecrets;
       }
 
       const context = lifecycleContext();
-      let receipt: InstallReceipt;
-      try {
-        receipt = await setupInstallation(context, {
-          installation,
-          ...(optionalArg(args.account) ? { accountId: optionalArg(args.account) } : {}),
-          mode,
-          origin,
-          rpId,
-          ...(secrets ? { secrets } : {}),
-        });
-      } catch (error) {
-        if (!mayReuseExistingSecrets || !(error instanceof Error) || !error.message.includes('setup secrets are required')) throw error;
-        const cfApiToken = process.env.VIBEFLARE_CF_API_TOKEN?.trim()
-          || await promptText('Cloudflare API token for Workers AI model discovery: ', { hidden: true });
-        if (!cfApiToken) throw new Error('Cloudflare API token is required (or set VIBEFLARE_CF_API_TOKEN)');
-        const retrySecrets: Record<string, string> = {
-          SESSION_SECRET: process.env.VIBEFLARE_SESSION_SECRET?.trim() || generatedSessionSecret(),
-          CF_API_TOKEN: cfApiToken,
-        };
-        receipt = await setupInstallation(context, {
-          installation,
-          ...(optionalArg(args.account) ? { accountId: optionalArg(args.account) } : {}),
-          mode,
-          origin,
-          rpId,
-          secrets: retrySecrets,
-        });
-      }
+      const receipt = await setupInstallation(context, {
+        installation,
+        ...(optionalArg(args.account) ? { accountId: optionalArg(args.account) } : {}),
+        mode,
+        origin,
+        rpId,
+        ...(secrets ? { secrets } : {}),
+      });
 
       printSetupComplete(receipt);
     } catch (error) {

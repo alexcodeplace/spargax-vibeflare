@@ -3,7 +3,7 @@ import type { Env, Variables } from '../env';
 import { getModel } from '../db/queries';
 import { peekQuota, chargeQuota } from '../quota/client';
 import { audit } from '../audit/log';
-import { estimateNeurons } from '../ai/neurons';
+import { actualNeuronsFromOutput, estimateNeurons } from '../ai/neurons';
 import { embedToWai, embedToOpenAI } from './translator';
 import { runner } from '../ai/dispatch';
 import { classifyUpstreamError } from '../ai/errors';
@@ -49,6 +49,8 @@ export async function handle(c: C): Promise<Response> {
 
   const allData: { object: string; index: number; embedding: number[] }[] = [];
   let totalTokens = 0;
+  let measuredNeurons = 0;
+  let hasMeasuredNeurons = true;
 
   for (let ci = 0; ci < chunks.length; ci++) {
     const chunk = chunks[ci]!;
@@ -66,6 +68,9 @@ export async function handle(c: C): Promise<Response> {
       });
       return c.json({ error: { type: failure.type, message: failure.message } }, failure.status);
     }
+    const measured = actualNeuronsFromOutput(out);
+    if (measured == null) hasMeasuredNeurons = false;
+    else measuredNeurons += measured;
     const partial = embedToOpenAI(out, body.model, ci * CHUNK_SIZE) as {
       data: { object: string; index: number; embedding: number[] }[];
     };
@@ -73,7 +78,7 @@ export async function handle(c: C): Promise<Response> {
     totalTokens += chunk.reduce((s, t) => s + Math.ceil(t.length / 4), 0);
   }
 
-  const neurons = estimateNeurons(modelRow, totalTokens, 0);
+  const neurons = hasMeasuredNeurons ? measuredNeurons : estimateNeurons(modelRow, totalTokens, 0);
   await chargeQuota(env, neurons);
   await audit(env, {
     userId, apiKeyId,

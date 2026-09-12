@@ -3,7 +3,7 @@ import { Button } from '../primitives/Button';
 import { Icon } from '../primitives/Icon';
 import { Badge } from '../primitives/Badge';
 import { Card } from '../primitives/Card';
-import { transcribeAudio } from '../../lib/api';
+import { notifyQuotaChanged, transcribeAudio } from '../../lib/api';
 
 export interface AudioTranscribePanelProps {
   model: string;
@@ -28,6 +28,7 @@ export function AudioTranscribePanel({ model }: AudioTranscribePanelProps) {
     try {
       const result = await transcribeAudio(form);
       setTranscript(result.text);
+      notifyQuotaChanged();
     } catch (e) {
       setError((e as Error).message);
     } finally {

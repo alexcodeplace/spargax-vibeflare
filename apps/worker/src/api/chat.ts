@@ -135,7 +135,10 @@ export async function handle(c: C): Promise<Response> {
       },
     });
 
-    const sseStream = waiStreamToOpenAISSE(aiStream, body.model, completionId);
+    let latestStreamUsage: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; neurons?: number } | null = null;
+    const sseStream = waiStreamToOpenAISSE(aiStream, body.model, completionId, (usage) => {
+      latestStreamUsage = usage;
+    });
     const writer = writable.getWriter();
 
     // Pipe SSE → passthrough.
@@ -161,11 +164,14 @@ export async function handle(c: C): Promise<Response> {
     if (hasCtx) {
       const postWork = pipeWork.then(async () => {
         try {
-          const tokensOut = estimateTokens(bufferedContent);
-          const tokensIn = estimateTokens(
+          const usage = latestStreamUsage as { prompt_tokens?: number; completion_tokens?: number; neurons?: number } | null;
+          const tokensOut = usage?.completion_tokens ?? estimateTokens(bufferedContent);
+          const tokensIn = usage?.prompt_tokens ?? estimateTokens(
             body.messages.map((m) => (typeof m.content === 'string' ? m.content : '')).join(' ')
           );
-          const neurons = estimateNeurons(modelRow, tokensIn, tokensOut);
+          const neurons = typeof usage?.neurons === 'number'
+            ? usage.neurons
+            : estimateNeurons(modelRow, tokensIn, tokensOut);
           await chargeQuota(env, neurons);
           await audit(env, {
             userId, apiKeyId,
@@ -215,7 +221,9 @@ export async function handle(c: C): Promise<Response> {
 
   const tokensIn = response.usage.prompt_tokens;
   const tokensOut = response.usage.completion_tokens;
-  const neurons = estimateNeurons(modelRow, tokensIn, tokensOut);
+  const neurons = typeof response.usage.neurons === 'number'
+    ? response.usage.neurons
+    : estimateNeurons(modelRow, tokensIn, tokensOut);
 
   await chargeQuota(env, neurons);
   await audit(env, {

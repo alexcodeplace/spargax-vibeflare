@@ -137,7 +137,6 @@ const setupInput = {
   mode: 'standalone' as const,
   origin: 'https://vf-test.example.workers.dev',
   rpId: 'vf-test.example.workers.dev',
-  secrets: { SESSION_SECRET: 'session', CF_API_TOKEN: 'token' },
 };
 
 describe('UJ-008 install, diagnose, and update lifecycle', () => {
@@ -167,7 +166,7 @@ describe('UJ-008 install, diagnose, and update lifecycle', () => {
       'createD1:acct-1:vf-test-db',
       'createR2:acct-1:vf-test-files',
       'buildUi',
-      'deploy:CF_API_TOKEN,SESSION_SECRET',
+      'deploy:',
     ]);
 
     provider.calls = [];

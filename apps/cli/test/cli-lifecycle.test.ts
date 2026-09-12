@@ -123,7 +123,6 @@ printf 'pnpm %s\\n' "$*" >> "${commandLog}"
     XDG_STATE_HOME: join(tempRoot, 'state'),
     VIBEFLARE_STATE_DIR: join(tempRoot, 'state', 'vibeflare', 'installations'),
     VIBEFLARE_WRANGLER_BIN: join(fakeBin, 'wrangler'),
-    VIBEFLARE_CF_API_TOKEN: 'not-a-real-token',
     PATH: `${fakeBin}:${process.env.PATH ?? ''}`,
   };
 });
@@ -145,7 +144,6 @@ describe('UJ-008/UJ-009 CLI journey', () => {
     expect(receipt?.status).toBe('installed');
     expect(receipt?.resources.d1?.id).toBe('11111111-1111-4111-8111-111111111111');
 
-    delete baseEnv.VIBEFLARE_CF_API_TOKEN;
     const setupAgain = await runCli(['setup', '--name=binary-test']);
     expect(setupAgain.code, setupAgain.stderr).toBe(0);
     expect(setupAgain.stdout).toContain('Setup complete.');

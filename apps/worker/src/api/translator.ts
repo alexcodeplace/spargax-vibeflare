@@ -35,7 +35,7 @@ export interface ChatCompletionResponse {
     message: { role: 'assistant'; content: string | null; tool_calls?: unknown[] };
     finish_reason: string;
   }[];
-  usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+  usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number; neurons?: number };
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -133,6 +133,9 @@ export function waiToChat(
   const usage = out.usage as Record<string, number> | undefined;
   const promptTokens = usage?.prompt_tokens ?? estimateTokens(content);
   const completionTokens = usage?.completion_tokens ?? estimateTokens(content);
+  const neurons = typeof usage?.neurons === 'number' && Number.isFinite(usage.neurons)
+    ? usage.neurons
+    : undefined;
 
   return {
     id: completionId,
@@ -150,6 +153,7 @@ export function waiToChat(
       prompt_tokens: promptTokens,
       completion_tokens: completionTokens,
       total_tokens: promptTokens + completionTokens,
+      ...(neurons != null ? { neurons } : {}),
     },
   };
 }
@@ -157,7 +161,8 @@ export function waiToChat(
 export function waiStreamToOpenAISSE(
   stream: ReadableStream,
   model: string,
-  completionId: string
+  completionId: string,
+  onUsage?: (usage: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; neurons?: number }) => void,
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
@@ -208,6 +213,9 @@ export function waiStreamToOpenAISSE(
               let content = '';
               try {
                 const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
+                if (parsed.usage && typeof parsed.usage === 'object') {
+                  onUsage?.(parsed.usage as { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; neurons?: number });
+                }
                 if (typeof parsed.response === 'string') {
                   content = parsed.response;
                 } else if (Array.isArray(parsed.choices)) {

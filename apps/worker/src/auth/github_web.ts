@@ -4,11 +4,17 @@ import { getSetting, setSetting } from '../db/queries';
 const CLIENT_ID_KEY = 'github.oauth_client_id';
 const CLIENT_SECRET_KEY = 'github.oauth_client_secret';
 const APP_SLUG_KEY = 'github.app_slug';
+const ORIGIN_KEY = 'github.oauth_origin';
+
+function originKey(origin: string, field: 'client_id' | 'client_secret' | 'app_slug'): string {
+  return `github.oauth.${encodeURIComponent(origin)}.${field}`;
+}
 
 export interface GithubWebConfig {
   clientId: string;
   clientSecret: string;
   appSlug: string | null;
+  origin: string;
 }
 
 export interface GithubManifestConversion {
@@ -22,26 +28,51 @@ export interface GithubManifestConversion {
   };
 }
 
-export async function getGithubWebConfig(env: Env): Promise<GithubWebConfig | null> {
+export async function getGithubWebConfig(env: Env, origin: string): Promise<GithubWebConfig | null> {
   const [clientId, clientSecret, appSlug] = await Promise.all([
+    getSetting(env.DB, originKey(origin, 'client_id')),
+    getSetting(env.DB, originKey(origin, 'client_secret')),
+    getSetting(env.DB, originKey(origin, 'app_slug')),
+  ]);
+  if (clientId && clientSecret) return { clientId, clientSecret, appSlug, origin };
+
+  // Legacy v0.9.2 installs stored one global GitHub App. Only reuse it when its
+  // registered origin is known to match the current request origin. Never guess:
+  // a reused D1 can otherwise pair one Worker's client id with another Worker's
+  // callback URL and GitHub correctly rejects the redirect_uri.
+  const [legacyClientId, legacyClientSecret, legacyAppSlug, legacyOrigin] = await Promise.all([
     getSetting(env.DB, CLIENT_ID_KEY),
     getSetting(env.DB, CLIENT_SECRET_KEY),
     getSetting(env.DB, APP_SLUG_KEY),
+    getSetting(env.DB, ORIGIN_KEY),
   ]);
-  if (!clientId || !clientSecret) return null;
-  return { clientId, clientSecret, appSlug };
+  if (!legacyClientId || !legacyClientSecret || legacyOrigin !== origin) return null;
+  return { clientId: legacyClientId, clientSecret: legacyClientSecret, appSlug: legacyAppSlug, origin };
 }
 
 export async function saveGithubWebConfig(
   env: Env,
-  config: { clientId: string; clientSecret: string; appSlug?: string | null },
+  config: { clientId: string; clientSecret: string; appSlug?: string | null; origin: string },
 ): Promise<void> {
   const now = Date.now();
-  await setSetting(env.DB, CLIENT_ID_KEY, config.clientId, now);
-  await setSetting(env.DB, CLIENT_SECRET_KEY, config.clientSecret, now);
+  await setSetting(env.DB, originKey(config.origin, 'client_id'), config.clientId, now);
+  await setSetting(env.DB, originKey(config.origin, 'client_secret'), config.clientSecret, now);
   if (config.appSlug) {
-    await setSetting(env.DB, APP_SLUG_KEY, config.appSlug, now);
+    await setSetting(env.DB, originKey(config.origin, 'app_slug'), config.appSlug, now);
   }
+}
+
+export async function hasGithubOwner(env: Env): Promise<boolean> {
+  const owner = await env.DB.prepare("SELECT github_login FROM auth_users WHERE role = 'owner' ORDER BY created_at LIMIT 1")
+    .first<{ github_login: string | null }>();
+  return Boolean(owner?.github_login?.trim());
+}
+
+export async function githubOwnerMatches(env: Env, login: string): Promise<{ id: string; role: 'owner' } | null> {
+  const owner = await env.DB.prepare("SELECT id, github_login FROM auth_users WHERE role = 'owner' ORDER BY created_at LIMIT 1")
+    .first<{ id: string; github_login: string | null }>();
+  if (!owner?.github_login || owner.github_login.toLowerCase() !== login.trim().toLowerCase()) return null;
+  return { id: owner.id, role: 'owner' };
 }
 
 export function buildGithubAppManifest(origin: string, name: string) {
@@ -103,4 +134,10 @@ export const GITHUB_PRIVATE_SETTING_KEYS = [
   'github.oauth_client_secret',
   'github.oauth_client_id',
   'github.app_slug',
+  'github.oauth_origin',
 ] as const;
+
+export function isPrivateGithubSettingKey(key: string): boolean {
+  return GITHUB_PRIVATE_SETTING_KEYS.includes(key as (typeof GITHUB_PRIVATE_SETTING_KEYS)[number])
+    || key.startsWith('github.oauth.');
+}

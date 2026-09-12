@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { env } from 'cloudflare:test';
-import { ensureModelCatalog, MODEL_CATALOG_READY_KEY } from '../src/models/catalog';
-import { countModels, getSetting, setModelEnabled, upsertModel } from '../src/db/queries';
+import { ensureModelCatalog, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_REFRESH_MS, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
+import { countModels, getSetting, setModelEnabled, setSetting, upsertModel } from '../src/db/queries';
 
 const model = {
   name: '@cf/test/bootstrap', task: 'text-generation', description: null, properties: '[]',
@@ -11,7 +11,7 @@ const preferred = { ...model, name: '@cf/meta/llama-3.2-3b-instruct', synced_at:
 
 beforeEach(async () => {
   await env.DB.prepare('DELETE FROM models').run();
-  await env.DB.prepare('DELETE FROM settings WHERE key = ?').bind(MODEL_CATALOG_READY_KEY).run();
+  await env.DB.prepare('DELETE FROM settings WHERE key IN (?, ?)').bind(MODEL_CATALOG_READY_KEY, MODEL_CATALOG_SYNCED_AT_KEY).run();
 });
 
 describe('ensureModelCatalog', () => {
@@ -24,6 +24,22 @@ describe('ensureModelCatalog', () => {
     await expect(ensureModelCatalog(env as never, sync as never)).resolves.toEqual({ initialized: false, count: 1 });
     expect(sync).toHaveBeenCalledTimes(1);
     expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe('1');
+  });
+
+  it('refreshes lazily after the 24-hour catalog TTL expires', async () => {
+    const initial = vi.fn(async () => {
+      await upsertModel(env.DB, model);
+      return { count: 1, delisted: 0, rearmed: 0 };
+    });
+    await ensureModelCatalog(env as never, initial as never);
+    await setSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY, String(Date.now() - MODEL_CATALOG_REFRESH_MS - 1), Date.now());
+
+    const refresh = vi.fn(async () => {
+      await upsertModel(env.DB, preferred);
+      return { count: 2, delisted: 0, rearmed: 0 };
+    });
+    await expect(ensureModelCatalog(env as never, refresh as never)).resolves.toEqual({ initialized: false, count: 2 });
+    expect(refresh).toHaveBeenCalledTimes(1);
   });
 
   it('does not mistake partially inserted rows for a completed catalog', async () => {

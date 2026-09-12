@@ -36,6 +36,37 @@ describe('Workers AI modality translation', () => {
     expect(result.choices[0]?.message.content).toBe('reasoning-model answer');
   });
 
+  it('preserves Workers AI neuron usage on synchronous chat responses', () => {
+    const result = waiToChat({
+      response: 'OK',
+      usage: { prompt_tokens: 37, completion_tokens: 2, total_tokens: 39, neurons: 0.232059 },
+    }, '@cf/meta/llama-3.2-3b-instruct', 'chatcmpl-usage');
+    expect(result.usage).toMatchObject({
+      prompt_tokens: 37,
+      completion_tokens: 2,
+      total_tokens: 39,
+      neurons: 0.232059,
+    });
+  });
+
+  it('surfaces the final cumulative neuron usage from a Workers AI stream', async () => {
+    const seen: Array<{ neurons?: number; prompt_tokens?: number; completion_tokens?: number }> = [];
+    const source = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: {"response":"OK","usage":{"prompt_tokens":37,"completion_tokens":0,"neurons":0.1711}}\n\n'));
+        controller.enqueue(new TextEncoder().encode('data: {"response":"","usage":{"prompt_tokens":37,"completion_tokens":2,"neurons":0.232059}}\n\n'));
+        controller.close();
+      },
+    });
+    await new Response(waiStreamToOpenAISSE(
+      source,
+      '@cf/meta/llama-3.2-3b-instruct',
+      'chatcmpl-stream-usage',
+      (usage) => seen.push(usage),
+    )).text();
+    expect(seen.at(-1)).toMatchObject({ prompt_tokens: 37, completion_tokens: 2, neurons: 0.232059 });
+  });
+
   it('maps streamed reasoning deltas to OpenAI content deltas', async () => {
     const source = new ReadableStream<Uint8Array>({
       start(controller) {

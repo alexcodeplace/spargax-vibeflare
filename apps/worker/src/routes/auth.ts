@@ -21,6 +21,8 @@ import {
   convertGithubAppManifest,
   exchangeGithubOAuthCode,
   getGithubWebConfig,
+  githubOwnerMatches,
+  hasGithubOwner,
   saveGithubWebConfig,
 } from '../auth/github_web';
 
@@ -58,6 +60,7 @@ function getIp(c: { req: { header: (h: string) => string | undefined } }): strin
 }
 
 const GH_MANIFEST_STATE_COOKIE = 'vf_gh_manifest_state';
+const GH_MANIFEST_PURPOSE_COOKIE = 'vf_gh_manifest_purpose';
 const GH_OAUTH_STATE_COOKIE = 'vf_gh_oauth_state';
 const GH_OAUTH_PURPOSE_COOKIE = 'vf_gh_oauth_purpose';
 const GH_FLOW_TTL_SEC = 10 * 60;
@@ -194,16 +197,24 @@ auth.post('/setup/github/bootstrap/start', async (c) => {
   if (getBrowserAuthMode(c.env) !== 'standalone') {
     return c.json({ error: { type: 'auth_mode', message: 'Cloudflare Access owns browser sign-in for this deployment' } }, 409);
   }
-  if ((await countUsers(c.env.DB)) > 0) {
-    return c.json({ error: { type: 'forbidden', message: 'setup already complete' } }, 403);
-  }
   if (c.env.GITHUB_CLIENT_ID?.trim()) {
     return c.json({ error: { type: 'already_configured', message: 'GitHub Device Flow is configured for this deployment' } }, 409);
   }
 
+  const origin = requestOrigin(c.req.url);
+  if (await getGithubWebConfig(c.env, origin)) {
+    return c.json({ error: { type: 'already_configured', message: 'GitHub web sign-in is already configured for this origin' } }, 409);
+  }
+
+  const userCount = await countUsers(c.env.DB);
+  const purpose = userCount === 0 ? 'setup' : 'rebind';
+  if (purpose === 'rebind' && !(await hasGithubOwner(c.env))) {
+    return c.json({ error: { type: 'forbidden', message: 'Only an existing GitHub owner can repair GitHub sign-in for a new hostname' } }, 403);
+  }
+
   const state = nanoid(32);
   setFlowCookie(c, GH_MANIFEST_STATE_COOKIE, state);
-  const origin = requestOrigin(c.req.url);
+  setFlowCookie(c, GH_MANIFEST_PURPOSE_COOKIE, purpose);
   const manifest = buildGithubAppManifest(origin, `VibeFlare ${nanoid(8)}`);
   return c.json({
     action: `https://github.com/settings/apps/new?state=${encodeURIComponent(state)}`,
@@ -216,14 +227,13 @@ auth.get('/setup/github/manifest/callback', async (c) => {
     return c.redirect('/login', 302);
   }
   const expectedState = getCookie(c, GH_MANIFEST_STATE_COOKIE);
+  const purpose = getCookie(c, GH_MANIFEST_PURPOSE_COOKIE);
   clearFlowCookie(c, GH_MANIFEST_STATE_COOKIE);
+  clearFlowCookie(c, GH_MANIFEST_PURPOSE_COOKIE);
   const state = c.req.query('state');
   const code = c.req.query('code');
-  if (!expectedState || !state || expectedState !== state || !code) {
-    return c.redirect('/setup?github=manifest_failed', 302);
-  }
-  if ((await countUsers(c.env.DB)) > 0) {
-    return c.redirect('/login', 302);
+  if (!expectedState || !state || expectedState !== state || !code || (purpose !== 'setup' && purpose !== 'rebind')) {
+    return c.redirect(purpose === 'rebind' ? '/login?reason=github_failed' : '/setup?github=manifest_failed', 302);
   }
 
   try {
@@ -232,7 +242,21 @@ auth.get('/setup/github/manifest/callback', async (c) => {
     const clientId = app.client_id?.trim();
     const clientSecret = app.client_secret?.trim();
     if (!login || !clientId || !clientSecret) {
-      return c.redirect('/setup?github=manifest_failed', 302);
+      return c.redirect(purpose === 'rebind' ? '/login?reason=github_failed' : '/setup?github=manifest_failed', 302);
+    }
+
+    const origin = requestOrigin(c.req.url);
+    if (purpose === 'rebind') {
+      const owner = await githubOwnerMatches(c.env, login);
+      if (!owner) return c.redirect('/login?reason=github_owner_mismatch', 302);
+      await saveGithubWebConfig(c.env, {
+        clientId,
+        clientSecret,
+        appSlug: app.slug ?? null,
+        origin,
+      });
+      await issueSession(c, owner.id, 'owner');
+      return c.redirect('/', 302);
     }
 
     const userId = newId();
@@ -250,6 +274,7 @@ auth.get('/setup/github/manifest/callback', async (c) => {
         clientId,
         clientSecret,
         appSlug: app.slug ?? null,
+        origin,
       });
     } catch (error) {
       await c.env.DB.prepare('DELETE FROM auth_users WHERE id = ?').bind(userId).run();
@@ -259,7 +284,7 @@ auth.get('/setup/github/manifest/callback', async (c) => {
     await issueSession(c, userId, 'owner');
     return c.redirect('/', 302);
   } catch {
-    return c.redirect('/setup?github=manifest_failed', 302);
+    return c.redirect(purpose === 'rebind' ? '/login?reason=github_failed' : '/setup?github=manifest_failed', 302);
   }
 });
 
@@ -267,7 +292,8 @@ auth.get('/github/oauth/start', async (c) => {
   if (getBrowserAuthMode(c.env) !== 'standalone') {
     return c.json({ error: { type: 'auth_mode', message: 'Cloudflare Access owns browser sign-in for this deployment' } }, 409);
   }
-  const config = await getGithubWebConfig(c.env);
+  const origin = requestOrigin(c.req.url);
+  const config = await getGithubWebConfig(c.env, origin);
   if (!config) {
     return c.json({ error: { type: 'not_configured', message: 'GitHub web sign-in is not configured' } }, 501);
   }
@@ -283,7 +309,7 @@ auth.get('/github/oauth/start', async (c) => {
   const state = nanoid(32);
   setFlowCookie(c, GH_OAUTH_STATE_COOKIE, state);
   setFlowCookie(c, GH_OAUTH_PURPOSE_COOKIE, purpose);
-  const redirectUri = `${requestOrigin(c.req.url)}/auth/github/oauth/callback`;
+  const redirectUri = `${config.origin}/auth/github/oauth/callback`;
   const authorize = new URL('https://github.com/login/oauth/authorize');
   authorize.searchParams.set('client_id', config.clientId);
   authorize.searchParams.set('redirect_uri', redirectUri);
@@ -306,9 +332,10 @@ auth.get('/github/oauth/callback', async (c) => {
   }
 
   try {
-    const config = await getGithubWebConfig(c.env);
+    const origin = requestOrigin(c.req.url);
+    const config = await getGithubWebConfig(c.env, origin);
     if (!config) return c.redirect('/login?reason=github_failed', 302);
-    const redirectUri = `${requestOrigin(c.req.url)}/auth/github/oauth/callback`;
+    const redirectUri = `${config.origin}/auth/github/oauth/callback`;
     const accessToken = await exchangeGithubOAuthCode(config, code, redirectUri);
     const ghUser = await deps.fetchUser(accessToken);
 
@@ -449,14 +476,16 @@ auth.post('/setup/github/poll', async (c) => {
 auth.get('/methods', async (c) => {
   const mode = getBrowserAuthMode(c.env);
   const setupRequired = mode === 'standalone' && (await countUsers(c.env.DB)) === 0;
-  const githubWeb = mode === 'standalone' ? await getGithubWebConfig(c.env) : null;
+  const origin = requestOrigin(c.req.url);
+  const githubWeb = mode === 'standalone' ? await getGithubWebConfig(c.env, origin) : null;
+  const canRebindGithub = mode === 'standalone' && !setupRequired && !githubWeb && await hasGithubOwner(c.env);
   const githubFlow = mode !== 'standalone'
     ? 'none'
     : c.env.GITHUB_CLIENT_ID?.trim()
       ? 'device'
       : githubWeb
         ? 'oauth'
-        : setupRequired
+        : setupRequired || canRebindGithub
           ? 'bootstrap'
           : 'none';
   return c.json({

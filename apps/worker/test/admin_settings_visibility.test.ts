@@ -9,6 +9,7 @@ describe('admin settings visibility', () => {
       { key: 'github.oauth_client_id', value: 'Iv1.client' },
       { key: 'github.oauth_client_secret', value: 'super-secret' },
       { key: 'github.app_slug', value: 'vibeflare-instance' },
+      { key: 'github.oauth.https%3A%2F%2Fnew.example.workers.dev.client_secret', value: 'origin-secret' },
       { key: 'system.session_secret', value: 'session-secret' },
       { key: 'models.catalog.ready', value: '1' },
     ]);
