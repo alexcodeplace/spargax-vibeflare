@@ -4,6 +4,19 @@ import { syncModels } from '../crons/sync_models';
 
 export type ModelSync = typeof syncModels;
 export const MODEL_CATALOG_READY_KEY = 'system.model_catalog_ready';
+export const BUILTIN_MODEL_CATALOG_VERSION_KEY = 'system.builtin_model_catalog_version';
+export const BUILTIN_MODEL_CATALOG_VERSION = '2';
+
+const BUILTIN_MODELS = [
+  ['@cf/meta/llama-3.2-3b-instruct', 'text-generation', 'Fast default chat model.'],
+  ['@cf/meta/llama-3.1-8b-instruct-fp8', 'text-generation', 'General-purpose 8B instruction model.'],
+  ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', 'text-generation', 'Higher-quality large instruction model.'],
+  ['@cf/qwen/qwen2.5-coder-32b-instruct', 'text-generation', 'Coding-focused instruction model.'],
+  ['@cf/deepseek-ai/deepseek-r1-distill-qwen-32b', 'text-generation', 'Reasoning-focused instruction model.'],
+  ['@cf/black-forest-labs/flux-1-schnell', 'text-to-image', 'Fast FLUX text-to-image generation.'],
+  ['@cf/bytedance/stable-diffusion-xl-lightning', 'text-to-image', 'Fast SDXL text-to-image generation.'],
+  ['@cf/lykon/dreamshaper-8-lcm', 'text-to-image', 'Photorealistic text-to-image generation.'],
+] as const;
 
 let initializationInFlight: Promise<{ initialized: boolean; count: number }> | null = null;
 
@@ -12,19 +25,28 @@ function hasRemoteCatalogCredentials(env: Env): boolean {
 }
 
 async function seedBuiltInCatalog(env: Env): Promise<{ count: number; delisted: number; rearmed: number }> {
-  await upsertModel(env.DB, {
-    name: '@cf/meta/llama-3.2-3b-instruct',
-    task: 'text-generation',
-    description: 'Reliable built-in Workers AI chat model for zero-config deployments.',
-    properties: '[]',
-    neurons_input: null,
-    neurons_output: null,
-    neurons_flat: null,
-    beta: 0,
-    enabled: 1,
-    synced_at: Date.now(),
-  });
-  return { count: 1, delisted: 0, rearmed: 0 };
+  const syncedAt = Date.now();
+  for (const [name, task, description] of BUILTIN_MODELS) {
+    await upsertModel(env.DB, {
+      name,
+      task,
+      description,
+      properties: '[]',
+      neurons_input: null,
+      neurons_output: null,
+      neurons_flat: null,
+      beta: 0,
+      enabled: 1,
+      synced_at: syncedAt,
+    });
+  }
+  await setSetting(env.DB, BUILTIN_MODEL_CATALOG_VERSION_KEY, BUILTIN_MODEL_CATALOG_VERSION, syncedAt);
+  return { count: BUILTIN_MODELS.length, delisted: 0, rearmed: 0 };
+}
+
+async function ensureBuiltInCatalogCurrent(env: Env): Promise<void> {
+  if ((await getSetting(env.DB, BUILTIN_MODEL_CATALOG_VERSION_KEY)) === BUILTIN_MODEL_CATALOG_VERSION) return;
+  await seedBuiltInCatalog(env);
 }
 
 async function isReady(env: Env): Promise<boolean> {
@@ -59,6 +81,7 @@ export async function ensureModelCatalog(
   sync: ModelSync = syncModels,
 ): Promise<{ initialized: boolean; count: number }> {
   if (await isReady(env)) {
+    if (sync === syncModels && !hasRemoteCatalogCredentials(env)) await ensureBuiltInCatalogCurrent(env);
     return { initialized: false, count: await countModels(env.DB) };
   }
 

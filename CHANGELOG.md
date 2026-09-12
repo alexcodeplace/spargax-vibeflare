@@ -4,6 +4,7 @@ All notable VibeFlare changes are documented here.
 
 ## Unreleased
 
+- Zero-config model bootstrap now includes five text models and three image-generation models, and automatically backfills existing one-model installations on upgrade.
 ## 0.9.2 - 2026-09-11
 
 - **Use GitHub** now works with zero deployment environment variables by bootstrapping a per-deployment GitHub App through GitHub's App Manifest flow; generated OAuth credentials stay private in D1.

@@ -42,7 +42,7 @@ const requiredEvidence = [
   ['Cloudflare Access Wrangler config validation', /generated cf_access Wrangler config/],
   ['CLI tests', /apps\/cli test:[\s\S]*?Tests\s+26 passed/],
   ['UI component tests', /apps\/ui test:[\s\S]*?Tests\s+14 passed/],
-  ['Worker tests', /apps\/worker test:[\s\S]*?Tests\s+87 passed/],
+  ['Worker tests', /apps\/worker test:[\s\S]*?Tests\s+88 passed/],
   ['Playwright suite', /52 passed \(/],
 ];
 for (const [name, pattern] of requiredEvidence) {
@@ -87,7 +87,7 @@ const receipt = {
     tests: {
       cli: { passed: 26 },
       uiComponents: { passed: 14 },
-      worker: { passed: 87 },
+      worker: { passed: 88 },
       browserTotal: { passed: 52 },
       uiMatrix: { passed: matrixCases, snapshotsChanged: false },
       canonicalJourneyContracts: { ready: canonicalJourneys },

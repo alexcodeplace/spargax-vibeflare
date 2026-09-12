@@ -10,7 +10,7 @@ Click **Deploy to Cloudflare** above, choose your Cloudflare account, and accept
 
 When Cloudflare finishes, open the Worker URL. A fresh install routes you to `/setup`, where you can become the owner with GitHub or a passkey. **GitHub requires no deployment environment variables or pre-created OAuth credentials**: VibeFlare uses GitHub's App Manifest flow to create a small GitHub App owned by your GitHub account, then stores that instance's generated OAuth credentials privately in D1.
 
-The zero-config deployment starts with a known-good Workers AI chat model. Advanced installs can optionally add a Workers AI Read token later to sync the full Cloudflare model catalog.
+The zero-config deployment starts with a curated Workers AI set: multiple text models plus image-generation models. Advanced installs can optionally add a Workers AI Read token later to sync the full Cloudflare model catalog.
 
 VibeFlare is for people building with AI who want one private place for Cloudflare Workers AI instead of wiring authentication, API keys, model lists, usage tracking, files, and chat history into every project themselves.
 
@@ -19,7 +19,7 @@ You deploy it to **your Cloudflare account**. You get:
 - a browser chat UI;
 - an OpenAI-compatible `/v1` API for apps and coding tools;
 - API keys you can create and revoke;
-- a zero-config Workers AI model, with optional full catalog discovery;
+- a useful zero-config Workers AI model set for text and image generation, with optional full catalog discovery;
 - chat history and private file storage;
 - usage and audit views;
 - passkey login plus zero-config GitHub sign-in by default;
