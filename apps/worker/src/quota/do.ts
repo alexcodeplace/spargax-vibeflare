@@ -16,6 +16,11 @@ export class QuotaCounter implements DurableObject {
       return Response.json({ used, limit: DAILY_LIMIT, day: today });
     }
 
+    if (url.pathname === '/reset' && req.method === 'POST') {
+      await this.state.storage.deleteAll();
+      return Response.json({ ok: true, used: 0, limit: DAILY_LIMIT, day: today });
+    }
+
     if (url.pathname === '/charge' && req.method === 'POST') {
       const { neurons } = await req.json<{ neurons: number }>();
       if (used + neurons > DAILY_LIMIT) {

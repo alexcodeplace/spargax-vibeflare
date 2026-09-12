@@ -54,6 +54,7 @@ async function reset(env: Env) {
   // Browser journeys stay hermetic: production empty-catalog bootstrap is
   // covered by model_catalog.test.ts, while E2E starts with one deterministic
   // Workers AI model instead of reaching the external Cloudflare catalog.
+  await env.QUOTA.get(env.QUOTA.idFromName('global')).fetch('https://q/reset', { method: 'POST' });
   await seedModel(env, { name: '@cf/meta/e2e-chat', task: 'text-generation' });
   const now = Date.now();
   await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', now);

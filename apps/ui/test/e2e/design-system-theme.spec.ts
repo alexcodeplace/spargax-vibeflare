@@ -36,11 +36,15 @@ test.describe('Design System — Astryx neutral theme', () => {
 
   test('compatibility aliases resolve to Astryx semantic tokens', async ({ page }) => {
     await page.goto('/design-system');
-    const aliasValues = await cssVars(page, Object.keys(ALIASES));
-    const semanticValues = await cssVars(page, Object.values(ALIASES));
-    for (const [alias, semantic] of Object.entries(ALIASES)) {
-      expect(aliasValues[alias], `--${alias}`).toBe(semanticValues[semantic]);
-    }
+    // Astro's ClientRouter may replace the execution context once immediately
+    // after first load. Poll through that swap rather than racing page.evaluate.
+    await expect.poll(async () => {
+      const aliasValues = await cssVars(page, Object.keys(ALIASES));
+      const semanticValues = await cssVars(page, Object.values(ALIASES));
+      return Object.entries(ALIASES).every(([alias, semantic]) =>
+        aliasValues[alias] === semanticValues[semantic]
+      );
+    }).toBe(true);
   });
 
   test('defaults to explicit neutral dark mode and resolves its palette', async ({ page }) => {
