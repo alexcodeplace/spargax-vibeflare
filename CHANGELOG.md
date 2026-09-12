@@ -2,8 +2,12 @@
 
 All notable VibeFlare changes are documented here.
 
-## Unreleased
+## 0.9.3 - 2026-09-12
 
+- Add owner-controlled **Exclude paid**, enabled by default, with a persisted policy and dollar markers for paid models when explicitly included.
+- Classify model billing from Cloudflare's public metadata and real-request errors, without synthetic inference probes. Preserve learned restrictions through catalog refreshes and block excluded requests before inference.
+- Show private conversations below **Workspace** immediately after the first message, including mobile navigation, shared History updates and local titles with no AI cost.
+- Fix the settings payload mismatch and keep restored conversations' model selection synchronized with the picker.
 - Zero-config installs now load Cloudflare's full public Workers AI catalog with a 24-hour lazy refresh, an explicit Refresh models action, known-good models ranked first, and Llama 3.2 3B as the default text model.
 - Workers AI usage now records `usage.neurons` returned by Cloudflare, and the header shows the live neuron count against the 10,000-neuron daily free allocation instead of only a rounded percentage.
 - Root navigation is now decided at the Worker edge: fresh installs go directly to `/setup`, authenticated users to `/chat`, and signed-out existing installs directly to `/login` without flashing `/chat` first.

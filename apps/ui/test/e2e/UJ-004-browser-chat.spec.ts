@@ -26,12 +26,24 @@ test('UJ-004 H1/A1/P1 — browser chat streams and persists real history', async
     await composer.fill('Hello VibeFlare');
     await composer.press('Enter');
 
-    await expect(page.getByText('Hello VibeFlare', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('vibeflare-chat').getByText('Hello VibeFlare', { exact: true })).toBeVisible();
     await expect(page.getByText('Hello from VibeFlare E2E', { exact: true })).toBeVisible({ timeout: 15_000 });
 
     const url = new URL(page.url());
     const chatId = url.searchParams.get('chat_id');
     expect(chatId).toBeTruthy();
+
+    // Persistence completes in waitUntil after the final stream chunk.
+    await expect.poll(async () => {
+      const read = await page.request.get(`/admin/chats/${encodeURIComponent(chatId!)}/messages`);
+      return (await read.json() as { messages: unknown[] }).messages.length;
+    }).toBe(2);
+
+    // Persistence completes in waitUntil after the final stream chunk.
+    await expect.poll(async () => {
+      const read = await page.request.get(`/admin/chats/${encodeURIComponent(chatId!)}/messages`);
+      return (await read.json() as { messages: unknown[] }).messages.length;
+    }).toBe(2);
 
     const fresh = await page.request.get(`/admin/chats/${encodeURIComponent(chatId!)}/messages`);
     expect(fresh.status()).toBe(200);
@@ -43,7 +55,7 @@ test('UJ-004 H1/A1/P1 — browser chat streams and persists real history', async
     ]);
 
     await page.reload();
-    await expect(page.getByText('Hello VibeFlare', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('vibeflare-chat').getByText('Hello VibeFlare', { exact: true })).toBeVisible();
     await expect(page.getByText('Hello from VibeFlare E2E', { exact: true })).toBeVisible();
 
     // A1: rejected body cannot create another chat.
