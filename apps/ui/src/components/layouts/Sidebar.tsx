@@ -25,11 +25,11 @@ export interface SidebarProps {
  */
 export function Sidebar({ activePath = '' }: SidebarProps) {
   return (
-    <aside className="flex flex-col w-56 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] h-full min-h-screen px-3 py-6 gap-1">
+    <aside className="vf-sidebar flex">
       <div className="px-2 mb-6">
-        <span className="text-base font-bold text-[var(--color-accent)] tracking-tight">VibeFlare</span>
+        <span className="vf-brand"><span className="vf-brand-mark" aria-hidden="true">S</span>Spargax VibeFlare</span>
       </div>
-      <nav className="flex flex-col gap-1">
+      <nav className="vf-navigation">
         {NAV_LINKS.map(({ href, label, icon }) => {
           const active = activePath.startsWith(href);
           return (
@@ -37,7 +37,7 @@ export function Sidebar({ activePath = '' }: SidebarProps) {
               key={href}
               href={href}
               className={[
-                'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                'vf-nav-link',
                 active
                   ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/40',

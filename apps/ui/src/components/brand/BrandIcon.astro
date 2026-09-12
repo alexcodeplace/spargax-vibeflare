@@ -1,0 +1,7 @@
+---
+export interface Props { name: string; size?: number; class?: string }
+const { name, size = 20, class: className } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" class={className}>
+  <use href={`/assets/club/icons.svg#${name}`} />
+</svg>

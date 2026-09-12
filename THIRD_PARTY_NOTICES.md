@@ -45,6 +45,9 @@ Package license terms remain authoritative; package homepages/repositories are p
 | @floating-ui/dom | 1.8.0 | MIT | <https://floating-ui.com> |
 | @floating-ui/react-dom | 2.1.9 | MIT | <https://floating-ui.com/docs/react-dom> |
 | @floating-ui/utils | 0.2.12 | MIT | <https://floating-ui.com> |
+| @fontsource-variable/outfit | 5.3.0 | OFL-1.1 | <https://fontsource.org/fonts/outfit> |
+| @fontsource/noto-sans-hebrew | 5.3.0 | OFL-1.1 | <https://fontsource.org/fonts/noto-sans-hebrew> |
+| @fontsource/poppins | 5.3.0 | OFL-1.1 | <https://fontsource.org/fonts/poppins> |
 | @formatjs/fast-memoize | 3.1.7 | MIT | <https://github.com/formatjs/formatjs#readme> |
 | @formatjs/icu-messageformat-parser | 3.5.17 | MIT | <https://github.com/formatjs/formatjs#readme> |
 | @formatjs/icu-skeleton-parser | 2.1.11 | MIT | <https://github.com/formatjs/formatjs#readme> |
@@ -407,4 +410,4 @@ Package license terms remain authoritative; package homepages/repositories are p
 | zod | 4.5.4 | MIT | <https://zod.dev> |
 | zwitch | 2.0.4 | MIT | <https://github.com/wooorm/zwitch#readme> |
 
-Total locked production package/license records: 400.
+Total locked production package/license records: 403.

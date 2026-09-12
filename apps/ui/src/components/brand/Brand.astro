@@ -1,0 +1,8 @@
+---
+export interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+---
+<a class:list={['vf-brand', { 'vf-brand--compact': compact }]} href="/" aria-label="Spargax VibeFlare home">
+  <span class="vf-brand-mark" aria-hidden="true">S</span>
+  <span class="vf-brand-wordmark" dir="ltr"><strong>Spargax</strong><span>VibeFlare</span></span>
+</a>

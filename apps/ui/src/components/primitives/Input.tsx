@@ -80,7 +80,7 @@ export function Input({
         onFocus={onFocus}
         onBlur={onBlur}
         onKeyDown={onKeyDown}
-        className={className}
+        className={`vf-input ${className ?? ''}`}
         {...rest}
       />
     );
@@ -110,7 +110,7 @@ export function Input({
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
-      className={className}
+      className={`vf-input ${className ?? ''}`}
       {...rest}
     />
   );

@@ -1,0 +1,906 @@
+{
+  "canonicalPackages": [
+    "docs/design/canonical/2026-09-12/light-svg-kit",
+    "docs/design/canonical/2026-09-12/dark-svg-kit"
+  ],
+  "runtimeOnly": true,
+  "notes": "Matched contour SVGs are preserved only as canonical editing sources. Controls remain live HTML/Astryx.",
+  "files": [
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/avatar-ring-blank.svg",
+      "target": "public/assets/club/light/surfaces/avatar-ring-blank.svg",
+      "sha256": "957adef6434d470f1dd41456da664d9ae40a0b6ff87a1e96f6b07998c1448d17",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/badge-active-blank.svg",
+      "target": "public/assets/club/light/surfaces/badge-active-blank.svg",
+      "sha256": "e09818b84579a5981b7f081d74e743b6f5c51fecc8dd8b85808fbfe2b53a7e9e",
+      "bytes": 2076,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/badge-guide-blank.svg",
+      "target": "public/assets/club/light/surfaces/badge-guide-blank.svg",
+      "sha256": "8e982143cb1126d0f66baaa3aec9b8600adb1ef65930b73a3e7d594c6864efdb",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/badge-role-blank.svg",
+      "target": "public/assets/club/light/surfaces/badge-role-blank.svg",
+      "sha256": "81b61c3c1740ff4b993630a563ff77d84253e972cafbb6d9b770094d01ab14d7",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/badge-template-blank.svg",
+      "target": "public/assets/club/light/surfaces/badge-template-blank.svg",
+      "sha256": "88baafe84628e266008abb9439ad4e4662de4b7f0c86f0158024628cd1eb63ab",
+      "bytes": 2076,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/badge-tutorial-blank.svg",
+      "target": "public/assets/club/light/surfaces/badge-tutorial-blank.svg",
+      "sha256": "43a155a63c9f68593d4ba09657f7672eaeeccdd9c0f93e8e594722e7db56ca99",
+      "bytes": 2076,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/brand-tile-blank.svg",
+      "target": "public/assets/club/light/surfaces/brand-tile-blank.svg",
+      "sha256": "8511de09251d7bb56d5e4b021a623f936b53b4a166d0d4f1e133f24ba8e1a979",
+      "bytes": 2180,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-primary-disabled.svg",
+      "target": "public/assets/club/light/surfaces/button-primary-disabled.svg",
+      "sha256": "bcc5e5c999ce5b647a87fb44d3dcf9eeeba74b947afbd90eef5c064412bdc704",
+      "bytes": 2087,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-primary-hover.svg",
+      "target": "public/assets/club/light/surfaces/button-primary-hover.svg",
+      "sha256": "024448f5daf1e559f53895a019a2c6b9397e074e37244ea467a6618432e19d08",
+      "bytes": 2192,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-primary-idle.svg",
+      "target": "public/assets/club/light/surfaces/button-primary-idle.svg",
+      "sha256": "4738e1b966e6209536aa6fb17c3f1f278165166fe1b77656b53477e9f5fe9706",
+      "bytes": 2192,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-primary-pressed.svg",
+      "target": "public/assets/club/light/surfaces/button-primary-pressed.svg",
+      "sha256": "b71c584a3fb78fb47da8564ea88a98cd677d83f2ca0af45632b050124a2cbe0d",
+      "bytes": 2192,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-secondary-hover.svg",
+      "target": "public/assets/club/light/surfaces/button-secondary-hover.svg",
+      "sha256": "a7d76acbe14f07a2aba72f4716f3c234677673fdbad5cd2c98e648516c554554",
+      "bytes": 2190,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/button-secondary-idle.svg",
+      "target": "public/assets/club/light/surfaces/button-secondary-idle.svg",
+      "sha256": "c852195d15d19a3acdaef893227453acf936d27e59a621d2b75374c2764ed8a8",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/empty-state-card-blank.svg",
+      "target": "public/assets/club/light/surfaces/empty-state-card-blank.svg",
+      "sha256": "193f610dbf5b83e7889bb88181092af1f3b43192288f5fcb6412b04f37bfb078",
+      "bytes": 2283,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/feature-panel-blank.svg",
+      "target": "public/assets/club/light/surfaces/feature-panel-blank.svg",
+      "sha256": "3f250b425e4cc1a58b2cce6b4e332dada90ebe83a15bbee84e0a279da53ce3e6",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/feature-row-blank.svg",
+      "target": "public/assets/club/light/surfaces/feature-row-blank.svg",
+      "sha256": "366c58179246b9944260c16879a0eb20312ba3df554ef969775b95d22f8d9b44",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/icon-button-blank.svg",
+      "target": "public/assets/club/light/surfaces/icon-button-blank.svg",
+      "sha256": "b974e76c0f46cb2ca8484227aeeb71fad3d888739d847f05a3d0b7d1ab021d57",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/icon-tile-blue.svg",
+      "target": "public/assets/club/light/surfaces/icon-tile-blue.svg",
+      "sha256": "8bd9558c860360b3b7298056109dc04d73bf55507a8552512c7338b6d8833efd",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/icon-tile-cyan.svg",
+      "target": "public/assets/club/light/surfaces/icon-tile-cyan.svg",
+      "sha256": "48024a307a12f7f0b27365c8d9f6c477c9c026a4fcc28c3a9bf4b607400d25cc",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/icon-tile-violet.svg",
+      "target": "public/assets/club/light/surfaces/icon-tile-violet.svg",
+      "sha256": "cd65ec8dac212148a4e6a4a36517f999d23daa6c695b31de0f822a3043690508",
+      "bytes": 2074,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/input-disabled.svg",
+      "target": "public/assets/club/light/surfaces/input-disabled.svg",
+      "sha256": "bcc5e5c999ce5b647a87fb44d3dcf9eeeba74b947afbd90eef5c064412bdc704",
+      "bytes": 2087,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/input-error.svg",
+      "target": "public/assets/club/light/surfaces/input-error.svg",
+      "sha256": "c3302ffdeeb6dfb18685c8ec255b244898216b97628801da78e8e70321b0beff",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/input-focus.svg",
+      "target": "public/assets/club/light/surfaces/input-focus.svg",
+      "sha256": "fef086fcd031f8b6f85e82652275c2ed1d11fb6f9957a488796483674067dc49",
+      "bytes": 2190,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/input-idle.svg",
+      "target": "public/assets/club/light/surfaces/input-idle.svg",
+      "sha256": "c852195d15d19a3acdaef893227453acf936d27e59a621d2b75374c2764ed8a8",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/language-segment-active.svg",
+      "target": "public/assets/club/light/surfaces/language-segment-active.svg",
+      "sha256": "fc10bf311cce717427678f42bf9bc5a4d6ebe275943cea03584175b182932b7c",
+      "bytes": 2173,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/language-switcher-blank.svg",
+      "target": "public/assets/club/light/surfaces/language-switcher-blank.svg",
+      "sha256": "eb088fd419aa8ae6b44bcf12636ff1447a7131d559f73e73f897af7c7b8d708d",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/login-card-blank.svg",
+      "target": "public/assets/club/light/surfaces/login-card-blank.svg",
+      "sha256": "d90878fbf5ece2a66c7bf4df547832315e48479597d10c42d45b2e5157dbd173",
+      "bytes": 2276,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/metric-card-blue.svg",
+      "target": "public/assets/club/light/surfaces/metric-card-blue.svg",
+      "sha256": "be1e85765df43b92d2de756e59c30cf54049a1155422ed5f9a30fe3fa5ac8fb2",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/metric-card-cyan.svg",
+      "target": "public/assets/club/light/surfaces/metric-card-cyan.svg",
+      "sha256": "6f4b9a088d01e33f928828dae9579c1aa4c90697963285ff1a038c1598000179",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/metric-card-violet.svg",
+      "target": "public/assets/club/light/surfaces/metric-card-violet.svg",
+      "sha256": "6220d280df6a1e3962390d3a8220fd5666efc04f5fd7ac3c4f4d87d281e77aaa",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/nav-item-active.svg",
+      "target": "public/assets/club/light/surfaces/nav-item-active.svg",
+      "sha256": "ee42ac54646beb4f8decf191798eabba59328bc93aaf7979c1ba0ef9b95a5bad",
+      "bytes": 2190,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/nav-item-hover.svg",
+      "target": "public/assets/club/light/surfaces/nav-item-hover.svg",
+      "sha256": "30ce772310ba1a0a915029f0d9b8f0c9b711ac1048238e527f541086f177542c",
+      "bytes": 2190,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/promo-card-blank.svg",
+      "target": "public/assets/club/light/surfaces/promo-card-blank.svg",
+      "sha256": "9e8e73e397ea4b52a6a0a8e346f9154bf4f6f69c48b006750bd33e1a3c056506",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/resource-card-blank.svg",
+      "target": "public/assets/club/light/surfaces/resource-card-blank.svg",
+      "sha256": "1bd318907fb22bd1db18190ba638b0abf191c943f8711ef8012f4b2e7301f78b",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/search-field-blank.svg",
+      "target": "public/assets/club/light/surfaces/search-field-blank.svg",
+      "sha256": "18d1a3adcbd7866a80eda952d6d6144fe1c42f1593e1baf945e9021769c6bb70",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/sidebar-blank.svg",
+      "target": "public/assets/club/light/surfaces/sidebar-blank.svg",
+      "sha256": "65652e5a78f16c5c4b4f4a72a36c82b75f9cff2313ec3604ae0e7cef76155f33",
+      "bytes": 2170,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/slider-native.svg",
+      "target": "public/assets/club/light/surfaces/slider-native.svg",
+      "sha256": "4a99c24d793e1b36e0771972faac9606146e558ac6709cc859d03a2b20004c1b",
+      "bytes": 950,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/toggle-off-native.svg",
+      "target": "public/assets/club/light/surfaces/toggle-off-native.svg",
+      "sha256": "04fdf8ef4168e9dad817c14f6af73ac546efc5214296ed8ec4ea1ee596169712",
+      "bytes": 954,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/toggle-on-native.svg",
+      "target": "public/assets/club/light/surfaces/toggle-on-native.svg",
+      "sha256": "e2d22f9ae9089af84e4bae4370fe51b82fbefe9a9357ea5acf66cfae406d35ef",
+      "bytes": 956,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/tooltip-blank.svg",
+      "target": "public/assets/club/light/surfaces/tooltip-blank.svg",
+      "sha256": "d2fa5608796744d6a5254820824186dde691eb681568606fcb5edcafc38dc3e8",
+      "bytes": 2085,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/surfaces/svg/topbar-blank.svg",
+      "target": "public/assets/club/light/surfaces/topbar-blank.svg",
+      "sha256": "539c96d5afb046b931f66503a69d0aa7f1d801958fc50d132cc420d05f2c7812",
+      "bytes": 2173,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/accent-line.svg",
+      "target": "public/assets/club/light/illustrations/accent-line.svg",
+      "sha256": "0082449ccbe74eca6c6d25c7f0e64c5bb4f93116e699af79e87c5353a092985c",
+      "bytes": 1093,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/community-glass.svg",
+      "target": "public/assets/club/light/illustrations/community-glass.svg",
+      "sha256": "928c3a0495ca36ea45666807f16fc1214a77b8da4caea157af55c3ba5caca259",
+      "bytes": 1285,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/corner-waves-blue.svg",
+      "target": "public/assets/club/light/illustrations/corner-waves-blue.svg",
+      "sha256": "beb20ded0a7509a981e624b96a0121a921b8de6530c28d33361158922b12e112",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/corner-waves-cyan.svg",
+      "target": "public/assets/club/light/illustrations/corner-waves-cyan.svg",
+      "sha256": "5d1241717c6072e39c43a424e0b2acaf9172087d875dd2a0bc533a3fd2b2a513",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/corner-waves-violet.svg",
+      "target": "public/assets/club/light/illustrations/corner-waves-violet.svg",
+      "sha256": "f18302728ac1503ad1a8bb5c2e3bc0f3eaa875821427eca9af80add4c5476071",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/crown-glass.svg",
+      "target": "public/assets/club/light/illustrations/crown-glass.svg",
+      "sha256": "860bf19e2495e33f4232e530cb684428a14791ba9f8e095f3a617b999e783b6b",
+      "bytes": 1378,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/database-stack.svg",
+      "target": "public/assets/club/light/illustrations/database-stack.svg",
+      "sha256": "af6dd1074b73c004fa8b0d7b3412aad8072ac92c5f4223e5155d98bbc348cc90",
+      "bytes": 1937,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/dot-grid.svg",
+      "target": "public/assets/club/light/illustrations/dot-grid.svg",
+      "sha256": "672779d95b9ad266e47657634342ee7103bab6203f59a53367a20d8b881ec4bd",
+      "bytes": 6498,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/envelope-glass.svg",
+      "target": "public/assets/club/light/illustrations/envelope-glass.svg",
+      "sha256": "f03317f7b5fd7525c6d66c2e7353180705639f5f0b94ac0116c4329d4d0ba809",
+      "bytes": 1423,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/fine-grid.svg",
+      "target": "public/assets/club/light/illustrations/fine-grid.svg",
+      "sha256": "2467c759b40bf5c00caa4a426350423444884cc17f7aa2a15e52ab60d288ba71",
+      "bytes": 3022,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/folder-glass.svg",
+      "target": "public/assets/club/light/illustrations/folder-glass.svg",
+      "sha256": "a8255d6f7037789de841edf4e01b03e30d4a038e71a3984b44f3d7ff16cd02c0",
+      "bytes": 1323,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/glow-blue.svg",
+      "target": "public/assets/club/light/illustrations/glow-blue.svg",
+      "sha256": "94991c2406b3dcdfdf571a1c7604f54b6fd7c7042726bf1d76f98a780304b994",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/glow-cyan.svg",
+      "target": "public/assets/club/light/illustrations/glow-cyan.svg",
+      "sha256": "75cc2cabb1d8849205354ebeeb39312a23500083a8b11bd2fdaa0e7c7dadc59c",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/glow-violet.svg",
+      "target": "public/assets/club/light/illustrations/glow-violet.svg",
+      "sha256": "f7f6b2b906a5ff6ad4823c622b008144c2d914613ec2897362fa26e73465c43d",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/growth-bars-glass.svg",
+      "target": "public/assets/club/light/illustrations/growth-bars-glass.svg",
+      "sha256": "9f0f91a7cd76299d03d9fb4fad850185f03aa937a41bafef4d75d537e223e32c",
+      "bytes": 1451,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/light-flare.svg",
+      "target": "public/assets/club/light/illustrations/light-flare.svg",
+      "sha256": "f6c799dd3ea9cc88f9e5b4ab927012491501fdf7c15a48104ecc58cca85c6d13",
+      "bytes": 1183,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/lightbulb-glass.svg",
+      "target": "public/assets/club/light/illustrations/lightbulb-glass.svg",
+      "sha256": "9c82c2ada797563e9a8edb0706b5eb7163aef6ee4e20145263cc86a5fc9aa135",
+      "bytes": 1230,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/lightning-glass.svg",
+      "target": "public/assets/club/light/illustrations/lightning-glass.svg",
+      "sha256": "6f5591880443dcae9b7b7fc12c82aaa73e8566feca712f7a59e9e713a60b3c23",
+      "bytes": 1199,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/orbital-rings.svg",
+      "target": "public/assets/club/light/illustrations/orbital-rings.svg",
+      "sha256": "0d8bae87dee698553f8b11b459bea2233ed5d88398abea4872d70eb1fd4add8a",
+      "bytes": 1305,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/play-orb.svg",
+      "target": "public/assets/club/light/illustrations/play-orb.svg",
+      "sha256": "015d4b0b2ad9f1fa3d42fa28aaabd7a7843f1f359632efd22daef01a89cd5623",
+      "bytes": 1223,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/template-panels.svg",
+      "target": "public/assets/club/light/illustrations/template-panels.svg",
+      "sha256": "cadf45bf37016f56821ae5e37f65895b5f1d57eeeda749ba091f4faa748a52c9",
+      "bytes": 3163,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/illustrations/svg/workflow-panels.svg",
+      "target": "public/assets/club/light/illustrations/workflow-panels.svg",
+      "sha256": "f9bdfda8d68c56a8239a28f12ec0117273dd8bc560965140c695e5a4674c61b2",
+      "bytes": 4185,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/avatar-ring-blank.svg",
+      "target": "public/assets/club/dark/surfaces/avatar-ring-blank.svg",
+      "sha256": "d2f3c761e6b4a619d338510030ceae80c1d0085de2e90c61e17c70021c98cd81",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/badge-active-blank.svg",
+      "target": "public/assets/club/dark/surfaces/badge-active-blank.svg",
+      "sha256": "8be14805b289c59c85aa4ca1cab77f5bb9d1a5e5d8c9e3b07d6f94710ae8685b",
+      "bytes": 2075,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/badge-guide-blank.svg",
+      "target": "public/assets/club/dark/surfaces/badge-guide-blank.svg",
+      "sha256": "ac8c97490d3fccbf146eab6a445f5493fe69a624e6aaec99e33c7933786bf673",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/badge-role-blank.svg",
+      "target": "public/assets/club/dark/surfaces/badge-role-blank.svg",
+      "sha256": "463cbabb4cfabb92d1c14ded41ed98c6a78f0222dd12a17483d8fbc2f8f2f6cc",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/badge-template-blank.svg",
+      "target": "public/assets/club/dark/surfaces/badge-template-blank.svg",
+      "sha256": "d60fae160e9a2f29756e204c5ffd3571c31cc94610e9f95c821129e8fc303705",
+      "bytes": 2075,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/badge-tutorial-blank.svg",
+      "target": "public/assets/club/dark/surfaces/badge-tutorial-blank.svg",
+      "sha256": "422a6d5c56b232833278eb23f64d4acc39c7169f6a18cb39489e874530fd94d6",
+      "bytes": 2075,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/brand-tile-blank.svg",
+      "target": "public/assets/club/dark/surfaces/brand-tile-blank.svg",
+      "sha256": "118224948ae65a5bdfed33aef5c49b9c8af02ba4add92602cbd59754544b4423",
+      "bytes": 2179,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-primary-disabled.svg",
+      "target": "public/assets/club/dark/surfaces/button-primary-disabled.svg",
+      "sha256": "1f5b90896ddb90d7ed5f5c48edb7a4c201294d0b380f7dd21878c75b47e9f23a",
+      "bytes": 2086,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-primary-hover.svg",
+      "target": "public/assets/club/dark/surfaces/button-primary-hover.svg",
+      "sha256": "6db1f38c27e804db0d5898b3c16ee98aeeda7cb977218d7962ccac5d551a587f",
+      "bytes": 2191,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-primary-idle.svg",
+      "target": "public/assets/club/dark/surfaces/button-primary-idle.svg",
+      "sha256": "ed4fcc054431771cfeb192c4a9ed3fa0ac2042fa0eb6046a424039834d93414d",
+      "bytes": 2191,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-primary-pressed.svg",
+      "target": "public/assets/club/dark/surfaces/button-primary-pressed.svg",
+      "sha256": "0cd1a0fa8549d60c3e211211d947afc06a9a854838c2c5d91a0ce7203b4ff2fb",
+      "bytes": 2191,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-secondary-hover.svg",
+      "target": "public/assets/club/dark/surfaces/button-secondary-hover.svg",
+      "sha256": "8e6c8513a3a789b931b5700b671a2aaf027db27b6b3ddaeeb1a64b617d6cdcd9",
+      "bytes": 2189,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/button-secondary-idle.svg",
+      "target": "public/assets/club/dark/surfaces/button-secondary-idle.svg",
+      "sha256": "22fcdb577f38c857bdd829bab2cd0abf43c6534a2097948f395490f76db03604",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/empty-state-card-blank.svg",
+      "target": "public/assets/club/dark/surfaces/empty-state-card-blank.svg",
+      "sha256": "096976372f99edc1d4910e8b4713b7e97fcf27dcc473cd687d6b734ee446cc33",
+      "bytes": 2282,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/feature-panel-blank.svg",
+      "target": "public/assets/club/dark/surfaces/feature-panel-blank.svg",
+      "sha256": "ad67b100e9cf929d35d8153bef6324f663890f21664a6557755b4535c8825607",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/feature-row-blank.svg",
+      "target": "public/assets/club/dark/surfaces/feature-row-blank.svg",
+      "sha256": "ad88c6fce664a07b74bb98ab58676ecf857433e10e3eca93a15c6605729b2476",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/icon-button-blank.svg",
+      "target": "public/assets/club/dark/surfaces/icon-button-blank.svg",
+      "sha256": "c24d85d656511c14ebe290678f5407bff0cb6bd25f74397b1389b3553c624aa1",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/icon-tile-blue.svg",
+      "target": "public/assets/club/dark/surfaces/icon-tile-blue.svg",
+      "sha256": "2ab1546030c10dc4bd63d45add4465681d6eeebcb7c89aabc62b1ecd1f5c9dae",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/icon-tile-cyan.svg",
+      "target": "public/assets/club/dark/surfaces/icon-tile-cyan.svg",
+      "sha256": "ed67626f3370ce1e0a174e8388198af8aac8ba5d4f8fc9bd1bf03d47ffa820b1",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/icon-tile-violet.svg",
+      "target": "public/assets/club/dark/surfaces/icon-tile-violet.svg",
+      "sha256": "628779e96acdc53946e3ad8ac582a8f8718df73e280db3ed6d2f04db7fdee4f5",
+      "bytes": 2073,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/input-disabled.svg",
+      "target": "public/assets/club/dark/surfaces/input-disabled.svg",
+      "sha256": "1f5b90896ddb90d7ed5f5c48edb7a4c201294d0b380f7dd21878c75b47e9f23a",
+      "bytes": 2086,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/input-error.svg",
+      "target": "public/assets/club/dark/surfaces/input-error.svg",
+      "sha256": "937b35803d28fca04225b40a3f30769b7602189bf1ef9e6a2bd03a6b58d406d9",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/input-focus.svg",
+      "target": "public/assets/club/dark/surfaces/input-focus.svg",
+      "sha256": "ee668bffcdb94aed91d350044497778fcba1788c7abad6ad589d030fd0bf8c32",
+      "bytes": 2189,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/input-idle.svg",
+      "target": "public/assets/club/dark/surfaces/input-idle.svg",
+      "sha256": "22fcdb577f38c857bdd829bab2cd0abf43c6534a2097948f395490f76db03604",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/language-segment-active.svg",
+      "target": "public/assets/club/dark/surfaces/language-segment-active.svg",
+      "sha256": "44bc40c60166a61839ba9b785929b004b359f8468a0d0c555eb05564e0d74592",
+      "bytes": 2172,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/language-switcher-blank.svg",
+      "target": "public/assets/club/dark/surfaces/language-switcher-blank.svg",
+      "sha256": "6ac8a14fb7f307caa47ff78e2bc525d4722dbb2babaf3ee8d4a250940cc45931",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/login-card-blank.svg",
+      "target": "public/assets/club/dark/surfaces/login-card-blank.svg",
+      "sha256": "727082734eaf50d12612a8bae6c3f9c048f358abffc1e5067cc21688ee6689cd",
+      "bytes": 2275,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/metric-card-blue.svg",
+      "target": "public/assets/club/dark/surfaces/metric-card-blue.svg",
+      "sha256": "d81e3a027c3a740a2239f368b9af03675b35d33737c8c625a1eb059c0433e979",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/metric-card-cyan.svg",
+      "target": "public/assets/club/dark/surfaces/metric-card-cyan.svg",
+      "sha256": "a74527a1b94993cf772f4b03f3bf31dcc258d2769f1b13b232f8b2476c0e1278",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/metric-card-violet.svg",
+      "target": "public/assets/club/dark/surfaces/metric-card-violet.svg",
+      "sha256": "6ef271b6c35ba6d53fc8192bd64b59ee1774cfa8971111bd3d2c73eaac3f4142",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/nav-item-active.svg",
+      "target": "public/assets/club/dark/surfaces/nav-item-active.svg",
+      "sha256": "5a865aa0f2d7a4154393cac39507d1e0846fba34d2d585ab120b10319ca11301",
+      "bytes": 2189,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/nav-item-hover.svg",
+      "target": "public/assets/club/dark/surfaces/nav-item-hover.svg",
+      "sha256": "5f8057a151aaaaf7ea5c4723f1252feba7358bcd8306ecd8644df4d7a26f8ec3",
+      "bytes": 2189,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/promo-card-blank.svg",
+      "target": "public/assets/club/dark/surfaces/promo-card-blank.svg",
+      "sha256": "0c65e93e78135810eb32becdcbc24f171ec022f3c3d8c8b6f28e1bae5a5e9576",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/resource-card-blank.svg",
+      "target": "public/assets/club/dark/surfaces/resource-card-blank.svg",
+      "sha256": "92dc789e3d8a94cba6995aca6068d3dd90b142e1f3bb618d0b77322e34b15638",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/search-field-blank.svg",
+      "target": "public/assets/club/dark/surfaces/search-field-blank.svg",
+      "sha256": "17dad126d7a19a94fa21a5618b52bbe7e158b6c72820c7232c3dabdd44a5e171",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/sidebar-blank.svg",
+      "target": "public/assets/club/dark/surfaces/sidebar-blank.svg",
+      "sha256": "99fad1b26310ca8172bc9f0a5ca4008a6851c734fbf2b167a5f37676bde33278",
+      "bytes": 2169,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/tooltip-blank.svg",
+      "target": "public/assets/club/dark/surfaces/tooltip-blank.svg",
+      "sha256": "116f3efd31b2ed9d182725ecb31bf6e22319423aacfc81c98d281648466ba5b4",
+      "bytes": 2084,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/surfaces/svg/topbar-blank.svg",
+      "target": "public/assets/club/dark/surfaces/topbar-blank.svg",
+      "sha256": "0b69f28fe20ae6263a28cbd25dd41ddd8f965a0a6a1944752d1b166d121538df",
+      "bytes": 2172,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/accent-line.svg",
+      "target": "public/assets/club/dark/illustrations/accent-line.svg",
+      "sha256": "eed9e947a5e2913b138eb777e87756ba91afa700b0a9c282574dd2dc55a54fd7",
+      "bytes": 1093,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/community-glass.svg",
+      "target": "public/assets/club/dark/illustrations/community-glass.svg",
+      "sha256": "b56e486ab59302df262c9535c144e01dd133f0446e751f1846ffd4ee722c17f8",
+      "bytes": 1285,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/corner-waves-blue.svg",
+      "target": "public/assets/club/dark/illustrations/corner-waves-blue.svg",
+      "sha256": "0411d3e6ba643873a42eae44e32085f8a26540551df6017de7cf257376e8de92",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/corner-waves-cyan.svg",
+      "target": "public/assets/club/dark/illustrations/corner-waves-cyan.svg",
+      "sha256": "6e8dd49b9e68e4bf74631cc31d692ea948e1b0e307516dafaec598a6d82166c5",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/corner-waves-violet.svg",
+      "target": "public/assets/club/dark/illustrations/corner-waves-violet.svg",
+      "sha256": "9390b96cbacefa82d24a47520af8079df128e9f41804e187921dcc79965578dc",
+      "bytes": 1243,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/crown-glass.svg",
+      "target": "public/assets/club/dark/illustrations/crown-glass.svg",
+      "sha256": "799e0ca68e05c23deb9fff315a00218f9acbd4324a322bbd043de35b0ebbbf1f",
+      "bytes": 1378,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/database-stack.svg",
+      "target": "public/assets/club/dark/illustrations/database-stack.svg",
+      "sha256": "7e02a1a4e1173e5c773b43de08baac9cd1acaaa3a597729b97603d23f3fbbed3",
+      "bytes": 1937,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/dot-grid.svg",
+      "target": "public/assets/club/dark/illustrations/dot-grid.svg",
+      "sha256": "e5fef558669fd73be213789e6a21f6e50a33c02a055ffea909a09babe74339d3",
+      "bytes": 6498,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/envelope-glass.svg",
+      "target": "public/assets/club/dark/illustrations/envelope-glass.svg",
+      "sha256": "0fe7f0f98d272967e0978892a4923a27b8ef8dc0898957efac9474053acc8637",
+      "bytes": 1423,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/fine-grid.svg",
+      "target": "public/assets/club/dark/illustrations/fine-grid.svg",
+      "sha256": "822a3bb706ef96dcbc7d355dd0494b378ff9b7e7630794c34ee42c9cdc3b84a0",
+      "bytes": 3022,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/folder-glass.svg",
+      "target": "public/assets/club/dark/illustrations/folder-glass.svg",
+      "sha256": "d8c109b8500853b40d62422d6d831163e204797fefdaf1ccd9ebd065b903e1db",
+      "bytes": 1323,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/glow-blue.svg",
+      "target": "public/assets/club/dark/illustrations/glow-blue.svg",
+      "sha256": "d09fae8203871d48f96cb62392ada98b52edf5a0bafab48a040193e5e9ca4389",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/glow-cyan.svg",
+      "target": "public/assets/club/dark/illustrations/glow-cyan.svg",
+      "sha256": "a18805023263fd543c5cb31842f1ddba2d10b123beb81d0f6a1524bf53b1786e",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/glow-violet.svg",
+      "target": "public/assets/club/dark/illustrations/glow-violet.svg",
+      "sha256": "506fada6105b3b1f75187671f7378f5085ea1bde86441e31cf419117b4dc1728",
+      "bytes": 999,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/growth-bars-glass.svg",
+      "target": "public/assets/club/dark/illustrations/growth-bars-glass.svg",
+      "sha256": "66f4c9cebc4ffc164d8d16b7f4e0c87a2f03b32acb47883a1abcdfbbb22802b1",
+      "bytes": 1451,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/light-flare.svg",
+      "target": "public/assets/club/dark/illustrations/light-flare.svg",
+      "sha256": "67585a4567965e3ed9bf4457eb2fb634c58c1dbecea7ac9087f05b6313d600ae",
+      "bytes": 1183,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/lightbulb-glass.svg",
+      "target": "public/assets/club/dark/illustrations/lightbulb-glass.svg",
+      "sha256": "17ea0793bc6164b3a261010f0c8a8aab92e8f69c4149af4628505296a8cf5710",
+      "bytes": 1230,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/lightning-glass.svg",
+      "target": "public/assets/club/dark/illustrations/lightning-glass.svg",
+      "sha256": "dab4f988029d8e4be872c0cc78852023ac2aaf50bb5c477131410f966b89acc5",
+      "bytes": 1199,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/orbital-rings.svg",
+      "target": "public/assets/club/dark/illustrations/orbital-rings.svg",
+      "sha256": "c19f3dc41972c0f0b79d9f4fcf14e205ce1dd5b309522ad6d4882bae2e26996b",
+      "bytes": 1305,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/play-orb.svg",
+      "target": "public/assets/club/dark/illustrations/play-orb.svg",
+      "sha256": "68d0aa7e4bbaabafe61af495ac1aef6870fc408767663cc58f98403b1d06776d",
+      "bytes": 1223,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/template-panels.svg",
+      "target": "public/assets/club/dark/illustrations/template-panels.svg",
+      "sha256": "489f1b94927c99353d82a8ef12196d986dccef93f9ad203c51ecd9987684d587",
+      "bytes": 3163,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/illustrations/svg/workflow-panels.svg",
+      "target": "public/assets/club/dark/illustrations/workflow-panels.svg",
+      "sha256": "4bdc8348d235e7fa6377b4b51c66b1a72b7999374bf7a6576926683917aa22ac",
+      "bytes": 4185,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/native/icons/svg",
+      "target": "public/assets/club/icons.svg",
+      "sha256": "17fc3b5e76533470628caddaf73173b2789382b62109453845353f98b9e66c5f",
+      "bytes": 13544,
+      "transform": "symbol sprite; cropped outer padding; inherit currentColor"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/backgrounds/login-background.webp",
+      "target": "public/assets/club/light-auth-background.webp",
+      "sha256": "b34b20e8551b2f85b3a2fbe83659ffe32dc0412cf959f86cd4e9a281e94acf61",
+      "bytes": 81126,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/light-svg-kit/backgrounds/dashboard-background.webp",
+      "target": "public/assets/club/light-dashboard-background.webp",
+      "sha256": "f093388c43cf042caee798229871b842ad13e3c9ee0e74c9d69c3b48d99e0d10",
+      "bytes": 89010,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/backgrounds/login-background.webp",
+      "target": "public/assets/club/dark-auth-background.webp",
+      "sha256": "f460cf10870ce28b626db6c46b9a4830fc74d592951139513689b8daaf58d0a8",
+      "bytes": 50582,
+      "transform": "byte-for-byte"
+    },
+    {
+      "source": "docs/design/canonical/2026-09-12/dark-svg-kit/backgrounds/dashboard-background.webp",
+      "target": "public/assets/club/dark-dashboard-background.webp",
+      "sha256": "26c4220360d648299532529040ad821a06889b37eedc5a34a33e56ff35db5a07",
+      "bytes": 60972,
+      "transform": "byte-for-byte"
+    }
+  ]
+}

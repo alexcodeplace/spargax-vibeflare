@@ -17,7 +17,7 @@ export function Card({ variant = 'default', padding, className, children, ...res
       variant={variant === 'outlined' ? 'transparent' : 'default'}
       elevation={variant === 'elevated' ? 'med' : 'none'}
       padding={padding ? paddingStep[padding] : undefined}
-      className={className}
+      className={`vf-card ${className ?? ''}`}
       {...rest}
     >
       {children}

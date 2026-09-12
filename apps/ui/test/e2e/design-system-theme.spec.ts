@@ -29,7 +29,7 @@ async function rootTheme(page: Page) {
   }));
 }
 
-test.describe('Design System — Astryx neutral theme', () => {
+test.describe('Design System: Spargax brand over Astryx semantics', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => localStorage.removeItem('vf-theme'));
   });
@@ -53,20 +53,20 @@ test.describe('Design System — Astryx neutral theme', () => {
       mode: 'dark',
       theme: 'neutral',
       scheme: 'dark',
-      background: 'rgb(27, 27, 27)',
-      text: 'rgb(255, 255, 255)',
+      background: 'rgb(6, 19, 41)',
+      text: 'rgb(237, 245, 255)',
     });
   });
 
-  test('explicit light mode resolves the neutral light palette', async ({ page }) => {
+  test('explicit light mode resolves the Spargax light palette', async ({ page }) => {
     await page.goto('/design-system');
     await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
     await expect.poll(() => rootTheme(page)).toEqual({
       mode: 'light',
       theme: 'neutral',
       scheme: 'light',
-      background: 'rgb(241, 241, 241)',
-      text: 'rgb(17, 17, 17)',
+      background: 'rgb(237, 244, 252)',
+      text: 'rgb(19, 46, 80)',
     });
   });
 

@@ -16,11 +16,11 @@ export interface AppShellProps {
  */
 export function AppShell({ children, activePath, title }: AppShellProps) {
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--color-bg)]">
+    <div className="vf-workspace">
       <Sidebar activePath={activePath} />
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="vf-workspace-main">
         <TopBar title={title} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="vf-main">
           {children}
         </main>
       </div>

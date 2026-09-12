@@ -1,13 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+import AuthShell from '../components/layouts/AuthShell.astro';
 import { SignupPage } from '../components/widgets/SignupPage';
 
 ---
 
 <Base
   title="Sign up · VibeFlare"
-  bodyClass="min-h-screen flex items-center justify-center bg-[var(--color-bg)]"
+  bodyClass="vf-auth-body"
   noReferrer={true}
 >
-  <SignupPage client:load />
+  <AuthShell><SignupPage client:load /></AuthShell>
 </Base>

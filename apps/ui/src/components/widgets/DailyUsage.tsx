@@ -70,7 +70,7 @@ function DailyUsageInner({ compact = false }: DailyUsageProps) {
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2" title={`${usageLabel} free neurons used by VibeFlare today`}>
+      <div className="vf-daily-usage flex items-center gap-2" title={`${usageLabel} free neurons used by VibeFlare today`}>
         <Progress value={quota.used} max={quota.limit} className="w-20" />
         <span className="whitespace-nowrap text-xs font-medium tabular-nums text-[var(--color-muted)]">
           {usageLabel} neurons

@@ -52,7 +52,7 @@ export function Button({
       endContent={rightIcon}
       isDisabled={disabled}
       isLoading={loading}
-      className={className}
+      className={`vf-button ${className ?? ''}`}
       style={style}
       type={type}
       onClick={onClick}
