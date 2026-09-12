@@ -6,12 +6,23 @@ import adminRoutes from './routes/admin';
 import v1Routes from './routes/v1';
 import { ensureCronArmed } from './crons/scheduler';
 import { requireApiKey } from './auth/apikey';
-import { requireUserAuth } from './auth/middleware';
+import { requireUserAuth, resolveUser } from './auth/middleware';
 import { getFile } from './files/r2';
+import { countUsers } from './db/queries';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 app.get('/health', (c) => c.json({ ok: true, version: '0.9.2' }));
+
+// Root routing happens at the Worker edge so the browser never loads /chat only
+// to be bounced again by client-side auth. A fresh install goes straight to
+// setup, an authenticated user goes straight to chat, and everyone else goes
+// straight to login.
+app.get('/', async (c) => {
+  c.header('Cache-Control', 'private, no-store');
+  if (await resolveUser(c)) return c.redirect('/chat', 302);
+  return c.redirect((await countUsers(c.env.DB)) === 0 ? '/setup' : '/login', 302);
+});
 
 // Invite links must be handled at request time. The UI is statically built, so
 // signup.astro cannot stash query tokens into an httpOnly cookie at runtime.

@@ -35,7 +35,7 @@ bucket_name = "vibeflare-files"
 binding = "ASSETS"
 directory = "apps/ui/dist"
 not_found_handling = "none"
-run_worker_first = ["/signup", "/signup/*"]
+run_worker_first = ["/", "/signup", "/signup/*"]
 
 [durable_objects]
 bindings = [

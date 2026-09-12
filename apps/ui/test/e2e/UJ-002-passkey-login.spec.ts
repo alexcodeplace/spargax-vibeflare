@@ -27,7 +27,21 @@ test('UJ-002 H1/P1 — existing passkey user signs in once without a redirect lo
       error: { type: 'auth', message: 'authentication required' },
     });
 
-    await page.goto('/login');
+    // Regression: an existing signed-out installation must route / directly to
+    // /login at the Worker edge. It must never render /chat first and bounce.
+    const signedOutNavigations: string[] = [];
+    const recordSignedOutNavigation = (request: import('@playwright/test').Request) => {
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+        signedOutNavigations.push(new URL(request.url()).pathname);
+      }
+    };
+    page.on('request', recordSignedOutNavigation);
+    await page.goto('/');
+    await page.waitForURL(/\/login(?:\/|$|\?)/, { timeout: 10_000 });
+    page.off('request', recordSignedOutNavigation);
+    expect(signedOutNavigations).toContain('/');
+    expect(signedOutNavigations).toContain('/login');
+    expect(signedOutNavigations).not.toContain('/chat');
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
     await page.getByRole('button', { name: 'Sign in with passkey' }).click();
     await page.waitForURL(/\/chat(?:\/|$|\?)/, { timeout: 20_000 });

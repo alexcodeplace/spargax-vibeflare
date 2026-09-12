@@ -24,6 +24,7 @@ for (const required of [
   '[ai]',
   'binding = "AI"',
   'binding = "ASSETS"',
+  'run_worker_first = ["/", "/signup", "/signup/*"]',
   'name = "QUOTA"',
   'name = "AUTH_RL"',
   'name = "CRON"',

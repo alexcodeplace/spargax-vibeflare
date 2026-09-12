@@ -14,9 +14,21 @@ test('UJ-001 H1/A1 — first owner setup is durable and cannot be repeated', asy
     expect(methods.status()).toBe(200);
     expect(await methods.json()).toEqual({ mode: 'standalone', passkey: true, github: true, github_flow: 'bootstrap', cf_access: false, setup_required: true });
 
-    // A fresh install must guide the user to owner setup instead of the returning-user login.
+    // A fresh install must route directly to owner setup at the Worker edge.
+    // Regression: /chat must never flash as an intermediate document.
+    const firstRunNavigations: string[] = [];
+    const recordFirstRunNavigation = (request: import('@playwright/test').Request) => {
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+        firstRunNavigations.push(new URL(request.url()).pathname);
+      }
+    };
+    page.on('request', recordFirstRunNavigation);
     await page.goto('/');
     await page.waitForURL(/\/setup(?:\/|$|\?)/, { timeout: 20_000 });
+    page.off('request', recordFirstRunNavigation);
+    expect(firstRunNavigations).toContain('/');
+    expect(firstRunNavigations).toContain('/setup');
+    expect(firstRunNavigations).not.toContain('/chat');
 
     const { credentialId } = await createFirstOwner(page);
     expect(page.url()).toMatch(/\/chat(?:\/|$|\?)/);

@@ -1,4 +1,13 @@
 ---
-// Redirect to /chat or /setup on first load
+// The Worker owns root routing so authentication/setup decisions happen before
+// any UI is rendered. This static file is only a last-resort asset fallback.
 ---
-<meta http-equiv="refresh" content="0; url=/chat" />
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VibeFlare</title>
+  </head>
+  <body></body>
+</html>
