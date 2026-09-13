@@ -39,6 +39,9 @@ for (const theme of ['dark', 'light'] as const) {
           await expect(action).toHaveCSS('color', 'rgb(255, 255, 255)');
         }
         if (route === '/chat') {
+          await expect(page.locator('#sidebar .vf-brand-logo')).toHaveAttribute('src', '/assets/brand/vibeflare-wordmark-320.webp');
+          await expect(page.locator('.vf-topbar .vf-brand-symbol')).toHaveAttribute('src', '/assets/brand/vibeflare-mark.webp');
+          await expect(page.locator('.vf-brand-mark')).toHaveCount(0);
           // Inspect painted output, not only a root token: the composer has its own surface.
           const composerBackground = await page.getByLabel('Message input').evaluate(editor => {
             for (let node: Element | null = editor; node; node = node.parentElement) {
