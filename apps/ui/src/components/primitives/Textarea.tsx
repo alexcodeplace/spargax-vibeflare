@@ -70,7 +70,7 @@ export function Textarea({
       onPaste={onPaste}
       hasSpellCheck={spellCheck == null ? undefined : spellCheck === true || spellCheck === 'true'}
       maxLength={maxLength}
-      className={className}
+      className={`vf-textarea ${className ?? ''}`}
       {...rest}
     />
   );

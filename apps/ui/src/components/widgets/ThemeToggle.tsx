@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '../primitives/Button';
 import { Icon } from '../primitives/Icon';
-import { toggleTheme, getTheme, type ThemeMode } from '../../lib/theme';
+import { toggleTheme, THEME_CHANGED_EVENT, type ThemeMode } from '../../lib/theme';
 
 /**
  * Tiny theme-toggle island. Mounted with client:idle in TopBar.astro.
@@ -11,7 +11,10 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<ThemeMode>('dark');
 
   useEffect(() => {
-    setTheme(getTheme());
+    const sync = () => setTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+    sync();
+    window.addEventListener(THEME_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(THEME_CHANGED_EVENT, sync);
   }, []);
 
   function handleToggle() {

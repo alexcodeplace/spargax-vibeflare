@@ -10,12 +10,12 @@ import {
   ChatMessageList,
 } from '@astryxdesign/core/Chat';
 import { Avatar } from '@astryxdesign/core/Avatar';
-import { Icon as AstryxIcon } from '@astryxdesign/core/Icon';
-import { Layout, LayoutContent, HStack, VStack } from '@astryxdesign/core/Layout';
+import { Icon } from '../primitives/Icon';
+import { BrandArtwork } from '../brand/BrandArtwork';
+import { HStack, VStack } from '@astryxdesign/core/Layout';
 import { Markdown } from '@astryxdesign/core/Markdown';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
-import { PaperClipIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { AudioTranscribePanel } from './AudioTranscribePanel';
 import { ModelPicker } from './ModelPicker';
 import { Card } from '../primitives/Card';
@@ -49,7 +49,13 @@ const TASK_ITEMS = [
 
 const pageFill: CSSProperties = { minHeight: '100%' };
 const chatFill: CSSProperties = { minHeight: 0, flex: 1 };
-const composerInputStyle: CSSProperties = { minHeight: 84 };
+const composerInputStyle: CSSProperties = { minHeight: 90 };
+
+const STARTERS = [
+  { title: 'Think it through', detail: 'Turn a thought into a plan', art: 'lightbulb-glass' as const, prompt: 'Help me think through an idea. Ask me a few questions to understand what I am trying to achieve.' },
+  { title: 'Build something', detail: 'Work through code together', art: 'workflow-panels' as const, prompt: 'Help me build a small project. First, ask what I want to make and which tools I use.' },
+  { title: 'Make it clearer', detail: 'Find the words that fit', art: 'template-panels' as const, prompt: 'Help me make a piece of writing clearer. Ask me for the text and who it is for.' },
+];
 
 /**
  * VibeFlare's chat follows Astryx's AI Chat Landing for the zero state and
@@ -65,6 +71,7 @@ function ChatPageInner() {
   const [attachedFiles, setAttachedFiles] = useState<Array<{ id: string; name: string }>>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
 
   const [imagePrompt, setImagePrompt] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -322,6 +329,7 @@ function ChatPageInner() {
   ) : undefined;
 
   const textComposer = (
+    <div className="vf-composer-wrap" ref={composerRef}>
     <ChatComposer
       value={input}
       onChange={setInput}
@@ -345,38 +353,38 @@ function ChatPageInner() {
       }
       headerActions={
         <HStack gap={1} vAlign="center">
-          <AstryxIcon icon={PaperClipIcon} size="sm" color="secondary" />
+          <Icon name="Upload" size="sm" />
           <Text type="supporting" color="secondary">
             {uploadingFiles ? 'Uploading…' : 'Drop or paste files here'}
           </Text>
         </HStack>
       }
     />
+    </div>
   );
 
   const textSurface = loadingHistory ? (
     <div className="flex min-h-[360px] items-center justify-center"><Spinner size="lg" /></div>
   ) : messages.length === 0 ? (
-    <Layout
-      height="fill"
-      contentWidth={720}
-      padding={6}
-      content={
-        <LayoutContent>
-          <VStack gap={8} vAlign="center" style={pageFill}>
-            <VStack gap={1}>
-              <HStack gap={2} vAlign="center">
-                <AstryxIcon icon={SparklesIcon} size="md" color="accent" />
-                <Text type="large" as="h2">VibeFlare</Text>
-              </HStack>
-              <Text type="display-2" as="h1">What do you want to make?</Text>
-              <Text type="body" color="secondary">Pick a model, ask anything, and keep the whole conversation here.</Text>
-            </VStack>
-            {textComposer}
-          </VStack>
-        </LayoutContent>
-      }
-    />
+    <div className="vf-chat-welcome">
+      <div className="vf-welcome-heading">
+        <div className="vf-welcome-emblem"><BrandArtwork name="lightning-glass" size={64}/></div>
+        <p className="vf-eyebrow">A LITTLE SPARK GOES A LONG WAY</p>
+        <h1>What do you want to make?</h1>
+        <p>A thought, a first draft, a working prototype.<br />Pick a model and start wherever you are.</p>
+      </div>
+      {textComposer}
+      <div className="vf-composer-hint"><span>Enter to send · Shift + Enter for a new line</span><span>Your next idea starts here.</span></div>
+      <div className="vf-starters" aria-label="Conversation starters">
+        {STARTERS.map(starter => <button type="button" key={starter.title} className="vf-starter" data-vf-spotlight data-testid="vf-prompt-starter"
+          onClick={() => {
+            setInput(starter.prompt);
+            requestAnimationFrame(() => composerRef.current?.querySelector<HTMLElement>('[contenteditable="true"], textarea')?.focus());
+          }}>
+          <BrandArtwork name={starter.art} size={44}/><span><strong>{starter.title}</strong><small>{starter.detail}</small></span>
+        </button>)}
+      </div>
+    </div>
   ) : (
     <ChatLayout density="spacious" style={chatFill} composer={textComposer}>
       <ChatMessageList align="top" isStreaming={sending}>
@@ -442,23 +450,24 @@ function ChatPageInner() {
   );
 
   return (
-    <div className="flex h-full min-w-0 flex-col gap-3" data-testid="vibeflare-chat">
+    <div className="vf-chat flex h-full min-w-0 flex-col" data-testid="vibeflare-chat">
       <Toast
         open={toast.open}
         onOpenChange={(open) => setToast((previous) => ({ ...previous, open }))}
         title={toast.title}
         variant={toast.variant}
       />
-      <div className="shrink-0 space-y-3">
+      <div className="vf-chat-toolbar">
         <Tabs
+          className="vf-task-tabs"
           items={TASK_ITEMS.map((task) => ({ value: task.value, label: task.label, content: null }))}
           value={activeTask}
           onValueChange={handleTaskChange}
           variant="segmented"
         />
-        <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />
+        <div className="vf-model-control"><ModelPicker task={activeTask} value={model} onChange={handleModelChange} /></div>
       </div>
-      <div className="min-h-0 flex-1">
+      <div className="vf-chat-content">
         {isAudioMode ? <AudioTranscribePanel model={model} /> : isImageMode ? imageSurface : textSurface}
       </div>
     </div>

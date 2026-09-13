@@ -1,0 +1,34 @@
+---
+import Brand from '../brand/Brand.astro';
+import BrandIcon from '../brand/BrandIcon.astro';
+import { ThemeToggle } from '../widgets/ThemeToggle';
+---
+<div class="vf-auth-shell">
+  <header class="vf-auth-header">
+    <Brand />
+    <div class="vf-auth-header-actions"><span>Your AI workspace</span><ThemeToggle client:load /></div>
+  </header>
+  <main id="main-content" class="vf-auth-main" tabindex="-1">
+    <section class="vf-auth-story" aria-labelledby="vf-auth-heading">
+      <p class="vf-eyebrow"><span class="vf-accent-line"></span>SPARGAX / VIBEFLARE</p>
+      <h2 id="vf-auth-heading">A little spark.<br /><span>A lot of possibility.</span></h2>
+      <p class="vf-auth-description">A space to think, build, and create.<br />Your models. Your conversations. Your pace.</p>
+      <div class="vf-auth-art" aria-hidden="true">
+        <img data-art-theme="dark" src="/assets/club/dark/illustrations/workflow-panels.svg" width="330" height="250" alt="" />
+        <img data-art-theme="light" src="/assets/club/light/illustrations/workflow-panels.svg" width="330" height="250" alt="" />
+        <div class="vf-art-caption"><BrandIcon name="sparkles" size={18}/><span>Make room for your next idea.</span></div>
+      </div>
+      <div class="vf-auth-capabilities">
+        <span><BrandIcon name="chat" size={18} /> Conversations</span>
+        <span><BrandIcon name="bolt" size={18} /> Creation</span>
+        <span><BrandIcon name="code-branch" size={18} /> Building</span>
+      </div>
+    </section>
+    <section class="vf-auth-form" aria-label="Account access" data-vf-spotlight>
+      <span class="vf-auth-form-kicker"><BrandIcon name="shield-check" size={18}/> YOUR WORKSPACE STARTS HERE</span>
+      <slot />
+      <div class="vf-auth-note"><BrandIcon name="lock" size={14} /><span>Connected to your VibeFlare installation</span></div>
+    </section>
+  </main>
+  <footer class="vf-auth-footer"><span>© {new Date().getFullYear()} Spargax</span><span>THINK. BUILD. CREATE.</span></footer>
+</div>

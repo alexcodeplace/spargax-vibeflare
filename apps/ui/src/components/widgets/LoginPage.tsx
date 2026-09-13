@@ -54,7 +54,7 @@ function LoginPageInner() {
     <Card data-testid="login-page" className="w-full max-w-sm p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--color-text)]">Sign in</h1>
-        <p className="text-sm text-[var(--color-muted)] mt-1">to VibeFlare</p>
+        <p className="text-sm text-[var(--color-muted)] mt-1">Welcome back to your Spargax workspace.</p>
       </div>
 
       {showInviteRequired && (

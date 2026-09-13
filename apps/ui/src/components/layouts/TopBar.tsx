@@ -25,7 +25,7 @@ export function TopBar({ title }: TopBarProps) {
   }
 
   return (
-    <header className="flex items-center justify-between h-14 px-6 border-b border-[var(--color-border)] bg-[var(--color-surface)] shrink-0">
+    <header className="vf-topbar">
       <div className="text-base font-semibold text-[var(--color-text)]">
         {title ?? 'VibeFlare'}
       </div>
