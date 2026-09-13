@@ -24,7 +24,7 @@ function readThemeMode(): ThemeMode {
 }
 
 /**
- * Shared provider for every page island. Spargax themes the Astryx components; the
+ * Shared provider for every page island. VibeFlare applies the shared design system to Astryx components; the
  * observer keeps independently hydrated Astro islands on the same light/dark
  * mode when the global theme toggle updates <html>.
  */

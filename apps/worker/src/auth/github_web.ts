@@ -78,7 +78,7 @@ export async function githubOwnerMatches(env: Env, login: string): Promise<{ id:
 export function buildGithubAppManifest(origin: string, name: string) {
   return {
     name,
-    url: 'https://github.com/alexcodeplace/spargax-vibeflare',
+    url: 'https://github.com/alexcodeplace/vibeflare',
     description: 'GitHub sign-in for this self-hosted VibeFlare deployment.',
     redirect_url: `${origin}/auth/setup/github/manifest/callback`,
     callback_urls: [`${origin}/auth/github/oauth/callback`],

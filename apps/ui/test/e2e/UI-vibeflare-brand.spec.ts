@@ -13,7 +13,7 @@ async function assertNoOverflow(page: Page) {
 for (const theme of ['dark', 'light'] as const) {
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
     for (const route of ['/login', '/chat'] as const) {
-      test(`Spargax ${route} ${theme} ${viewport.width}: canonical assets and responsive layout`, async ({ page, context, baseURL }) => {
+      test(`VibeFlare ${route} ${theme} ${viewport.width}: canonical assets and responsive layout`, async ({ page, context, baseURL }) => {
         await page.setViewportSize(viewport);
         await page.addInitScript(mode => localStorage.setItem('vf-theme', mode), theme);
         await applyAuth(context, route === '/chat' ? 'owner' : 'anonymous', baseURL!, route);
@@ -102,12 +102,12 @@ test('Hebrew, Latin and digits render using the three requested font families', 
   await page.evaluate(async () => {
     const probe = document.createElement('div');
     probe.style.cssText = 'position:fixed;inset:0 auto auto 0;opacity:0;pointer-events:none';
-    probe.innerHTML = '<span id="font-en">Spargax</span><span id="font-he" lang="he" dir="rtl">שלום</span><span id="font-numerals">1234567890</span>';
+    probe.innerHTML = '<span id="font-en">VibeFlare</span><span id="font-he" lang="he" dir="rtl">שלום</span><span id="font-numerals">1234567890</span>';
     document.querySelector('.vf-chat-content')!.append(probe);
     await Promise.all([
-      document.fonts.load('400 16px Poppins', 'Spargax'),
+      document.fonts.load('400 16px Poppins', 'VibeFlare'),
       document.fonts.load('400 16px "Noto Sans Hebrew"', 'שלום'),
-      document.fonts.load('400 16px "Spargax Numerals"', '1234567890'),
+      document.fonts.load('400 16px "VibeFlare Numerals"', '1234567890'),
     ]);
   });
   const cdp = await context.newCDPSession(page);

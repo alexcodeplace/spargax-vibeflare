@@ -17,7 +17,7 @@ beforeEach(() => {
 });
 afterEach(restoreStorage);
 
-describe('Spargax theme continuity', () => {
+describe('VibeFlare theme continuity', () => {
   it('loads a saved light preference and updates the browser chrome', async () => {
     localStorage.setItem('vf-theme', 'light');
     const { initTheme } = await import('../src/lib/theme');
