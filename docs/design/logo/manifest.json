@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "source": "User-supplied VibeFlare logo pack, 2026-09-13",
+  "originals": [
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_53 PM (1).png",
+      "bytes": 1149102,
+      "sha256": "41855d84ccf18e540c604a384fcf54615a4ca222c76bc0bde63844cd10e34ff2",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_54 PM (2).png",
+      "bytes": 589897,
+      "sha256": "ba2316f62c85408c289dbda1873ffb2186d2873b5b92573079e669129a48066e",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_54 PM (3).png",
+      "bytes": 291874,
+      "sha256": "1530b86ad0ed291e6521febbf52b921ca072fa574b6f90df31a17d66c8bcbd4e",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_55 PM (4).png",
+      "bytes": 972510,
+      "sha256": "650b9a12a07db57a811e3526337bfb55f69f0b01b8b8c33f095f4415c7168164",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_58 PM (5).png",
+      "bytes": 859061,
+      "sha256": "f21e8fe19e4ca564e74afc43a06b32ff96524c39d67a4cb1b2445d606cbd41af",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_58 PM (6).png",
+      "bytes": 677695,
+      "sha256": "395723199592a5c8402896ea300885f95e47452f491e7ac7f7cdd96793955486",
+      "dimensions": [
+        1448,
+        1086
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_59 PM (7).png",
+      "bytes": 1216629,
+      "sha256": "c635a814bc44d405cff1a1d9f6bcecd4686af6026dfe48508d02666bb14badd9",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_21_59 PM (8).png",
+      "bytes": 802544,
+      "sha256": "389396bfd0f10752e323ada3bb9d09315b171874c23c910176eb246108627778",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "file": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "bytes": 526635,
+      "sha256": "3d445a99a7799190e5c8faea355aac88dd04b0fff53b898e7a51019aeb66edae",
+      "dimensions": [
+        1254,
+        1254
+      ]
+    }
+  ],
+  "selected": {
+    "wordmark": "ChatGPT Image Sep 13, 2026, 03_21_54 PM (3).png",
+    "symbol": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+    "wordmarkCrop": [
+      50,
+      359,
+      1408,
+      711
+    ],
+    "symbolCrop": [
+      34,
+      143,
+      1235,
+      1109
+    ]
+  },
+  "runtime": [
+    {
+      "file": "assets/brand/vibeflare-wordmark-320.webp",
+      "source": "ChatGPT Image Sep 13, 2026, 03_21_54 PM (3).png",
+      "operation": "Trim transparent margin using alpha >=16; resize, preserve transparency.",
+      "width": 320,
+      "height": 83,
+      "bytes": 14710,
+      "sha256": "80ba6b4bec6c866513076369f772d2c4bf10a128bdbdbc328ab7a640a7b2bf2e"
+    },
+    {
+      "file": "assets/brand/vibeflare-wordmark-640.webp",
+      "source": "ChatGPT Image Sep 13, 2026, 03_21_54 PM (3).png",
+      "operation": "Trim transparent margin using alpha >=16; resize, preserve transparency.",
+      "width": 640,
+      "height": 166,
+      "bytes": 32962,
+      "sha256": "f0283ab1d40116744cc5cfa81edf7c6730198ba96b40fc10f9525ebbe6e4ea21"
+    },
+    {
+      "file": "assets/brand/vibeflare-mark.webp",
+      "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "operation": "Trim transparent margin and contain in 128px; preserve transparency.",
+      "width": 128,
+      "height": 103,
+      "bytes": 6644,
+      "sha256": "1690c97e25dcfc188ec05a04ba56383bc0a5e7d6fd6da83fc97adc1b943ff091"
+    },
+    {
+      "file": "favicon-32.png",
+      "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "operation": "Center transparent mark in square canvas with 5% padding.",
+      "width": 32,
+      "height": 32,
+      "bytes": 1507,
+      "sha256": "6ef255a5df0425e5a824fa57cf3c46be14c8da403189bfa35ff3a2abc89a6742"
+    },
+    {
+      "file": "favicon-64.png",
+      "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "operation": "Center transparent mark in square canvas with 5% padding.",
+      "width": 64,
+      "height": 64,
+      "bytes": 4113,
+      "sha256": "2ed2cee93a7de6706d18da03ba1003f0623517e08e294105ed022add3d374b7b"
+    },
+    {
+      "file": "apple-touch-icon.png",
+      "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "operation": "Center transparent mark in square canvas with 5% padding.",
+      "width": 180,
+      "height": 180,
+      "bytes": 18633,
+      "sha256": "e4606e5e661fa293758b8963e11f9c60c50df6b97edd7bfc93be11b5de0096b0"
+    },
+    {
+      "file": "icon-192.png",
+      "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+      "operation": "Center transparent mark in square canvas with 5% padding.",
+      "width": 192,
+      "height": 192,
+      "bytes": 20454,
+      "sha256": "9f958f3343291552b409f3855e96b779cfe23f78ca394e9b8ee06563b134f2a2"
+    }
+  ],
+  "dotField": {
+    "source": "ChatGPT Image Sep 13, 2026, 03_22_00 PM (9).png",
+    "sourceSha256": "3d445a99a7799190e5c8faea355aac88dd04b0fff53b898e7a51019aeb66edae",
+    "markedDots": 607,
+    "totalDots": 3080,
+    "generatedFile": "apps/ui/src/lib/flare-logo-data.ts",
+    "generatedSha256": "554ad3e2a6d86ca62da1c55b48a4c7cece8046a34c63794729045e5f99f1d84f"
+  }
+}

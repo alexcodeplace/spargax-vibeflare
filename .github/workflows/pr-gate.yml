@@ -14,8 +14,8 @@ permissions:
 jobs:
   gate:
     name: Full gate
-    # Keep the existing same-repository guard; run the complete gate on a
-    # disposable hosted runner rather than waiting for a missing private label.
+    # Keep the same-repository guard and stable hosted-browser baselines.
+    # The separate readiness job checks the repaired private runner identity.
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -56,6 +56,9 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Verify canonical logo assets
+        run: node tools/verify-logo-assets.mjs
+
       - name: Validate generated Cloudflare config
         run: pnpm validate:wrangler
 
@@ -78,3 +81,22 @@ jobs:
           path: apps/ui/test-results/
           if-no-files-found: warn
           retention-days: 3
+
+  runner-readiness:
+    name: VibeFlare runner readiness
+    # Never execute fork-provided code on the persistent private host.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, vibeflare-gate]
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - name: Verify canonical repository and workflow guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "alexcodeplace/vibeflare"
+          node tools/check-offload-workflow.mjs .github/workflows/pr-gate.yml
+          printf 'Runner %s is ready for %s at %s\n' "$RUNNER_NAME" "$GITHUB_REPOSITORY" "$GITHUB_SHA"

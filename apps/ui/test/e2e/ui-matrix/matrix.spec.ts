@@ -93,6 +93,12 @@ for (const entry of matrix) {
         expect(consoleErrors, `console errors on ${entry.route}`).toEqual([]);
         expect(failedRequests, `failed same-origin requests on ${entry.route}`).toEqual([]);
 
+        const flare = page.getByTestId('flare-logo');
+        if (await flare.count()) {
+          await expect(flare).toHaveAttribute('data-ready', 'true');
+          await expect(flare).toHaveAttribute('data-state', /^(idle|paused|reduced)$/, { timeout: 7000 });
+        }
+
         await expect(page).toHaveScreenshot(
           `matrix-${routeLabel(entry.route)}-${role}-${viewport.name}.png`,
           { fullPage: true, animations: 'disabled' },

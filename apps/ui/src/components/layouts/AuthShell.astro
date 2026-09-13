@@ -1,5 +1,6 @@
 ---
 import Brand from '../brand/Brand.astro';
+import FlareLogo from '../brand/FlareLogo.astro';
 import BrandIcon from '../brand/BrandIcon.astro';
 import { ThemeToggle } from '../widgets/ThemeToggle';
 ---
@@ -13,11 +14,7 @@ import { ThemeToggle } from '../widgets/ThemeToggle';
       <p class="vf-eyebrow"><span class="vf-accent-line"></span>VIBEFLARE</p>
       <h2 id="vf-auth-heading">A little spark.<br /><span>A lot of possibility.</span></h2>
       <p class="vf-auth-description">A space to think, build, and create.<br />Your models. Your conversations. Your pace.</p>
-      <div class="vf-auth-art" aria-hidden="true">
-        <img data-art-theme="dark" src="/assets/club/dark/illustrations/workflow-panels.svg" width="330" height="250" alt="" />
-        <img data-art-theme="light" src="/assets/club/light/illustrations/workflow-panels.svg" width="330" height="250" alt="" />
-        <div class="vf-art-caption"><BrandIcon name="sparkles" size={18}/><span>Make room for your next idea.</span></div>
-      </div>
+      <div class="vf-auth-art"><FlareLogo /></div>
       <div class="vf-auth-capabilities">
         <span><BrandIcon name="chat" size={18} /> Conversations</span>
         <span><BrandIcon name="bolt" size={18} /> Creation</span>

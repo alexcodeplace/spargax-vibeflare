@@ -62,6 +62,11 @@ async function capture(file, route, description, options = {}) {
   assert.ok(!(await page.locator('body').innerText()).toLowerCase().includes(obsoleteProductName), `${file}: obsolete external product branding is visible`);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${file}: horizontal overflow`);
   assert.deepEqual(problems, [], `${file}: browser/asset failures`);
+  const flare = page.getByTestId('flare-logo');
+  if (await flare.count()) {
+    await expect(flare).toHaveAttribute('data-ready', 'true');
+    await expect(flare).toHaveAttribute('data-state', /^(idle|paused|reduced)$/);
+  }
   await page.screenshot({ path: join(temporary, file), fullPage: true, animations: 'disabled', ...options });
   const bytes = readFileSync(join(temporary, file));
   assert.ok(bytes.length > 10_000, `${file}: implausibly empty capture`);

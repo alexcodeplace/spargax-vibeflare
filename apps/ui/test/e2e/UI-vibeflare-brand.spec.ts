@@ -27,16 +27,21 @@ for (const theme of ['dark', 'light'] as const) {
         const background = await page.locator(route === '/chat' ? '.vf-workspace' : '.vf-auth-shell').evaluate(el => getComputedStyle(el).backgroundImage);
         expect(background).toContain(`/assets/club/${theme}-${route === '/chat' ? 'dashboard' : 'auth'}-background.webp`);
         const visibleArt = page.locator(`img[data-art-theme="${theme}"]:visible`);
-        if (route === '/chat' || viewport.width > 700) {
+        if (route === '/chat') {
           expect(await visibleArt.count()).toBeGreaterThan(0);
           await expect.poll(() => visibleArt.evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
         }
         if (route === '/login') {
+          await expect(page.getByTestId('flare-logo')).toBeVisible();
+          await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeAttached();
           const action = page.getByRole('button', { name: 'Sign in with passkey', exact: true });
           await expect(action).toHaveCSS('background-image', /linear-gradient/);
           await expect(action).toHaveCSS('color', 'rgb(255, 255, 255)');
         }
         if (route === '/chat') {
+          await expect(page.locator('#sidebar .vf-brand-logo')).toHaveAttribute('src', '/assets/brand/vibeflare-wordmark-320.webp');
+          await expect(page.locator('.vf-topbar .vf-brand-symbol')).toHaveAttribute('src', '/assets/brand/vibeflare-mark.webp');
+          await expect(page.locator('.vf-brand-mark')).toHaveCount(0);
           // Inspect painted output, not only a root token: the composer has its own surface.
           const composerBackground = await page.getByLabel('Message input').evaluate(editor => {
             for (let node: Element | null = editor; node; node = node.parentElement) {

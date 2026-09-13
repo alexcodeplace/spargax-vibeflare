@@ -27,7 +27,7 @@ export function Sidebar({ activePath = '' }: SidebarProps) {
   return (
     <aside className="vf-sidebar flex">
       <div className="px-2 mb-6">
-        <span className="vf-brand"><span className="vf-brand-mark" aria-hidden="true">V</span>VibeFlare</span>
+        <a className="vf-brand" href="/" aria-label="VibeFlare home"><img className="vf-brand-logo" src="/assets/brand/vibeflare-wordmark-320.webp" srcSet="/assets/brand/vibeflare-wordmark-320.webp 320w, /assets/brand/vibeflare-wordmark-640.webp 640w" sizes="184px" width={184} height={48} alt="VibeFlare" /></a>
       </div>
       <nav className="vf-navigation">
         {NAV_LINKS.map(({ href, label, icon }) => {

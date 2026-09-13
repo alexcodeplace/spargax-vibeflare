@@ -1,0 +1,147 @@
+{
+  "sourceRun": 34766689227,
+  "sourceCommit": "d62522903ab2a9f27b9df4077a48dbe4472e8a55",
+  "reason": "Replace typed letter/word branding with supplied logo assets and auth illustration with sampled interactive symbol. Hosted functional checks passed; exact rendered logo changes accepted without relaxed tolerances. Assistant avatar is outside these empty-chat snapshots.",
+  "snapshots": [
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-desktop-linux.png",
+      "before": "e810a47eb0792d0205d2936fdbffc6ae84c0527426cdd08b66ae0ecc0cc0cda3",
+      "after": "48e1d1c58412ab5e4aaa383276f5e655bb49bdf9623591c5fec6bca40bf45dde"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-mobile-linux.png",
+      "before": "e09c8229d5253221d069c97bbb715e4711753da019fc45203262cdfd0862cbd3",
+      "after": "0670f89777ef2f57a865b759939d80373877282c1945143cd4e5e8e31d478837"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-desktop-linux.png",
+      "before": "e810a47eb0792d0205d2936fdbffc6ae84c0527426cdd08b66ae0ecc0cc0cda3",
+      "after": "48e1d1c58412ab5e4aaa383276f5e655bb49bdf9623591c5fec6bca40bf45dde"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-mobile-linux.png",
+      "before": "e09c8229d5253221d069c97bbb715e4711753da019fc45203262cdfd0862cbd3",
+      "after": "0670f89777ef2f57a865b759939d80373877282c1945143cd4e5e8e31d478837"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-desktop-linux.png",
+      "before": "7c3cf34c2a9ef4ea1c5908533f3383e3c08287311a91c0b3504ceff713d0075b",
+      "after": "1d8131ab6e068b0b9756033bc5d63cc8f7a32580cc7638ce26a4d8c5087b83ad"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-mobile-linux.png",
+      "before": "185b8874174fbf2ba13e446c82d119a1ba22897a422dcb1a02cf7be8d16c546c",
+      "after": "7ff9627a8ffd0b739c886d837a7e1446f9f7f8d067909eb24a398955ec7927e4"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-desktop-linux.png",
+      "before": "7c3cf34c2a9ef4ea1c5908533f3383e3c08287311a91c0b3504ceff713d0075b",
+      "after": "1d8131ab6e068b0b9756033bc5d63cc8f7a32580cc7638ce26a4d8c5087b83ad"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-mobile-linux.png",
+      "before": "185b8874174fbf2ba13e446c82d119a1ba22897a422dcb1a02cf7be8d16c546c",
+      "after": "7ff9627a8ffd0b739c886d837a7e1446f9f7f8d067909eb24a398955ec7927e4"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-desktop-linux.png",
+      "before": "86092ab3ba4e546d25357e11c0e08efb408f11afa7e07e03a099047c92980f89",
+      "after": "0044f0d9ec9d1a13719c5d4f047eafe2102a0f0150ec3b41fdf1320a5bffa229"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-mobile-linux.png",
+      "before": "0b3bbdb247004727c9fb6640325bc8401c98de4b3fcd5ebe0890da1b016a5b2b",
+      "after": "bd271e295996251333486228fe0016376eb3178c91fc7fa8c993239539f404a7"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-desktop-linux.png",
+      "before": "86092ab3ba4e546d25357e11c0e08efb408f11afa7e07e03a099047c92980f89",
+      "after": "0044f0d9ec9d1a13719c5d4f047eafe2102a0f0150ec3b41fdf1320a5bffa229"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-mobile-linux.png",
+      "before": "0b3bbdb247004727c9fb6640325bc8401c98de4b3fcd5ebe0890da1b016a5b2b",
+      "after": "bd271e295996251333486228fe0016376eb3178c91fc7fa8c993239539f404a7"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-desktop-linux.png",
+      "before": "ec516a247f3bdbacb4cbfb01a2d75083c2489f17fd0fea96c5acf8c65cb4cea9",
+      "after": "02b15e5ef70dc03012ab64e32b739a9e9f951b3ff0c7a07583b95c708103d122"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-mobile-linux.png",
+      "before": "0c8074ffa51bb40125e8d3f2618e3f9e770e5e9b8612ad18baa205533fddd244",
+      "after": "fd7eae75b2205e79b4d2ecddb65e5f84ab9fc34eac94012d88e8de0fcec75979"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-desktop-linux.png",
+      "before": "ec516a247f3bdbacb4cbfb01a2d75083c2489f17fd0fea96c5acf8c65cb4cea9",
+      "after": "02b15e5ef70dc03012ab64e32b739a9e9f951b3ff0c7a07583b95c708103d122"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-mobile-linux.png",
+      "before": "0c8074ffa51bb40125e8d3f2618e3f9e770e5e9b8612ad18baa205533fddd244",
+      "after": "fd7eae75b2205e79b4d2ecddb65e5f84ab9fc34eac94012d88e8de0fcec75979"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-desktop-linux.png",
+      "before": "0f108b5fc4173fc8b04140ab659cef0a52545c3f8ae247733558de5775369800",
+      "after": "c128a3f5dbdc2c7dc014d158767dd964dd0494a8e53b5842d03d9b7136d70ec5"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-mobile-linux.png",
+      "before": "000717cc028632ab3d4e257b2277b8e2992bbb881a9457568c3e9d3c73bb504d",
+      "after": "7fb02893f3ac632eced990867c37701462ec040a28c336292fb89ed908b76bc0"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-desktop-linux.png",
+      "before": "0f108b5fc4173fc8b04140ab659cef0a52545c3f8ae247733558de5775369800",
+      "after": "c128a3f5dbdc2c7dc014d158767dd964dd0494a8e53b5842d03d9b7136d70ec5"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-mobile-linux.png",
+      "before": "000717cc028632ab3d4e257b2277b8e2992bbb881a9457568c3e9d3c73bb504d",
+      "after": "7fb02893f3ac632eced990867c37701462ec040a28c336292fb89ed908b76bc0"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-desktop-linux.png",
+      "before": "b60b1c404f90a6927e9bf84383215724df7936091469a2844db7065e26e37887",
+      "after": "064edb8095334215a6a9a9d61a770d82e724d2c6e74ff82b6a209c9171411d04"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-mobile-linux.png",
+      "before": "88f9f309574aa45243fdceff720328f4ce4451fad575e597a903f8fc5f2526ba",
+      "after": "6908789c965d82cf04e28f851f63c03de4ada1ad7b248a2bfe4774f6a369c522"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-desktop-linux.png",
+      "before": "5bb7fc6a705c817b11c02fea4f98f24fc58b26db6e5f821db938933dd19e8e19",
+      "after": "b5e0edde32cac984e32b1a7ea02dfc4d7a251a23979d117d756341a937502d2b"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-mobile-linux.png",
+      "before": "7848c4d5fb95d7cbb5f4ed3b7150ea96e7f9f9b44d455f01b2673cdacadcdf75",
+      "after": "0152657c78b9b642200dec3fe2be6b83b245613635a5295151cf3a8cfa09b1ce"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-desktop-linux.png",
+      "before": "a285337461e5e0c2be9d7773f3aa71aa0f4b659848ceba955ed5b2458608b893",
+      "after": "edaaf60a1bd9d4c3125d73f8ce1ca62269a38f20ef94c8ae6fa0c836aabe6079"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-mobile-linux.png",
+      "before": "5a18f3c16658daa7de6862557b9fdb9635b44260d775fdaeefe1ed4a9206f8ee",
+      "after": "5a1225dfc5095f8fed7d792025e44445e9671dc3a8f2091eed0a93b6d5deefe7"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-desktop-linux.png",
+      "before": "95b166062e86ccb3c088b411ab766209351003b2920fea059a6a1084a3377900",
+      "after": "19a820520e1d1d299c986c802e3b35ec0a5767eb4c3a8ef41c7a8c9b5a627962"
+    },
+    {
+      "file": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-mobile-linux.png",
+      "before": "a1512fdd36d72eb8afc02c55025cd534ad9433b3bccca8aa6a94dc84f5ff21c9",
+      "after": "5bda3d36a2a49d4423883c100e8356cfcf705b5156242d31060ebdf4f800c668"
+    }
+  ]
+}

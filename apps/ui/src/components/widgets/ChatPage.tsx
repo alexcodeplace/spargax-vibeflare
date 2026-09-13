@@ -9,7 +9,6 @@ import {
   ChatMessageBubble,
   ChatMessageList,
 } from '@astryxdesign/core/Chat';
-import { Avatar } from '@astryxdesign/core/Avatar';
 import { BrandArtwork } from '../brand/BrandArtwork';
 import { Markdown } from '@astryxdesign/core/Markdown';
 import { TaskWorkspace, TASK_PRESENTATION } from './TaskWorkspace';
@@ -364,7 +363,7 @@ function ChatPageInner() {
       <HistoryAttachments metadata={message.attachments} prompt={message.role === 'assistant' ? messages[index - 1]?.content ?? message.content : message.content} />
     </Card>
   ) : (
-    <AstryxChatMessage key={message.id} sender={message.role} avatar={message.role === 'assistant' ? <Avatar name="VibeFlare" size="md" /> : undefined}>
+    <AstryxChatMessage key={message.id} sender={message.role} avatar={message.role === 'assistant' ? <img src="/assets/brand/vibeflare-mark.webp" width={32} height={32} alt="VibeFlare" style={{ objectFit: 'contain' }} /> : undefined}>
       <ChatMessageBubble variant={message.role === 'assistant' ? 'ghost' : 'filled'}>
         {message.role === 'assistant' ? <Markdown density="compact" isStreaming={sending && message.id === messages.at(-1)?.id}>{message.content || (isEmbeddingMode ? 'Creating embeddings…' : 'Thinking…')}</Markdown> : message.content}
         <HistoryAttachments metadata={message.attachments} prompt={message.content} />

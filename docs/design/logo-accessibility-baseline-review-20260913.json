@@ -1,0 +1,261 @@
+{
+  "source_run": 34771148190,
+  "head": "3324022dc840df5fb388a2c1acb0561865116202",
+  "count": 28,
+  "note": "Hosted actual screenshots from the combined logo + mainline accessibility/control source. Functional E2E checks were green; only these visual expectations differed. Interactive logo behavior had already been visually inspected in headed Chromium before this integration merge.",
+  "max_ratio": 0.13807,
+  "screenshots": [
+    {
+      "file": "matrix-analytics-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 65624,
+      "ratio": 0.050636,
+      "before_sha256": "48e1d1c58412ab5e4aaa383276f5e655bb49bdf9623591c5fec6bca40bf45dde",
+      "after_sha256": "285a9eab3ef604b03d3498a011953a02c94c4fdfc7a062af423b8bd672ff77b6"
+    },
+    {
+      "file": "matrix-analytics-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 23850,
+      "ratio": 0.072457,
+      "before_sha256": "0670f89777ef2f57a865b759939d80373877282c1945143cd4e5e8e31d478837",
+      "after_sha256": "308a23cb56e8b496197925b0f850726c48462755ae716d5c80d5681ec4de9174"
+    },
+    {
+      "file": "matrix-analytics-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 65624,
+      "ratio": 0.050636,
+      "before_sha256": "48e1d1c58412ab5e4aaa383276f5e655bb49bdf9623591c5fec6bca40bf45dde",
+      "after_sha256": "285a9eab3ef604b03d3498a011953a02c94c4fdfc7a062af423b8bd672ff77b6"
+    },
+    {
+      "file": "matrix-analytics-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 23850,
+      "ratio": 0.072457,
+      "before_sha256": "0670f89777ef2f57a865b759939d80373877282c1945143cd4e5e8e31d478837",
+      "after_sha256": "308a23cb56e8b496197925b0f850726c48462755ae716d5c80d5681ec4de9174"
+    },
+    {
+      "file": "matrix-chat-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 29242,
+      "ratio": 0.022563,
+      "before_sha256": "1d8131ab6e068b0b9756033bc5d63cc8f7a32580cc7638ce26a4d8c5087b83ad",
+      "after_sha256": "f7dabbd783468614098fe5950b282729fcb2120c74d22dd86023d8e38dcfccc1"
+    },
+    {
+      "file": "matrix-chat-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 28081,
+      "ratio": 0.085311,
+      "before_sha256": "7ff9627a8ffd0b739c886d837a7e1446f9f7f8d067909eb24a398955ec7927e4",
+      "after_sha256": "f6c681aaeeaabea6e4e934691f4ff7e1418baf44ea21622b6c025cf414e7e22e"
+    },
+    {
+      "file": "matrix-chat-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 29242,
+      "ratio": 0.022563,
+      "before_sha256": "1d8131ab6e068b0b9756033bc5d63cc8f7a32580cc7638ce26a4d8c5087b83ad",
+      "after_sha256": "f7dabbd783468614098fe5950b282729fcb2120c74d22dd86023d8e38dcfccc1"
+    },
+    {
+      "file": "matrix-chat-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 28081,
+      "ratio": 0.085311,
+      "before_sha256": "7ff9627a8ffd0b739c886d837a7e1446f9f7f8d067909eb24a398955ec7927e4",
+      "after_sha256": "f6c681aaeeaabea6e4e934691f4ff7e1418baf44ea21622b6c025cf414e7e22e"
+    },
+    {
+      "file": "matrix-files-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 4294,
+      "ratio": 0.003313,
+      "before_sha256": "0044f0d9ec9d1a13719c5d4f047eafe2102a0f0150ec3b41fdf1320a5bffa229",
+      "after_sha256": "e9d12158e0283d2cb357fbe22c4aa7dfc1039ed585df2d277e1c5ebe302024e5"
+    },
+    {
+      "file": "matrix-files-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 4663,
+      "ratio": 0.014166,
+      "before_sha256": "bd271e295996251333486228fe0016376eb3178c91fc7fa8c993239539f404a7",
+      "after_sha256": "5b937c563750367b816fa085b1372dae3a9139f7df21b26d61c8c20527405d58"
+    },
+    {
+      "file": "matrix-files-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 4294,
+      "ratio": 0.003313,
+      "before_sha256": "0044f0d9ec9d1a13719c5d4f047eafe2102a0f0150ec3b41fdf1320a5bffa229",
+      "after_sha256": "e9d12158e0283d2cb357fbe22c4aa7dfc1039ed585df2d277e1c5ebe302024e5"
+    },
+    {
+      "file": "matrix-files-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 4663,
+      "ratio": 0.014166,
+      "before_sha256": "bd271e295996251333486228fe0016376eb3178c91fc7fa8c993239539f404a7",
+      "after_sha256": "5b937c563750367b816fa085b1372dae3a9139f7df21b26d61c8c20527405d58"
+    },
+    {
+      "file": "matrix-history-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 4294,
+      "ratio": 0.003313,
+      "before_sha256": "02b15e5ef70dc03012ab64e32b739a9e9f951b3ff0c7a07583b95c708103d122",
+      "after_sha256": "c1467bbd876741321dabc65476b154bb4d46cccd8b34d5999031d046c9d13b4e"
+    },
+    {
+      "file": "matrix-history-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 4664,
+      "ratio": 0.014169,
+      "before_sha256": "fd7eae75b2205e79b4d2ecddb65e5f84ab9fc34eac94012d88e8de0fcec75979",
+      "after_sha256": "53bb39b080c051cdc659440f571b3c95fdfd51f85131483cd5903744405fa096"
+    },
+    {
+      "file": "matrix-history-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 4294,
+      "ratio": 0.003313,
+      "before_sha256": "02b15e5ef70dc03012ab64e32b739a9e9f951b3ff0c7a07583b95c708103d122",
+      "after_sha256": "c1467bbd876741321dabc65476b154bb4d46cccd8b34d5999031d046c9d13b4e"
+    },
+    {
+      "file": "matrix-history-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 4664,
+      "ratio": 0.014169,
+      "before_sha256": "fd7eae75b2205e79b4d2ecddb65e5f84ab9fc34eac94012d88e8de0fcec75979",
+      "after_sha256": "53bb39b080c051cdc659440f571b3c95fdfd51f85131483cd5903744405fa096"
+    },
+    {
+      "file": "matrix-keys-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 9940,
+      "ratio": 0.00767,
+      "before_sha256": "c128a3f5dbdc2c7dc014d158767dd964dd0494a8e53b5842d03d9b7136d70ec5",
+      "after_sha256": "9f80081f1548a2029478e5156db063fc495ac8328637cb5b1b14667b58da59bf"
+    },
+    {
+      "file": "matrix-keys-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 10777,
+      "ratio": 0.032741,
+      "before_sha256": "7fb02893f3ac632eced990867c37701462ec040a28c336292fb89ed908b76bc0",
+      "after_sha256": "0e4481e1c9531dd3c9948b552e905028ea5e17709d72e240dcb44ea00836a905"
+    },
+    {
+      "file": "matrix-keys-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 9940,
+      "ratio": 0.00767,
+      "before_sha256": "c128a3f5dbdc2c7dc014d158767dd964dd0494a8e53b5842d03d9b7136d70ec5",
+      "after_sha256": "9f80081f1548a2029478e5156db063fc495ac8328637cb5b1b14667b58da59bf"
+    },
+    {
+      "file": "matrix-keys-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 10777,
+      "ratio": 0.032741,
+      "before_sha256": "7fb02893f3ac632eced990867c37701462ec040a28c336292fb89ed908b76bc0",
+      "after_sha256": "0e4481e1c9531dd3c9948b552e905028ea5e17709d72e240dcb44ea00836a905"
+    },
+    {
+      "file": "matrix-login-anonymous-desktop-linux.png",
+      "width": 1440,
+      "height": 942,
+      "changed_pixels": 38067,
+      "ratio": 0.028063,
+      "before_sha256": "064edb8095334215a6a9a9d61a770d82e724d2c6e74ff82b6a209c9171411d04",
+      "after_sha256": "2205a3d49bb995428bcc2f040f75871d9080c72b17638736e2bddbfbb1636574"
+    },
+    {
+      "file": "matrix-login-anonymous-mobile-linux.png",
+      "width": 390,
+      "height": 1024,
+      "changed_pixels": 27319,
+      "ratio": 0.068407,
+      "before_sha256": "6908789c965d82cf04e28f851f63c03de4ada1ad7b248a2bfe4774f6a369c522",
+      "after_sha256": "337dc23c88dcf9ad8a094d23aa37f50acc5018e140bb947863c1dc93342d4a0e"
+    },
+    {
+      "file": "matrix-settings-owner-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 43533,
+      "ratio": 0.03359,
+      "before_sha256": "b5e0edde32cac984e32b1a7ea02dfc4d7a251a23979d117d756341a937502d2b",
+      "after_sha256": "913d1fef5ceac0663dcd57a3c1d28f5d9738ac280dcf15f20784a2023e3a97b3"
+    },
+    {
+      "file": "matrix-settings-owner-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 45241,
+      "ratio": 0.137444,
+      "before_sha256": "0152657c78b9b642200dec3fe2be6b83b245613635a5295151cf3a8cfa09b1ce",
+      "after_sha256": "c58a0e5f68ade848daedf26681ba39133259790cbe8601351de17c7acacfb849"
+    },
+    {
+      "file": "matrix-settings-user-desktop-linux.png",
+      "width": 1440,
+      "height": 900,
+      "changed_pixels": 43920,
+      "ratio": 0.033889,
+      "before_sha256": "edaaf60a1bd9d4c3125d73f8ce1ca62269a38f20ef94c8ae6fa0c836aabe6079",
+      "after_sha256": "c825e1cc80712351487d48ccc1a2fdf88ddfbc00d10767ea1a6b2b21bb4d6b5f"
+    },
+    {
+      "file": "matrix-settings-user-mobile-linux.png",
+      "width": 390,
+      "height": 844,
+      "changed_pixels": 45447,
+      "ratio": 0.13807,
+      "before_sha256": "5a1225dfc5095f8fed7d792025e44445e9671dc3a8f2091eed0a93b6d5deefe7",
+      "after_sha256": "72001a8e0cad3f056e3fd0ea2b1427f170cf9e64b14f2a5eaedcc4ad7a186537"
+    },
+    {
+      "file": "matrix-setup-anonymous-desktop-linux.png",
+      "width": 1440,
+      "height": 942,
+      "changed_pixels": 52006,
+      "ratio": 0.038339,
+      "before_sha256": "19a820520e1d1d299c986c802e3b35ec0a5767eb4c3a8ef41c7a8c9b5a627962",
+      "after_sha256": "f975243c63570885b89c27b42f9a112ca6f0a16741ab20115c710400e705c5cc"
+    },
+    {
+      "file": "matrix-setup-anonymous-mobile-linux.png",
+      "width": 390,
+      "height": 1102,
+      "changed_pixels": 36923,
+      "ratio": 0.085911,
+      "before_sha256": "5bda3d36a2a49d4423883c100e8356cfcf705b5156242d31060ebdf4f800c668",
+      "after_sha256": "8394cc809a73052030c73d6e86ba574868e5901ddcce011e72d1d8689799c306"
+    }
+  ]
+}
