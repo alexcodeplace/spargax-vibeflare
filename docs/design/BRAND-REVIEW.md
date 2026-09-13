@@ -1,11 +1,11 @@
 # Spargax VibeFlare brand review
 
-## User approval gate
+## User approval
 
-The user requested the Club brand redesign and deployment to their existing Vibeflare Worker for review **before merging to main**.
+The user requested the Club brand redesign and deployment to their existing Vibeflare Worker for review **before merging to main**. After the verified live preview, the user explicitly approved integration on 2026-09-13: “merge it to main.” The approval gate is satisfied.
 
 - Current review candidate: `feat/spargax-brand-preview-20260913`.
-- Do not merge or push the redesign to `main` without subsequent user approval.
+- Merge authorization: granted by the user on 2026-09-13. Integrate the approved preview without changing its deployed application code.
 - Target: `vibeflare.shrill-moon-94bd.workers.dev`.
 - Preserve authentication, user data, storage, quota, schedules, resource bindings and runtime configuration. This is a presentation-only deployment, not a database migration.
 
@@ -15,7 +15,7 @@ Reuse the canonical runtime assets from `/home/user/Projects/spargax/apps/club/p
 
 ## Candidate provenance
 
-The candidate combines the committed primary redesign (`7c25eb0`), the reviewed restricted-storage theme fix and font license notices (`ad06cc1`), and the primary worktree's preserved final UI/hydration/Workspace/auth changes. The original worktrees were not reset, discarded or committed over. During final verification, `f5e329c` (v0.9.4) landed on main. It was merged **into the review branch**, preserving the authoritative model-catalog fix and all of its tests. The deployed candidate is `0660b915de30ac7e0c5da74518ad215cebb4d662`, with no Worker or shared-runtime differences from the current `f5e329c` main. The redesign was not merged into main.
+The candidate combines the committed primary redesign (`7c25eb0`), the reviewed restricted-storage theme fix and font license notices (`ad06cc1`), and the primary worktree's preserved final UI/hydration/Workspace/auth changes. The original worktrees were not reset, discarded or committed over. During final verification, `f5e329c` (v0.9.4) landed on main. It was merged **into the review branch**, preserving the authoritative model-catalog fix and all of its tests. The deployed candidate is `0660b915de30ac7e0c5da74518ad215cebb4d662`, with no Worker or shared-runtime differences from the current `f5e329c` main. At preview deployment time, the redesign was not yet merged into main.
 
 The final follow-up adds deterministic first-render behavior across independently hydrated chat roots, keyboard-operable collapsible Recent chats under Workspace, visible branded login actions, and matching regression coverage. A type-unsafe assertion in the new theme test was also corrected without weakening the assertion.
 
@@ -46,7 +46,7 @@ The user-provided account token was accepted by Wrangler for the account owning 
 - Cloudflare version: `9fa768b0-05f9-4704-b37d-5018563a05f3`.
 - Active deployment: `15c948a7-2acc-423f-80e8-be239d109787`, 100% traffic, 2026-09-13 05:52:43 UTC.
 - Rollback version: `fe77ca1f-219f-476f-a6da-774ce7035d52` (the immediately preceding v0.9.4 deployment, not the older v0.9.3 version).
-- `main` and `origin/main` remain clean/synchronized at `f5e329cbc690687fc21b6f3a0904e1705b614391`. **The redesign awaits the user's visual approval before merge.**
+- At preview deployment time, `main` and `origin/main` were clean/synchronized at `f5e329cbc690687fc21b6f3a0904e1705b614391`. The user subsequently approved merging this exact design on 2026-09-13.
 
 Uploaded the exact verified build separately, staged it at 0% while the preceding version continued to serve ordinary requests, and verified the staged version with the provider's same-host version override. Promoted only after all final regression checks and staged live checks passed.
 
