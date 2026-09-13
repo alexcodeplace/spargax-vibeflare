@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { parseHistoryMetadata, type HistoryMetadata } from '@vibeflare/shared';
+import { HistoryAttachments } from './HistoryAttachments';
 import { createChat, getChatMessages, notifyModelsChanged, notifyQuotaChanged, redirectToLoginOnce, uploadFile } from '../../lib/api';
 import {
   ChatComposer,
@@ -29,15 +31,11 @@ import { cacheCreatedChat, notifyChatNavigation, refreshChats } from '../../lib/
 let msgCounter = 0;
 function nextId() { return `msg-${++msgCounter}`; }
 
-interface GeneratedImage {
-  blobUrl: string;
-  prompt: string;
-}
-
 interface UiMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  attachments?: HistoryMetadata | null;
 }
 
 const TASK_ITEMS = [
@@ -47,7 +45,6 @@ const TASK_ITEMS = [
   { value: 'automatic-speech-recognition', label: 'Audio' },
 ];
 
-const pageFill: CSSProperties = { minHeight: '100%' };
 const chatFill: CSSProperties = { minHeight: 0, flex: 1 };
 const composerInputStyle: CSSProperties = { minHeight: 90 };
 
@@ -75,7 +72,6 @@ function ChatPageInner() {
 
   const [imagePrompt, setImagePrompt] = useState('');
   const [generating, setGenerating] = useState(false);
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
 
   const [toast, setToast] = useState<{ open: boolean; title: string; variant: 'default' | 'danger' }>({
@@ -87,42 +83,65 @@ function ChatPageInner() {
     setToast({ open: true, title, variant });
   };
 
-  const [chatId, setChatId] = useState<string | null>(null);
-  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const chatIdRef = useRef<string | null>(null);
+  const operationRef = useRef(false);
+  const [audioBusy, setAudioBusy] = useState(false);
+  const busy = sending || generating || audioBusy || loadingHistory;
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
   const isImageMode = activeTask === 'text-to-image';
   const isAudioMode = activeTask === 'automatic-speech-recognition';
+  const isEmbeddingMode = activeTask === 'text-embeddings';
+
+  async function loadHistory(id: string, signal: AbortSignal) {
+    const detail = await getChatMessages(id, signal);
+    if (signal.aborted || chatIdRef.current !== id) return;
+    const history: UiMessage[] = detail.messages
+      .filter(message => message.role === 'user' || message.role === 'assistant')
+      .map(message => ({ id: message.id, role: message.role as 'user' | 'assistant', content: message.content, attachments: parseHistoryMetadata(message.attachments) }));
+    const task = [...history].reverse().find(message => message.attachments)?.attachments?.task ?? detail.chat.task ?? 'text-generation';
+    setActiveTask(task);
+    setModel(detail.chat.model);
+    setMessages(history);
+    refreshChats();
+  }
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cid = params.get('chat_id');
-    if (!cid) return;
-    setChatId(cid);
-    setLoadingHistory(true);
-    getChatMessages(cid)
-      .then(({ chat, messages: history }) => {
-        setModel(chat.model);
-        setMessages(history.map((message) => ({
-          id: message.id,
-          role: message.role as 'user' | 'assistant',
-          content: message.content,
-        })));
-      })
+    const cid = new URLSearchParams(window.location.search).get('chat_id');
+    if (!cid) { setLoadingHistory(false); return; }
+    const controller = new AbortController();
+    chatIdRef.current = cid;
+    void loadHistory(cid, controller.signal)
       .catch(() => {
-        setChatId(null);
+        if (controller.signal.aborted) return;
+        chatIdRef.current = null;
         notify('This chat could not be loaded.', 'danger');
       })
-      .finally(() => setLoadingHistory(false));
+      .finally(() => { if (!controller.signal.aborted) setLoadingHistory(false); });
+    return () => controller.abort();
   }, []);
 
+  async function ensureConversation(title: string, signal: AbortSignal): Promise<string> {
+    if (chatIdRef.current) return chatIdRef.current;
+    const chat = await createChat(title, model, signal);
+    if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+    chatIdRef.current = chat.id;
+    const location = new URL(window.location.href);
+    location.searchParams.set('chat_id', chat.id);
+    window.history.replaceState(null, '', location.toString());
+    await cacheCreatedChat(chat);
+    notifyChatNavigation();
+    return chat.id;
+  }
+
   function handleTaskChange(task: string) {
+    if (operationRef.current || audioBusy || loadingHistory) return;
     setActiveTask(task);
     setModel('');
     setMessages([]);
-    setChatId(null);
-    setGeneratedImages([]);
+    chatIdRef.current = null;
     setImageError(null);
     setAttachedFiles([]);
     setInput('');
@@ -156,12 +175,13 @@ function ChatPageInner() {
 
   async function sendMessage(value = input) {
     const text = value.trim();
-    if (!text || sending) return;
+    if (!text || operationRef.current || busy) return;
     if (!model) {
       notify('Choose a model first.');
       return;
     }
 
+    operationRef.current = true;
     const userMessage: UiMessage = { id: nextId(), role: 'user', content: text };
     const assistantId = nextId();
     setMessages((previous) => [
@@ -174,16 +194,21 @@ function ChatPageInner() {
     abortRef.current = new AbortController();
 
     try {
-      let activeChatId = chatId;
-      if (!activeChatId) {
-        const chat = await createChat(text, model, abortRef.current.signal);
-        activeChatId = chat.id;
-        setChatId(chat.id);
-        const location = new URL(window.location.href);
-        location.searchParams.set('chat_id', chat.id);
-        window.history.replaceState(null, '', location.toString());
-        await cacheCreatedChat(chat);
-        notifyChatNavigation();
+      const activeChatId = await ensureConversation(text, abortRef.current.signal);
+      if (isEmbeddingMode) {
+        const response = await fetch(`/v1/embeddings?chat_id=${encodeURIComponent(activeChatId)}`, {
+          method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'x-vf-browser': '1' },
+          body: JSON.stringify({ model, input: text }), signal: abortRef.current.signal,
+        });
+        if (response.status === 401) { redirectToLoginOnce(); return; }
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({})) as { error?: { type?: string; message?: string } };
+          if (error.error?.type === 'paid_plan_required' || error.error?.type === 'paid_model_excluded') notifyModelsChanged();
+          throw new Error(error.error?.message ?? `Request failed (${response.status})`);
+        }
+        await loadHistory(activeChatId, abortRef.current.signal);
+        notifyQuotaChanged();
+        return;
       }
       const url = new URL('/v1/chat/completions', window.location.origin);
       url.searchParams.set('chat_id', activeChatId);
@@ -258,6 +283,7 @@ function ChatPageInner() {
         ));
       }
     } finally {
+      operationRef.current = false;
       setSending(false);
       setAttachedFiles([]);
       abortRef.current = null;
@@ -266,51 +292,40 @@ function ChatPageInner() {
 
   async function generateImage(value = imagePrompt) {
     const prompt = value.trim();
-    if (!prompt || generating) return;
-    if (!model) {
-      notify('Choose an image model first.');
-      return;
-    }
-
+    if (!prompt || operationRef.current || busy) return;
+    if (!model) { notify('Choose an image model first.'); return; }
+    operationRef.current = true;
     setGenerating(true);
     setImageError(null);
-    abortRef.current = new AbortController();
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const response = await fetch('/v1/images/generations', {
-        method: 'POST',
-        credentials: 'same-origin',
+      const id = await ensureConversation(prompt, controller.signal);
+      const response = await fetch(`/v1/images/generations?chat_id=${encodeURIComponent(id)}`, {
+        method: 'POST', credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json', 'x-vf-browser': '1' },
-        body: JSON.stringify({ model, prompt, n: 1 }),
-        signal: abortRef.current.signal,
+        body: JSON.stringify({ model, prompt, n: 1, response_format: 'url' }), signal: controller.signal,
       });
-      if (response.status === 401) {
-        redirectToLoginOnce();
-        return;
-      }
+      if (response.status === 401) { redirectToLoginOnce(); return; }
       if (!response.ok) {
         const error = await response.json().catch(() => ({})) as { error?: { type?: string; message?: string } };
         if (error.error?.type === 'paid_plan_required' || error.error?.type === 'paid_model_excluded') notifyModelsChanged();
         throw new Error(error.error?.message ?? `Request failed (${response.status})`);
       }
-      const data = await response.json() as { data: Array<{ url?: string; b64_json?: string }> };
-      const newImages: GeneratedImage[] = [];
-      for (const item of data.data) {
-        if (item.b64_json) {
-          newImages.push({ blobUrl: `data:image/png;base64,${item.b64_json}`, prompt });
-        } else if (item.url) {
-          const imageResponse = await fetch(item.url, { headers: { 'x-vf-browser': '1' }, credentials: 'same-origin' });
-          if (!imageResponse.ok) throw new Error('Generated image could not be loaded.');
-          newImages.push({ blobUrl: URL.createObjectURL(await imageResponse.blob()), prompt });
-        }
-      }
-      setGeneratedImages((previous) => [...previous, ...newImages]);
+      await loadHistory(id, controller.signal);
+      if (controller.signal.aborted) return;
       setImagePrompt('');
       notifyQuotaChanged();
     } catch (error) {
-      if (!(error instanceof Error && error.name === 'AbortError')) {
+      if (!controller.signal.aborted) {
+        // The composer clears on submit; restore failed input without replacing
+        // a different prompt the user started typing while the request ran.
+        setImagePrompt(current => current.trim() ? current : prompt);
         setImageError(error instanceof Error ? error.message : 'Image generation failed');
       }
     } finally {
+      operationRef.current = false;
+      // A user cancellation remains usable without switching to another task.
       setGenerating(false);
       abortRef.current = null;
     }
@@ -400,6 +415,7 @@ function ChatPageInner() {
                   {message.content || 'Thinking…'}
                 </Markdown>
               ) : message.content}
+              <HistoryAttachments metadata={message.attachments} prompt={message.content} />
             </ChatMessageBubble>
           </AstryxChatMessage>
         ))}
@@ -410,42 +426,20 @@ function ChatPageInner() {
   const imageSurface = (
     <VStack gap={4} height="100%">
       {imageError && <Badge variant="danger">{imageError}</Badge>}
-      {generatedImages.length === 0 ? (
-        <VStack gap={2} vAlign="center" style={pageFill}>
-          <Heading level={1}>Create an image</Heading>
-          <Text color="secondary">Describe what you want and VibeFlare will generate it with the selected model.</Text>
-          <div className="w-full max-w-[720px]">
-            <ChatComposer
-              value={imagePrompt}
-              onChange={setImagePrompt}
-              onSubmit={generateImage}
-              onStop={() => abortRef.current?.abort()}
-              isStopShown={generating}
-              placeholder="Describe the image you want…"
-              input={<ChatComposerInput value={imagePrompt} onChange={setImagePrompt} onSubmit={generateImage} pasteAsToken={false} />}
-            />
-          </div>
-        </VStack>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {generatedImages.map((image, index) => (
-              <Card key={`${image.prompt}-${index}`} variant="outlined" className="overflow-hidden">
-                <img src={image.blobUrl} alt={image.prompt} width={1} height={1} className="h-auto w-full" style={{ aspectRatio: '1/1' }} />
-                <p className="truncate px-3 py-2 text-xs text-[var(--color-muted)]">{image.prompt}</p>
-              </Card>
-            ))}
-          </div>
-          <ChatComposer
-            value={imagePrompt}
-            onChange={setImagePrompt}
-            onSubmit={generateImage}
-            onStop={() => abortRef.current?.abort()}
-            isStopShown={generating}
-            placeholder="Create another image…"
-          />
-        </>
-      )}
+      {!messages.length && <VStack gap={2} vAlign="center" style={{ minHeight: 180 }}>
+        <Heading level={1}>Create an image</Heading>
+        <Text color="secondary">Describe what you want. Your prompts and images will be saved in history.</Text>
+      </VStack>}
+      {messages.map((message, index) => <Card key={message.id} variant="outlined" className="space-y-3 overflow-hidden p-4">
+        <p className="whitespace-pre-wrap text-sm text-[var(--color-text)]">{message.content}</p>
+        <HistoryAttachments metadata={message.attachments} prompt={messages[index - 1]?.content ?? message.content} />
+      </Card>)}
+      <div className="w-full max-w-[720px]">
+        <ChatComposer value={imagePrompt} onChange={setImagePrompt} onSubmit={generateImage}
+          onStop={() => abortRef.current?.abort()} isStopShown={generating} isDisabled={!model || loadingHistory}
+          placeholder="Describe the image you want…"
+          input={<ChatComposerInput value={imagePrompt} onChange={setImagePrompt} onSubmit={generateImage} isDisabled={!model || loadingHistory} pasteAsToken={false} />} />
+      </div>
     </VStack>
   );
 
@@ -460,15 +454,15 @@ function ChatPageInner() {
       <div className="vf-chat-toolbar">
         <Tabs
           className="vf-task-tabs"
-          items={TASK_ITEMS.map((task) => ({ value: task.value, label: task.label, content: null }))}
+          items={TASK_ITEMS.map((task) => ({ value: task.value, label: task.label, content: null, disabled: busy }))}
           value={activeTask}
           onValueChange={handleTaskChange}
           variant="segmented"
         />
-        <div className="vf-model-control"><ModelPicker task={activeTask} value={model} onChange={handleModelChange} /></div>
+        <div className="vf-model-control" inert={busy ? true : undefined}>{!loadingHistory && <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />}</div>
       </div>
       <div className="vf-chat-content">
-        {isAudioMode ? <AudioTranscribePanel model={model} /> : isImageMode ? imageSurface : textSurface}
+        {loadingHistory ? <div className="flex min-h-[360px] items-center justify-center"><Spinner size="lg" /></div> : isAudioMode ? <AudioTranscribePanel model={model} history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : isImageMode ? imageSurface : textSurface}
       </div>
     </div>
   );

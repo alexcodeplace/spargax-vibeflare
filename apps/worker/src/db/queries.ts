@@ -543,6 +543,7 @@ export interface ChatMessageRow {
   chat_id: string;
   role: string;
   content: string;
+  attachments: string | null;
   tokens_in: number | null;
   tokens_out: number | null;
   neurons: number | null;

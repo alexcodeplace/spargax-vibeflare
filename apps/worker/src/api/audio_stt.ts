@@ -1,3 +1,4 @@
+import { historyTarget, storeHistoryFile, saveHistoryTurn, discardHistoryFiles, type StoredHistoryFile } from './history';
 import type { Context } from 'hono';
 import type { Env, Variables } from '../env';
 import { getModel } from '../db/queries';
@@ -25,8 +26,8 @@ export async function handle(c: C): Promise<Response> {
     return c.json({ error: { type: 'invalid_request', message: 'multipart body required' } }, 400);
   }
 
-  const file = formData.get('file') as File | null;
-  if (!file) {
+  const file = formData.get('file');
+  if (!(file instanceof File)) {
     return c.json({ error: { type: 'invalid_request', message: 'file field required' } }, 400);
   }
 
@@ -37,6 +38,9 @@ export async function handle(c: C): Promise<Response> {
   if (!modelRow || modelRow.enabled === 0) {
     return c.json({ error: { type: 'not_found', message: `model '${modelName}' not found` } }, 404);
   }
+
+  const chatId = await historyTarget(c);
+  if (chatId instanceof Response) return chatId;
 
   const quota = await peekQuota(env);
   if (quota.used >= quota.limit) {
@@ -75,6 +79,17 @@ export async function handle(c: C): Promise<Response> {
     durationMs: Date.now() - start,
   });
 
+  if (typeof out.text !== 'string') return c.json({ error: { type: 'server_error', message: 'The model returned an invalid transcript.' } }, 502);
+  if (chatId) {
+    const saved = await storeHistoryFile(env, userId, 'audio', file.name || 'audio.wav', /^audio\/[a-zA-Z0-9.+-]+$/.test(file.type) ? file.type : 'audio/wav', audio);
+    try {
+      const metadata = { version: 1 as const, task: 'automatic-speech-recognition' as const, files: [saved.file] };
+      await saveHistoryTurn(env, userId, chatId, { model: modelName, userText: `Transcribe ${file.name || 'audio'}`, assistantText: out.text, metadata: { ...metadata, files: [] }, userMetadata: metadata, neurons });
+    } catch (error) {
+      await discardHistoryFiles(env, userId, [saved]);
+      throw error;
+    }
+  }
   const result = sttOutToOpenAI(out, responseFormat);
 
   if (responseFormat === 'text') {
