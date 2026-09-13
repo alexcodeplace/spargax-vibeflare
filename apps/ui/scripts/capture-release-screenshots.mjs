@@ -110,6 +110,10 @@ try {
   const deselect = page.waitForResponse(r => r.url().endsWith('/admin/models/visibility') && r.request().method() === 'PATCH');
   await page.getByRole('checkbox', { name: '@cf/meta/llama-3.1-8b-instruct-fp8', exact: true }).uncheck();
   await requireOk(await deselect, 'model preference save');
+  const hiddenModel = page.getByRole('checkbox', { name: '@cf/meta/llama-3.1-8b-instruct-fp8', exact: true });
+  await expect(hiddenModel).toBeEnabled();
+  await expect(hiddenModel).not.toBeChecked();
+  await expect(page.getByText('Model hidden from chat', { exact: true })).not.toBeVisible({ timeout: 15_000 });
   await capture('vibeflare-settings-models.png', '/settings/models/', 'Personal model checkboxes, paid-model policy and linkable selected Settings section.');
 
   await page.getByRole('button', { name: 'Toggle theme' }).click();
@@ -134,7 +138,7 @@ try {
   await composer.fill('Show me a sample conversation in my AI workspace.');
   await composer.press('Enter');
   await expect(page.getByText('Hello from VibeFlare E2E', { exact: true })).toBeVisible();
-  await expect(page.locator('.vf-workspace-chats').getByRole('link')).toHaveCount(1);
+  await expect(page.getByRole('list', { name: 'Workspace chats' }).getByRole('link')).toHaveCount(1);
   await capture('vibeflare-chat.png', '/chat/?chat_id=<fixture>', 'Persisted browser conversation and Workspace history; response is explicitly the local E2E fixture.');
 
   await visit('/keys/', 'keys-page');
@@ -148,7 +152,7 @@ try {
   assert.equal(typeof secret, 'string');
   const secretBlock = page.locator('pre').filter({ hasText: secret });
   await expect(secretBlock).toBeVisible();
-  await capture('vibeflare-key-creation.png', '/keys/', 'One-time local API-key reveal with the secret block deliberately masked.', { mask: [secretBlock] });
+  await capture('vibeflare-key-creation.png', '/keys/', 'One-time local API-key reveal with the secret block deliberately masked.', { mask: [secretBlock], maskColor: '#344b67' });
 
   const admin = await (await post('/admin/keys', { label: 'screenshot-doctor', is_admin: true })).json();
   assert.ok(typeof admin.full === 'string' && admin.full.startsWith('vf-'));
