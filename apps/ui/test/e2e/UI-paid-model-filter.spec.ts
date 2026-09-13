@@ -39,7 +39,7 @@ test('paid models are excluded by default and tagged when explicitly included', 
 
     await page.goto('/settings');
     await waitForHydratedIsland(page, 'settings-page');
-    await page.getByRole('tab', { name: 'Models' }).click();
+    await page.getByRole('link', { name: 'Models' }).click();
     const excludePaid = page.getByRole('checkbox', { name: 'Exclude paid' });
     await expect(excludePaid).toBeChecked();
     await page.screenshot({ path: 'test-results/exclude-paid-settings.png', fullPage: true, animations: 'disabled' });
@@ -72,14 +72,14 @@ test('paid models are excluded by default and tagged when explicitly included', 
     await page.keyboard.press('Escape');
     await page.goto('/settings');
     await waitForHydratedIsland(page, 'settings-page');
-    await page.getByRole('tab', { name: 'Models' }).click();
+    await page.getByRole('link', { name: 'Models' }).click();
     await expect(page.getByRole('checkbox', { name: 'Exclude paid' })).not.toBeChecked();
     const restore = page.waitForResponse(r => r.url().endsWith('/admin/settings') && r.request().method() === 'PUT');
     await page.getByRole('checkbox', { name: 'Exclude paid' }).click();
     expect((await restore).status()).toBe(200);
     await page.reload();
     await waitForHydratedIsland(page, 'settings-page');
-    await page.getByRole('tab', { name: 'Models' }).click();
+    await page.getByRole('link', { name: 'Models' }).click();
     await expect(page.getByRole('checkbox', { name: 'Exclude paid' })).toBeChecked();
     const excluded = await page.request.get('/admin/models');
     expect((await excluded.json()).models.some((m: { name: string }) => m.name === PAID_MODEL)).toBe(false);

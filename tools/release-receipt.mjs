@@ -41,9 +41,9 @@ const requiredEvidence = [
   ['standalone Wrangler config validation', /generated standalone Wrangler config/],
   ['Cloudflare Access Wrangler config validation', /generated cf_access Wrangler config/],
   ['CLI tests', /apps\/cli test:[\s\S]*?Tests\s+26 passed/],
-  ['UI component tests', /apps\/ui test:[\s\S]*?Tests\s+19 passed/],
-  ['Worker tests', /apps\/worker test:[\s\S]*?Tests\s+125 passed/],
-  ['Playwright suite', /56 passed \(/],
+  ['UI component tests', /apps\/ui test:[\s\S]*?Tests\s+30 passed/],
+  ['Worker tests', /apps\/worker test:[\s\S]*?Tests\s+134 passed/],
+  ['Playwright suite', /75 passed \(/],
 ];
 for (const [name, pattern] of requiredEvidence) {
   if (!pattern.test(log)) throw new Error(`release gate log is missing passing evidence for ${name}`);
@@ -86,10 +86,10 @@ const receipt = {
     productionDependencyAudit: 'no-known-vulnerabilities',
     tests: {
       cli: { passed: 26 },
-      uiComponents: { passed: 19 },
-      worker: { passed: 125 },
-      browserTotal: { passed: 56 },
-      uiMatrix: { passed: matrixCases, snapshotsChanged: false },
+      uiComponents: { passed: 30 },
+      worker: { passed: 134 },
+      browserTotal: { passed: 75 },
+      uiMatrix: { passed: matrixCases, snapshotsChanged: true, updatedSnapshots: ['settings-owner-desktop', 'settings-owner-mobile', 'settings-user-desktop', 'settings-user-mobile'] },
       canonicalJourneyContracts: { ready: canonicalJourneys },
     },
   },

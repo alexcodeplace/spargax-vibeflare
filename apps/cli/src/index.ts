@@ -23,7 +23,7 @@ import uninstallCmd from './commands/uninstall.js';
 const main = defineCommand({
   meta: {
     name: 'vf',
-    version: '0.9.4',
+    version: '0.9.5',
     description: 'VibeFlare CLI — self-hosted Workers AI gateway',
   },
   args: {

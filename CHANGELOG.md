@@ -2,6 +2,13 @@
 
 All notable VibeFlare changes are documented here.
 
+## 0.9.5 - 2026-09-13
+
+- Add a persistent checkbox beside each available model in Settings > Models. Personal selections determine chat picker visibility without changing other accounts or API access.
+- Keep unchecked models in Settings for re-selection; preserve selections through catalog refreshes and synchronize other open tabs. Empty selections link back to Settings instead of silently re-enabling models.
+- Add direct Settings URLs for Account, Devices, Auth, Models, Cache and owner-only Invites, with real links, reload support and browser Back/Forward navigation.
+- Protect private preference keys from the shared settings API and clean them up when the user account is deleted. No database schema migration or inference calls are needed.
+
 ## 0.9.4 - 2026-09-13
 
 - Remove the internal "billing unknown" suffix from model selection. Unclassified records are withheld, not presented as free or paid.

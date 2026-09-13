@@ -12,7 +12,7 @@ import { countUsers } from './db/queries';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-app.get('/health', (c) => c.json({ ok: true, version: '0.9.4' }));
+app.get('/health', (c) => c.json({ ok: true, version: '0.9.5' }));
 
 // Root routing happens at the Worker edge so the browser never loads /chat only
 // to be bounced again by client-side auth. A fresh install goes straight to

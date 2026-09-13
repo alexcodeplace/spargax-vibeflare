@@ -19,8 +19,8 @@ test('UJ-005 H1/A1/P1 — owner invite creates exactly one normal member', async
     await createFirstOwner(page);
 
     await page.goto('/settings');
-    await expect(page.getByRole('tab', { name: 'Invites' })).toBeVisible();
-    await page.getByRole('tab', { name: 'Invites' }).click();
+    await expect(page.getByRole('link', { name: 'Invites' })).toBeVisible();
+    await page.getByRole('link', { name: 'Invites' }).click();
     await expect(page.getByRole('heading', { name: 'Invites' })).toBeVisible();
     await page.getByRole('button', { name: 'New invite' }).click();
     await page.getByLabel('Label (optional)').fill('second-member');

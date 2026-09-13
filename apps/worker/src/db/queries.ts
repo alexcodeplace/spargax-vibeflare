@@ -1,4 +1,5 @@
 import type { User, ApiKey, Credential, ModelInfo, AuditEvent, Invite } from '@vibeflare/shared';
+import { modelVisibilityPrefix } from '../models/preferences';
 
 // ── Users ────────────────────────────────────────────────────────────────────
 
@@ -502,7 +503,9 @@ export async function listUsers(db: D1Database): Promise<User[]> {
 }
 
 export async function deleteUser(db: D1Database, id: string): Promise<void> {
+  const prefix = modelVisibilityPrefix(id);
   await db.batch([
+    db.prepare('DELETE FROM settings WHERE key >= ? AND key < ?').bind(prefix, prefix + '\uffff'),
     // Keep consumed invites consumed while releasing their historical FK to the
     // account being deleted. `used_at` remains authoritative for replay denial.
     db.prepare('UPDATE auth_invites SET used_by = NULL WHERE used_by = ?').bind(id),

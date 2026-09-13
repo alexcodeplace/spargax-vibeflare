@@ -95,7 +95,7 @@ printf 'pnpm %s\\n' "$*" >> "${commandLog}"
   const server = createServer((req, res) => {
     if (req.url === '/health') {
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, version: '0.9.4-test' }));
+      res.end(JSON.stringify({ ok: true, version: '0.9.5-test' }));
       return;
     }
     if (req.headers.authorization === 'Bearer vf-test-doctor-key' && req.url === '/v1/models') {
@@ -156,8 +156,8 @@ describe('UJ-008/UJ-009 CLI journey', () => {
 
     const doctor = await runCli(['doctor', '--name=binary-test']);
     expect(doctor.code, doctor.stderr).toBe(0);
-    expect(doctor.stdout).toContain('✓ installation: installed v0.9.4');
-    expect(doctor.stdout).toContain('✓ server: v0.9.4-test');
+    expect(doctor.stdout).toContain('✓ installation: installed v0.9.5');
+    expect(doctor.stdout).toContain('✓ server: v0.9.5-test');
     expect(doctor.stdout).toContain('○ api-client: not configured yet');
 
     baseEnv.VIBEFLARE_URL = healthUrl;
@@ -171,7 +171,7 @@ describe('UJ-008/UJ-009 CLI journey', () => {
 
     const update = await runCli(['update', '--name=binary-test']);
     expect(update.code, update.stderr).toBe(0);
-    expect(update.stdout).toContain('Updated binary-test: 0.9.4 → 0.9.4');
+    expect(update.stdout).toContain('Updated binary-test: 0.9.5 → 0.9.5');
 
     const logPath = join(tempRoot, 'provider.log');
     const beforePreview = readFileSync(logPath, 'utf8');

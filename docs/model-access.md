@@ -32,6 +32,31 @@ Workers AI error `5035` observed during a real user request records paid-require
 
 Only the owner can write this key, and only `"0"` and `"1"` are accepted. Changes notify other open tabs to refresh their model metadata. `/admin/models` returns only resolved `paid_required: true | false` entries; the OpenAI-compatible model response exposes the same metadata as `x-paid-required`. Records retain `access_source` and `access_checked_at` for auditability. Null is reserved for incomplete internal/legacy records and is not offered to the user.
 
+## Choose the models in your chat
+
+Open **Settings > Models**, directly at `/settings/models/`. Each available model has a checkbox. Unchecking it hides that model from your chat pickers; checking it restores it. Changes save immediately for the signed-in account and persist across reloads, devices and catalog refreshes. Other users' choices are independent.
+
+Hidden models stay in this Settings list so they can be restored. Search by model name or task to find an entry. Other open chat tabs refresh their picker after a saved change. If the selected model is hidden, the picker chooses another selected model; if none remain for that task, the composer is disabled and links back to Settings. A failed save restores the previous checkbox state and reports the error.
+
+This is a personal display preference, not a security or billing policy: it does not disable the model globally, modify other users, or remove models from the OpenAI-compatible `/v1/models` API. **Exclude paid** remains a separate owner-controlled policy and cannot be bypassed by checking a model.
+
+Preferences are sparse, private per-user/per-model settings. A single-model PATCH prevents concurrent checkbox edits from overwriting each other. Catalog sync never replaces these preferences. They are removed when the account is deleted and cannot be read or modified through the generic shared settings API.
+
+### Settings navigation
+
+Settings sections have actual links and generated pages:
+
+| Section | Path |
+| --- | --- |
+| Account | `/settings/account/` |
+| Devices | `/settings/devices/` |
+| Auth | `/settings/auth/` |
+| Models | `/settings/models/` |
+| Cache | `/settings/cache/` |
+| Invites (owner only) | `/settings/invites/` |
+
+`/settings/` still opens Account. Normal clicks switch sections without reloading the page; the URL, browser Back/Forward and reload stay synchronized. Links also support copy-link and opening in a new tab. A non-owner opening the Invites URL is returned to Account without rendering invite controls. Unknown section paths return 404.
+
 ## Workspace conversations
 
 The existing product navigation is retained. Conversations appear directly beneath **Workspace** as soon as the first message is submitted, before inference finishes. Titles are derived locally from that message; no title-generation model call is made.

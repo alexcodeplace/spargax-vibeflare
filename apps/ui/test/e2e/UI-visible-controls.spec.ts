@@ -7,7 +7,7 @@ async function artwork(control: Locator) {
 
 async function checkBounds(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
-  const tabs = await page.getByRole('tab').evaluateAll(elements => elements.map(el => {
+  const tabs = await page.getByRole('navigation', { name: 'Settings sections' }).getByRole('link').evaluateAll(elements => elements.map(el => {
     const r = el.getBoundingClientRect();
     const s = getComputedStyle(el);
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height, padding: parseFloat(s.paddingInlineStart), border: s.borderTopStyle };
@@ -40,15 +40,15 @@ for (const theme of ['dark', 'light'] as const) {
         if (/\/assets\/club\//.test(response.url()) && response.status() >= 400) failedAssets.push(response.url());
       });
       await page.goto('/settings/');
-      await expect(page.getByRole('tab')).toHaveCount(6);
+      await expect(page.getByRole('navigation', { name: 'Settings sections' }).getByRole('link')).toHaveCount(6);
       await checkBounds(page);
-      const account = page.getByRole('tab', { name: 'Account', exact: true });
-      const models = page.getByRole('tab', { name: 'Models', exact: true });
+      const account = page.getByRole('link', { name: 'Account', exact: true });
+      const models = page.getByRole('link', { name: 'Models', exact: true });
       expect(await artwork(account)).toContain(`/${theme}/surfaces/language-segment-active.svg`);
       expect(await artwork(models)).toContain(`/${theme}/surfaces/button-secondary-idle.svg`);
       await models.click();
-      await expect(models).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByRole('tabpanel', { name: 'Models', exact: true })).toBeVisible();
+      await expect(models).toHaveAttribute('aria-current', 'true');
+      await expect(page.getByRole('region', { name: 'Models', exact: true })).toBeVisible();
       expect(await artwork(models)).toContain(`/${theme}/surfaces/language-segment-active.svg`);
       const sync = page.getByRole('button', { name: 'Sync now', exact: true });
       await expect(sync).toHaveCSS('border-top-style', 'solid');
@@ -56,14 +56,14 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(sync).toHaveCSS('padding-left', '14px');
       await page.screenshot({ path: testInfo.outputPath(`settings-models-${theme}-${width}.png`), animations: 'disabled' });
 
-      await page.getByRole('tab', { name: 'Cache', exact: true }).click();
+      await page.getByRole('link', { name: 'Cache', exact: true }).click();
       const save = page.getByRole('button', { name: 'Save TTL', exact: true });
       await expect(save).toHaveCSS('color', 'rgb(255, 255, 255)');
       expect(await artwork(save)).toContain(`/${theme}/surfaces/button-primary-idle.svg`);
       await expect(page.getByRole('button', { name: 'Add prompt', exact: true })).toBeDisabled();
       await page.screenshot({ path: testInfo.outputPath(`settings-cache-${theme}-${width}.png`), animations: 'disabled' });
-      await page.getByRole('tab', { name: 'Invites', exact: true }).click();
-      await expect(page.getByRole('tabpanel', { name: 'Invites', exact: true })).toBeVisible();
+      await page.getByRole('link', { name: 'Invites', exact: true }).click();
+      await expect(page.getByRole('region', { name: 'Invites', exact: true })).toBeVisible();
       await checkBounds(page);
       expect(errors).toEqual([]);
       expect(failedAssets).toEqual([]);
@@ -77,7 +77,8 @@ for (const theme of ['dark', 'light'] as const) {
     for (const variant of ['primary', 'secondary', 'outline', 'ghost', 'danger']) {
       for (const size of ['sm', 'md', 'lg']) {
         const control = page.getByRole('button', { name: `${variant} ${size}`, exact: true });
-        await expect(control).toHaveCSS('display', 'inline-flex');
+        // Flex items blockify inline-flex to flex in computed styles.
+        await expect(control).toHaveCSS('display', /^(inline-)?flex$/);
         await expect(control).toHaveCSS('border-top-style', 'solid');
         await expect(control).toHaveCSS('border-radius', '12px');
         expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(size === 'sm' ? 40 : size === 'md' ? 44 : 48);
@@ -99,20 +100,20 @@ for (const theme of ['dark', 'light'] as const) {
 test('Settings tabs keep roving keyboard focus and labelled panels; buttons keep keyboard rings', async ({ page, context, baseURL }) => {
   await applyAuth(context, 'owner', baseURL!, '/settings');
   await page.goto('/settings/');
-  const account = page.getByRole('tab', { name: 'Account', exact: true });
+  const account = page.getByRole('link', { name: 'Account', exact: true });
   await account.focus();
   await page.keyboard.press('ArrowRight');
-  const devices = page.getByRole('tab', { name: 'Devices', exact: true });
+  const devices = page.getByRole('link', { name: 'Devices', exact: true });
   await expect(devices).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(devices).toHaveAttribute('aria-selected', 'true');
+  await expect(devices).toHaveAttribute('aria-current', 'true');
   await page.keyboard.press('End');
-  await expect(page.getByRole('tab', { name: 'Invites', exact: true })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'Invites', exact: true })).toBeFocused();
   await page.keyboard.press('Home');
   await expect(account).toBeFocused();
   await page.keyboard.press('Enter');
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('tabpanel', { name: 'Account', exact: true })).toBeFocused();
+  await expect(page.getByRole('region', { name: 'Account', exact: true })).toBeFocused();
   await page.keyboard.press('Tab');
   const signout = page.getByRole('button', { name: 'Sign out', exact: true });
   await expect(signout).toBeFocused();
@@ -124,9 +125,9 @@ test('Asset failures still leave bounded, usable controls; forced colors keeps s
   await applyAuth(context, 'owner', baseURL!, '/settings');
   await page.route('**/assets/club/*/surfaces/*.svg', route => route.abort());
   await page.goto('/settings/');
-  const models = page.getByRole('tab', { name: 'Models', exact: true });
+  const models = page.getByRole('link', { name: 'Models', exact: true });
   await models.click();
-  await expect(models).toHaveAttribute('aria-selected', 'true');
+  await expect(models).toHaveAttribute('aria-current', 'true');
   await expect(models).toHaveCSS('border-top-style', 'solid');
   await expect(models).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '../primitives/Card';
 import { Tabs } from '../primitives/Tabs';
 import type { TabItem } from '../primitives/Tabs';
@@ -11,27 +11,34 @@ import { Toast, ToastProvider } from '../primitives/Toast';
 import { PasskeyButton } from './PasskeyButton';
 import { HydratedIsland } from '../HydratedIsland';
 import { InvitesTab } from './InvitesTab';
+import { isSettingsTab, settingsTabFromPath, settingsTabPath, type SettingsTab } from '../../lib/settings-navigation';
 import {
   me, logout, getSettings, setSetting,
   listCredentials, revokeCredential,
   listPrompts, createPrompt, deletePrompt,
-  listModels, syncModels,
-  type UserInfo, type Credential, type PromptRecord, type ModelInfo,
+  listModelPreferences, setModelVisibility, syncModels, MODELS_CHANGED_EVENT, MODEL_POLICY_STORAGE_KEY,
+  type UserInfo, type Credential, type PromptRecord, type ModelPreference,
 } from '../../lib/api';
 
 /**
- * Settings page: Account / Devices / Auth / Cache tabs.
+ * Personal settings and model visibility with linkable sections.
  */
 export function parseExcludePaidSetting(value: string | undefined): boolean {
   if (value === undefined) return true;
   return !['0', 'false', 'off', 'no'].includes(value.trim().toLowerCase());
 }
 
-function SettingsPageInner() {
+function SettingsPageInner({ initialTab }: { initialTab: SettingsTab }) {
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [prompts, setPrompts] = useState<PromptRecord[]>([]);
-  const [models, setModels] = useState<ModelInfo[]>([]);
+  const [models, setModels] = useState<ModelPreference[]>([]);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [modelSearch, setModelSearch] = useState('');
+  const [pendingModels, setPendingModels] = useState<Set<string>>(new Set());
+  const pendingModelsRef = useRef(new Set<string>());
+  const modelsRequest = useRef(0);
   const [syncingModels, setSyncingModels] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ open: boolean; title: string; variant: 'success' | 'danger' }>({
@@ -51,7 +58,7 @@ function SettingsPageInner() {
       listCredentials().catch(() => []),
       getSettings().catch((error: Error) => { setSettingsError(error.message); return []; }),
       listPrompts().catch(() => []),
-      listModels().catch(() => []),
+      listModelPreferences().catch((error: Error) => { setModelsError(error.message); return []; }),
     ]).then(([u, creds, setts, proms, mods]) => {
       setUser(u);
       setCredentials(creds);
@@ -63,6 +70,74 @@ function SettingsPageInner() {
       setExcludePaid(parseExcludePaidSetting(setts.find(s => s.key === 'models.exclude_paid')?.value));
     }).finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    const readLocation = () => setActiveTab(settingsTabFromPath(window.location.pathname));
+    readLocation();
+    window.addEventListener('popstate', readLocation);
+    return () => window.removeEventListener('popstate', readLocation);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && user && activeTab === 'invites' && user.role !== 'owner') {
+      window.history.replaceState(window.history.state, '', settingsTabPath('account'));
+      setActiveTab('account');
+    }
+  }, [loading, user, activeTab]);
+
+  useEffect(() => {
+    document.title = `VibeFlare | Settings | ${activeTab[0]!.toUpperCase()}${activeTab.slice(1)}`;
+  }, [activeTab]);
+
+  function navigateTab(value: string) {
+    if (!isSettingsTab(value) || value === activeTab) return;
+    const url = new URL(window.location.href);
+    url.pathname = settingsTabPath(value);
+    url.hash = '';
+    window.history.pushState(window.history.state, '', url);
+    setActiveTab(value);
+  }
+
+  async function reloadModelPreferences() {
+    const version = ++modelsRequest.current;
+    const fresh = await listModelPreferences();
+    if (version !== modelsRequest.current) return;
+    // Do not overwrite in-flight optimistic choices with a stale GET response.
+    setModels(previous => fresh.map(row => pendingModelsRef.current.has(row.name)
+      ? previous.find(model => model.name === row.name) ?? row : row));
+    setModelsError(null);
+  }
+
+  useEffect(() => {
+    const refresh = () => { void reloadModelPreferences().catch((error: Error) => setModelsError(error.message)); };
+    const onStorage = (event: StorageEvent) => { if (event.key === MODEL_POLICY_STORAGE_KEY) refresh(); };
+    window.addEventListener(MODELS_CHANGED_EVENT, refresh);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      modelsRequest.current++;
+      window.removeEventListener(MODELS_CHANGED_EVENT, refresh);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
+  async function handleModelVisibility(name: string, visible: boolean) {
+    if (pendingModelsRef.current.has(name) || syncingModels || savingPaidPolicy) return;
+    const previous = models.find(model => model.name === name)?.visible;
+    if (previous === undefined) return;
+    pendingModelsRef.current.add(name);
+    setPendingModels(new Set(pendingModelsRef.current));
+    setModels(rows => rows.map(row => row.name === name ? { ...row, visible } : row));
+    try {
+      await setModelVisibility(name, visible);
+      showToast(visible ? 'Model shown in chat' : 'Model hidden from chat');
+    } catch (error) {
+      setModels(rows => rows.map(row => row.name === name ? { ...row, visible: previous } : row));
+      showToast((error as Error).message, 'danger');
+    } finally {
+      pendingModelsRef.current.delete(name);
+      setPendingModels(new Set(pendingModelsRef.current));
+    }
+  }
 
   function showToast(title: string, variant: 'success' | 'danger' = 'success') {
     setToast({ open: true, title, variant });
@@ -128,13 +203,13 @@ function SettingsPageInner() {
   }
 
   async function handleExcludePaidChange(next: boolean) {
-    if (savingPaidPolicy) return;
+    if (savingPaidPolicy || pendingModelsRef.current.size > 0) return;
     const previous = excludePaid;
     setSavingPaidPolicy(true);
     setExcludePaid(next);
     try {
       await setSetting('models.exclude_paid', next ? '1' : '0');
-      setModels(await listModels().catch(() => next ? models.filter((m) => m.paid_required !== true) : models));
+      await reloadModelPreferences().catch((error: Error) => setModelsError(error.message));
       showToast(next ? 'Paid models excluded' : 'Paid models included');
     } catch (e) {
       setExcludePaid(previous);
@@ -145,11 +220,11 @@ function SettingsPageInner() {
   }
 
   async function handleSyncModels() {
+    if (pendingModelsRef.current.size > 0 || savingPaidPolicy) return;
     setSyncingModels(true);
     try {
       const r = await syncModels();
-      const fresh = await listModels().catch(() => []);
-      setModels(fresh);
+      await reloadModelPreferences();
       showToast(`Synced ${r.synced} models`);
     } catch (e) {
       showToast((e as Error).message, 'danger');
@@ -175,6 +250,9 @@ function SettingsPageInner() {
       </div>
     );
   }
+
+  const visibleModels = models.filter(model => `${model.name} ${model.task}`.toLowerCase().includes(modelSearch.trim().toLowerCase()));
+  const selectedCount = models.filter(model => model.visible).length;
 
   const tabItems: TabItem[] = [
     {
@@ -265,7 +343,7 @@ function SettingsPageInner() {
               id="models-exclude-paid"
               label="Exclude paid"
               checked={excludePaid}
-              disabled={user?.role !== 'owner' || savingPaidPolicy || settingsError !== null}
+              disabled={user?.role !== 'owner' || savingPaidPolicy || pendingModels.size > 0 || settingsError !== null}
               onCheckedChange={handleExcludePaidChange}
             />
             <p className="text-xs text-[var(--color-muted)]">
@@ -278,22 +356,31 @@ function SettingsPageInner() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text)]">Workers AI Models</p>
-                <p className="text-xs text-[var(--color-muted)] mt-1">{models.length} models available</p>
+                <p className="text-xs text-[var(--color-muted)] mt-1">{selectedCount} of {models.length} models shown in your chat</p>
               </div>
-              <Button variant="outline" size="sm" loading={syncingModels} onClick={handleSyncModels}>
+              <Button variant="outline" size="sm" loading={syncingModels} disabled={savingPaidPolicy || pendingModels.size > 0} onClick={handleSyncModels}>
                 Sync now
               </Button>
             </div>
-            {models.length > 0 && (
-              <div className="max-h-64 overflow-y-auto space-y-1">
-                {models.map(m => (
-                  <div key={m.name} className="flex items-center justify-between py-1 border-b border-[var(--color-border)]">
-                    <span className="text-xs font-mono text-[var(--color-text)] truncate flex-1 mr-2">{m.paid_required ? '💲 Paid · ' : ''}{m.name}</span>
-                    <Badge variant="muted" size="sm">{m.task}</Badge>
-                  </div>
-                ))}
-              </div>
-            )}
+            <p className="text-xs text-[var(--color-muted)]">Check the models you want in your chat picker. Changes save automatically for your account and do not disable models for other users or API clients.</p>
+            <Input id="model-search" label="Search models" fullWidth value={modelSearch} onChange={event => setModelSearch(event.target.value)} placeholder="Search by model or task" />
+            {modelsError && <div role="alert" className="text-sm text-[var(--color-danger)]">Could not refresh your model list. <button type="button" className="underline" onClick={() => void reloadModelPreferences().catch((error: Error) => setModelsError(error.message))}>Retry</button></div>}
+            <div data-testid="model-visibility-list" className="max-h-96 overflow-y-auto space-y-1">
+              {visibleModels.map(m => (
+                <div key={m.name} data-model-name={m.name} className="flex min-w-0 flex-wrap items-center gap-2 py-2 border-b border-[var(--color-border)]">
+                  <Checkbox
+                    id={`model-visible-${encodeURIComponent(m.name)}`}
+                    label={`${m.paid_required ? '💲 Paid · ' : ''}${m.name}`}
+                    checked={m.visible}
+                    disabled={pendingModels.has(m.name) || syncingModels || savingPaidPolicy}
+                    onCheckedChange={checked => void handleModelVisibility(m.name, checked)}
+                    className="min-w-0 flex-1 [overflow-wrap:anywhere]"
+                  />
+                  <Badge variant="muted" size="sm">{m.task}</Badge>
+                </div>
+              ))}
+              {!visibleModels.length && !modelsError && <p className="py-3 text-sm text-[var(--color-muted)]">{models.length ? 'No models match your search.' : 'No models are available under the current access policy.'}</p>}
+            </div>
           </Card>
         </div>
       ),
@@ -378,7 +465,7 @@ function SettingsPageInner() {
   return (
     <ToastProvider>
       <div data-testid="settings-page" className="max-w-2xl">
-        <Tabs items={tabItems} />
+        <Tabs navigation label="Settings sections" items={tabItems.map(item => ({ ...item, href: settingsTabPath(item.value as SettingsTab) }))} value={activeTab} onValueChange={navigateTab} />
       </div>
 
       <Toast
@@ -391,10 +478,10 @@ function SettingsPageInner() {
   );
 }
 
-export function SettingsPage() {
+export function SettingsPage({ initialTab = 'account' }: { initialTab?: SettingsTab }) {
   return (
     <HydratedIsland>
-      <SettingsPageInner />
+      <SettingsPageInner initialTab={initialTab} />
     </HydratedIsland>
   );
 }

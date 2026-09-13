@@ -1,0 +1,16 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import AppShell from '../../components/layouts/AppShell.astro';
+import { SettingsPage } from '../../components/widgets/SettingsPage';
+import { SETTINGS_TABS, type SettingsTab } from '../../lib/settings-navigation';
+
+export const getStaticPaths = (() => SETTINGS_TABS.map(tab => ({ params: { tab }, props: { tab } }))) satisfies GetStaticPaths;
+interface Props { tab: SettingsTab }
+const { tab } = Astro.props;
+---
+<Base title="VibeFlare | Settings">
+  <AppShell title="Settings">
+    <SettingsPage initialTab={tab} client:load />
+  </AppShell>
+</Base>

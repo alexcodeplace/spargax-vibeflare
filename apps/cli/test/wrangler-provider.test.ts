@@ -79,7 +79,7 @@ describe('WranglerProvider deployment health', () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response('not ready', { status: 404 }))
       .mockRejectedValueOnce(new Error('connection reset'))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true, version: '0.9.4' }), {
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true, version: '0.9.5' }), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }));
@@ -88,7 +88,7 @@ describe('WranglerProvider deployment health', () => {
     const resultPromise = new WranglerProvider('/unused/wrangler').health('https://vf.example.workers.dev');
     await vi.advanceTimersByTimeAsync(4_000);
 
-    await expect(resultPromise).resolves.toEqual({ ok: true, version: '0.9.4' });
+    await expect(resultPromise).resolves.toEqual({ ok: true, version: '0.9.5' });
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });

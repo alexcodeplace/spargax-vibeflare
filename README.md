@@ -12,6 +12,8 @@ When Cloudflare finishes, open the Worker URL. A fresh install routes you to `/s
 
 VibeFlare loads the full public Workers AI catalog directly from Cloudflare with no API token. The current model registry refreshes lazily when models are opened after 24 hours, and **Refresh models** forces an immediate sync. Known-good models are ranked first, with `@cf/meta/llama-3.2-3b-instruct` as the default text model. **Settings > Models > Exclude paid** is on by default. The owner can turn it off to include models marked **💲 Paid**. Classification reads Cloudflare’s explicit paid-access flag, not the presence of a price-table row. Only current, verified entries are offered. Metadata refresh and local titles make no synthetic inference calls.
 
+Choose which models appear in your chat with the checkboxes at **Settings > Models** (`/settings/models/`). Choices save for your account and survive catalog refreshes. Every Settings section has its own URL, so it can be bookmarked or opened directly.
+
 Saved conversations appear directly under **Workspace** as soon as the first message is submitted, without replacing the other menus. Titles come from the first message and do not consume neurons. See [model access and Workspace behavior](docs/model-access.md) for the policy and API details.
 
 VibeFlare is for people building with AI who want one private place for Cloudflare Workers AI instead of wiring authentication, API keys, model lists, usage tracking, files, and chat history into every project themselves.

@@ -130,6 +130,8 @@ export function ModelPicker({ onChange, task, value }: ModelPickerProps) {
       <div className="min-w-0 flex-1">
         {error && models.length === 0 ? (
           <Badge variant="danger">Could not load models. Try Refresh models.</Badge>
+        ) : filtered.length === 0 ? (
+          <p className="text-sm text-[var(--color-muted)]">No models selected for this tab. <a href="/settings/models/" className="underline">Choose models in Settings</a></p>
         ) : (
           <Select
             placeholder="Select a Model…"
