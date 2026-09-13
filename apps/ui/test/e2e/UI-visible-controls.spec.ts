@@ -85,7 +85,7 @@ for (const theme of ['dark', 'light'] as const) {
         await expect(control).toHaveCSS('border-top-style', 'solid');
         await expect(control).toHaveCSS('border-radius', '12px');
         expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(size === 'sm' ? 40 : size === 'md' ? 44 : 48);
-        if (variant !== 'danger') expect(await artwork(control)).toContain(`/assets/club/${theme}/surfaces/button-`);
+        if (variant !== 'danger') await expect.poll(() => artwork(control), { message: `Hydrated ${variant} ${size} artwork` }).toContain(`/assets/club/${theme}/surfaces/button-`);
       }
     }
     const primary = page.getByRole('button', { name: 'primary md', exact: true });

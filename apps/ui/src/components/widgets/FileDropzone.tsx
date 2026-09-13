@@ -67,7 +67,9 @@ export function FileDropzone({ onUploaded, onFiles, accept, maxBytes = 25 * 1024
     event.preventDefault(); event.stopPropagation();
     void choose(Array.from(event.dataTransfer.files));
   }
-  const selected = selectedName === undefined ? doneName : selectedName;
+  // Task inputs retain their selected file. The general Files uploader resets
+  // to its prompt after upload; the new file is represented by its gallery row.
+  const selected = selectedName === undefined ? (onFiles ? doneName : '') : selectedName;
   return <div className={`vf-dropzone ${compact ? 'vf-dropzone--compact' : ''} ${className}`} data-testid="file-dropzone"
     data-dragging={dragging ? 'true' : 'false'} aria-busy={working}
     onDragEnter={event => { event.preventDefault(); if (!disabled && !working) setDragging(true); }}
