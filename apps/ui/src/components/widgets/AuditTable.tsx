@@ -35,53 +35,49 @@ export function AuditTable() {
 
   return (
     <Card data-testid="audit-table" className="overflow-hidden p-0">
-      {/* header row */}
-      <div className="grid grid-cols-7 gap-2 px-4 py-2 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-        {['Time','Endpoint','Model','Status','Neurons','Duration','Cached'].map(h => (
-          <span key={h} className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wide">{h}</span>
-        ))}
-      </div>
-
-      <div className="min-h-[360px]">
-        {loading ? (
-          <div className="flex min-h-[360px] items-center justify-center">
-            <Spinner size="md" />
-          </div>
-        ) : error ? (
-          <div className="p-4"><Badge variant="danger">{error}</Badge></div>
-        ) : pageRows.length === 0 ? (
-          <p className="px-4 py-6 text-sm text-[var(--color-muted)]">No entries.</p>
-        ) : pageRows.map(row => (
-          <div
-            key={row.id}
-            className="grid grid-cols-7 gap-2 px-4 py-2 border-b border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors"
-          >
-            <span className="text-xs text-[var(--color-muted)] truncate">{row.ts}</span>
-            <span className="text-xs text-[var(--color-text)] truncate">{row.endpoint}</span>
-            <span className="text-xs text-[var(--color-muted)] truncate">{row.model}</span>
-            <Badge variant={statusVariant(row.status)} size="sm">{row.status}</Badge>
-            <span className="text-xs text-[var(--color-muted)]">{row.neurons.toLocaleString()}</span>
-            <span className="text-xs text-[var(--color-muted)]">{row.duration_ms}ms</span>
-            <Badge variant={row.cached ? 'success' : 'muted'} size="sm">
-              {row.cached ? 'yes' : 'no'}
-            </Badge>
-          </div>
-        ))}
+      <div className="overflow-x-auto" role="region" aria-label="Request audit log" tabIndex={0}>
+        <table className="vf-data-table min-w-[48rem] whitespace-nowrap" aria-busy={loading}>
+          <caption className="sr-only">Recent request audit</caption>
+          <thead className="bg-[var(--color-surface)]">
+            <tr>{['Time', 'Endpoint', 'Model', 'Status', 'Neurons', 'Duration', 'Cached'].map(heading => (
+              <th key={heading} scope="col" className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wide">{heading}</th>
+            ))}</tr>
+          </thead>
+          <tbody className="h-[360px] text-xs">
+            {loading ? (
+              <tr><td colSpan={7}><div role="status" aria-label="Loading request audit" className="flex items-center justify-center"><Spinner size="md" /></div></td></tr>
+            ) : error ? (
+              <tr><td colSpan={7}><div role="alert" className="p-4 whitespace-normal"><Badge variant="danger">{error}</Badge></div></td></tr>
+            ) : pageRows.length === 0 ? (
+              <tr><td colSpan={7}><p className="py-6 text-sm text-[var(--color-muted)]">No entries.</p></td></tr>
+            ) : pageRows.map(row => (
+              <tr key={row.id} className="hover:bg-[var(--color-surface)] transition-colors">
+                <td className="text-[var(--color-muted)]">{row.ts}</td>
+                <td className="text-[var(--color-text)]">{row.endpoint}</td>
+                <td className="text-[var(--color-muted)]">{row.model}</td>
+                <td><Badge variant={statusVariant(row.status)} size="sm">{row.status}</Badge></td>
+                <td className="text-[var(--color-muted)]">{row.neurons.toLocaleString()}</td>
+                <td className="text-[var(--color-muted)]">{row.duration_ms}ms</td>
+                <td><Badge variant={row.cached ? 'success' : 'muted'} size="sm">{row.cached ? 'yes' : 'no'}</Badge></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* pagination */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--color-border)]">
-        <span className="text-xs text-[var(--color-muted)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-[var(--color-border)]">
+        <span role="status" aria-live="polite" aria-atomic="true" className="text-xs text-[var(--color-muted)]">
           Page {page + 1} of {totalPages} ({rows.length} entries)
         </span>
-        <div className="flex gap-2">
+        <nav aria-label="Audit log pages" className="flex flex-wrap gap-2">
           <Button variant="ghost" size="sm" disabled={page === 0} onClick={() => setPage(p => p - 1)}>
             Prev
           </Button>
           <Button variant="ghost" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>
             Next
           </Button>
-        </div>
+        </nav>
       </div>
     </Card>
   );

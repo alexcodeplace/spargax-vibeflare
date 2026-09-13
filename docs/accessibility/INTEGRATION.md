@@ -27,3 +27,7 @@ The canonical cross-project checklist is `platform-modules/mod:docs/standards/ac
 ## Using the controls
 
 Open the labelled Accessibility button fixed near the lower corner. Keyboard users can Tab to it and press Enter, move through native controls with Tab/Shift+Tab, and close it with Escape. Text, contrast, spacing, focus, reading and motion controls apply immediately. Choose Reset adjustments to clear only these preferences. The system reduced-motion preference remains respected. Settings stay on the current website origin; the same browser visiting another product has separate settings. The permanent footer statement link remains available without the panel.
+
+## Analytics-specific remediation
+
+The 320px/200%-text page audit found a clipped pagination action. The request-audit widget must wrap its status/navigation controls, expose real table headers and cells, retain complete endpoint/model text, and offer a named keyboard-focusable scroller for its inherently two-dimensional data. Preserve loading geometry and verify against the existing analytics layout-shift and durable-audit journeys.

@@ -57,7 +57,27 @@ for (const route of ['/chat/', '/history/', '/files/', '/analytics/', '/keys/', 
     await expect(page.getByRole('main')).toHaveCount(1);
     await expect(page.locator('.pm-a11y-launcher')).toBeVisible();
     await page.waitForLoadState('networkidle');
+    if (route === '/analytics/') {
+      const audit = page.getByRole('table', { name: 'Recent request audit' });
+      await expect(audit).toBeVisible();
+      await expect(audit.getByRole('columnheader')).toHaveCount(7);
+      await expect(page.getByRole('region', { name: 'Request audit log' })).toHaveAttribute('tabindex', '0');
+    }
     const results = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(results.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.map(n => ({ target: n.target, summary: n.failureSummary })) }))).toEqual([]);
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.locator('.pm-a11y-launcher').click();
+    await page.locator('[id$="-textScale"]').selectOption('200');
+    await page.locator('[id$="-textSpacing"]').check();
+    await page.keyboard.press('Escape');
+    const reflow = await page.getByRole('main').evaluate(el => ({
+      width: el.clientWidth, scrollWidth: el.scrollWidth,
+      overflowing: [...el.querySelectorAll('h1,h2,label,button,input,select,textarea')].filter(node => {
+        const box = node.getBoundingClientRect();
+        return box.width && (box.right > innerWidth + 2 || box.left < -2);
+      }).map(node => ({ tag: node.tagName, text: node.textContent?.slice(0,75), className: node.className }))
+    }));
+    expect(reflow.overflowing, JSON.stringify(reflow)).toEqual([]);
+
   });
 }
