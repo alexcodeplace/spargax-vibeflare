@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode, type MouseEvent } from 'react';
+import { useEffect, useId, useState, type ReactNode, type MouseEvent } from 'react';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 
 export interface TabItem {
@@ -27,12 +27,12 @@ function labelText(label: ReactNode, fallback: string): string {
 }
 
 export function Tabs({ items, defaultValue, value: controlledValue, onValueChange, className, variant = 'underline', touchFriendly = false, navigation = false, label = 'Sections' }: TabsProps) {
+  const id = useId();
   const [internalValue, setInternalValue] = useState(defaultValue ?? items[0]?.value ?? '');
   useEffect(() => {
     if (controlledValue !== undefined) setInternalValue(controlledValue);
   }, [controlledValue]);
   const value = controlledValue ?? internalValue;
-  const active = items.find((item) => item.value === value);
 
   function select(next: string) {
     const item = items.find((candidate) => candidate.value === next);
@@ -42,22 +42,26 @@ export function Tabs({ items, defaultValue, value: controlledValue, onValueChang
   }
 
   return (
-    <div className={className}>
+    <div className={`vf-tabs ${className ?? ''}`} data-vf-variant={variant}>
       <TabList
+        className="vf-tab-list"
+        overflow="visible"
         role={navigation ? undefined : 'tablist'}
         aria-label={label}
         value={value}
         onChange={select}
         layout={variant === 'segmented' ? 'fill' : 'hug'}
-        hasDivider={variant !== 'segmented'}
+        hasDivider={false}
       >
         {items.map((item) => (
           <Tab
             key={item.value}
+            id={`${id}-tab-${item.value}`}
+            className="vf-tab"
             value={item.value}
             label={labelText(item.label, item.value)}
             href={navigation ? item.href : undefined}
-            panelId={navigation ? undefined : `vf-tab-panel-${item.value}`}
+            panelId={navigation ? undefined : `${id}-panel-${item.value}`}
             data-testid={item.testid}
             style={touchFriendly ? { minWidth: 44, minHeight: 44 } : undefined}
             {...(item.disabled
@@ -77,9 +81,19 @@ export function Tabs({ items, defaultValue, value: controlledValue, onValueChang
           />
         ))}
       </TabList>
-      <div id={`vf-tab-panel-${value}`} role={navigation ? 'region' : 'tabpanel'} aria-label={navigation && active ? labelText(active.label, active.value) : undefined} className="pt-4">
-        {active?.content}
-      </div>
+      {items.map((item) => (
+        <div
+          key={item.value}
+          id={`${id}-panel-${item.value}`}
+          role={navigation ? 'region' : 'tabpanel'}
+          aria-labelledby={`${id}-tab-${item.value}`}
+          hidden={item.value !== value}
+          tabIndex={0}
+          className="vf-tab-panel pt-4"
+        >
+          {item.value === value ? item.content : null}
+        </div>
+      ))}
     </div>
   );
 }

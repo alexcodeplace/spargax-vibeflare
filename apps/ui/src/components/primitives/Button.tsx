@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { isValidElement, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Button as AstryxButton } from '@astryxdesign/core/Button';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
@@ -20,9 +20,20 @@ const variants = {
   danger: 'destructive',
 } as const;
 
-function textLabel(children: ReactNode, fallback?: string): string {
-  if (typeof children === 'string' || typeof children === 'number') return String(children);
-  return fallback ?? 'Action';
+function childText(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(childText).join('');
+  if (isValidElement<{ children?: ReactNode; 'aria-hidden'?: boolean | 'true' | 'false' }>(node)) {
+    if (node.props['aria-hidden'] === true || node.props['aria-hidden'] === 'true') return '';
+    return childText(node.props.children);
+  }
+  return '';
+}
+
+function textLabel(children: ReactNode): string {
+  // Compound JSX labels must not all become the accessible name "Action".
+  // Read the supplied content only; never execute a child component.
+  return childText(children).replace(/\s+/g, ' ').trim() || 'Action';
 }
 
 /** Compatibility adapter: all application buttons now render Astryx Button. */
@@ -53,6 +64,8 @@ export function Button({
       isDisabled={disabled}
       isLoading={loading}
       className={`vf-button ${className ?? ''}`}
+      data-vf-variant={variant}
+      data-vf-size={size}
       style={style}
       type={type}
       onClick={onClick}

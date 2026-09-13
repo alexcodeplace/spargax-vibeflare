@@ -31,6 +31,7 @@ import { HydratedIsland } from '../HydratedIsland';
 
 function DesignSystemGalleryInner() {
   const [toastOpen, setToastOpen] = useState(false);
+  const [inviteDemoOpen, setInviteDemoOpen] = useState(false);
   const [checked, setChecked] = useState(false);
   const [selectVal, setSelectVal] = useState('');
 
@@ -389,10 +390,11 @@ function DesignSystemGalleryInner() {
               />
             </div>
             <div>
-              <h3 className="text-sm text-[var(--color-muted)] mb-2">InviteCreateModal — open in form state</h3>
+              <h3 className="text-sm text-[var(--color-muted)] mb-2">InviteCreateModal</h3>
+              <Button variant="secondary" onClick={() => setInviteDemoOpen(true)}>Open invite form</Button>
               <InviteCreateModal
-                open
-                onClose={() => {}}
+                open={inviteDemoOpen}
+                onClose={() => setInviteDemoOpen(false)}
                 onCreate={async () => ({ full: 'vfi-demo-not-real-token-xxxxxxxxxxxxx', prefix: 'vfi-demo' })}
               />
             </div>
