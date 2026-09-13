@@ -28,6 +28,9 @@ test('shared controls survive Astro navigation and retain accessible contrast an
   }
   await panel.locator('[id$="-contrast"]').selectOption('yellow');
   expect((await new AxeBuilder({ page }).withTags(tags).analyze()).violations).toEqual([]);
+  await page.keyboard.press('Escape');
+  expect((await new AxeBuilder({ page }).withTags(tags).analyze()).violations).toEqual([]);
+  await launcher.click();
   await panel.locator('[id$="-textScale"]').selectOption('200');
   await panel.locator('[id$="-textSpacing"]').check();
   await page.setViewportSize({ width: 320, height: 800 });
@@ -39,8 +42,22 @@ test('shared controls survive Astro navigation and retain accessible contrast an
   await expect(launcher).toBeFocused();
   await expect(page.locator('html')).toHaveAttribute('data-a11y-motion', 'true');
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.getByRole('link', { name: 'Files', exact: true }).first().click();
+  await page.getByRole('link', { name: 'Projects', exact: true }).first().click();
   await expect(page.locator('.pm-a11y-launcher')).toHaveCount(1);
   await expect(page.getByRole('button', { name: /Browse:/ })).toBeVisible();
   expect((await new AxeBuilder({ page }).withTags(tags).analyze()).violations).toEqual([]);
 });
+
+for (const route of ['/chat/', '/history/', '/files/', '/analytics/', '/keys/', '/settings/']) {
+  test(`default signed-in page accessibility: ${route}`, async ({ page, context, baseURL }) => {
+    await applyAuth(context, 'owner', baseURL!, route);
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(200);
+    expect(new URL(page.url()).pathname.replace(/\/$/, '')).toBe(route.replace(/\/$/, ''));
+    await expect(page.getByRole('main')).toHaveCount(1);
+    await expect(page.locator('.pm-a11y-launcher')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    const results = await new AxeBuilder({ page }).withTags(tags).analyze();
+    expect(results.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.map(n => ({ target: n.target, summary: n.failureSummary })) }))).toEqual([]);
+  });
+}

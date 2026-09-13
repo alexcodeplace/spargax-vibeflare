@@ -19,3 +19,11 @@ Before a legal conformance claim, the operator must confirm applicable Israeli s
 ## Regression gate
 
 The app's existing Playwright suite includes accessibility tests. The shared package has its own built-consumer tests, so acceptance covers both the reusable implementation and this framework's lifecycle. Keep CI, package integrity and existing regression checks required before merging.
+
+## Shared legal-readiness and manual acceptance procedure
+
+The canonical cross-project checklist is `platform-modules/mod:docs/standards/accessibility-release-readiness.md`. It defines evidence requirements for complete journeys, screen readers, captions/documents, contrast/zoom and a monitored account-free reporting channel. The local statement deliberately describes the current evaluation status rather than claiming certification.
+
+## Using the controls
+
+Open the labelled Accessibility button fixed near the lower corner. Keyboard users can Tab to it and press Enter, move through native controls with Tab/Shift+Tab, and close it with Escape. Text, contrast, spacing, focus, reading and motion controls apply immediately. Choose Reset adjustments to clear only these preferences. The system reduced-motion preference remains respected. Settings stay on the current website origin; the same browser visiting another product has separate settings. The permanent footer statement link remains available without the panel.
