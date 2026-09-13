@@ -20,7 +20,7 @@ describe('zero-config GitHub web auth', () => {
     const manifest = buildGithubAppManifest('https://vf.example.workers.dev', 'VibeFlare abc123');
     expect(manifest).toEqual({
       name: 'VibeFlare abc123',
-      url: 'https://github.com/alexcodeplace/spargax-vibeflare',
+      url: 'https://github.com/alexcodeplace/vibeflare',
       description: 'GitHub sign-in for this self-hosted VibeFlare deployment.',
       redirect_url: 'https://vf.example.workers.dev/auth/setup/github/manifest/callback',
       callback_urls: ['https://vf.example.workers.dev/auth/github/oauth/callback'],

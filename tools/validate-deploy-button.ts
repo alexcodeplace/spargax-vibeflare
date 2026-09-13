@@ -12,7 +12,7 @@ const requireText = (text: string, needle: string, label: string) => {
 const readme = read('README.md');
 requireText(
   readme,
-  '[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/spargax-vibeflare)',
+  '[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/vibeflare)',
   'README',
 );
 

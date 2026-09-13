@@ -129,8 +129,8 @@ https://developers.cloudflare.com/workers/wrangler/install-and-update/
 ### 2. Download VibeFlare
 
 ```bash
-git clone https://github.com/alexcodeplace/spargax-vibeflare.git
-cd spargax-vibeflare
+git clone https://github.com/alexcodeplace/vibeflare.git
+cd vibeflare
 ./install.sh
 ```
 
