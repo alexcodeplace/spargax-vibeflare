@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { applyAuth } from './ui-matrix/matrix-auth';
 
-type Diagnostics = { state: string; frames: number; pendingFrame: boolean; points: number; markedPoints: number; targetFps: number; backingWidth: number; backingHeight: number; paintP95Ms: number; maxDisplacement: number };
+type Diagnostics = { state: string; frames: number; pulses: number; pendingFrame: boolean; points: number; markedPoints: number; targetFps: number; backingWidth: number; backingHeight: number; paintP95Ms: number; maxDisplacement: number };
 const diagnostic = (page: Page) => page.getByTestId('flare-logo').evaluate(el => (el as HTMLElement & { getDiagnostics: () => Diagnostics }).getDiagnostics());
 async function load(page: Page, baseURL: string, theme = 'dark') {
   await page.addInitScript(mode => localStorage.setItem('vf-theme', mode), theme);
@@ -36,7 +36,9 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     expect((await diagnostic(page)).frames).toBe(idleFrames);
     expect((await diagnostic(page)).pendingFrame).toBe(false);
     await logo.getByRole('button', { name: 'Replay the VibeFlare dot animation' }).focus();
+    const pulses = (await diagnostic(page)).pulses;
     await page.keyboard.press('Enter');
+    expect((await diagnostic(page)).pulses).toBe(pulses + 1);
     await expect.poll(async () => (await diagnostic(page)).maxDisplacement).toBeGreaterThan(1);
     await expect(logo).toHaveAttribute('data-state', 'idle', { timeout: 7000 });
     await page.getByRole('button', { name: 'Sign in with passkey', exact: true }).scrollIntoViewIfNeeded();

@@ -30,7 +30,7 @@ export class FlareElement extends HTMLElement {
     const stimulus: FlareStimulus = { x: 0, y: 0, active: false, rippleX: FLARE_WIDTH / 2, rippleY: FLARE_HEIGHT / 2, rippleAge: -1 };
     let frame = 0; let visible = false; let disconnected = false; let entered = false;
     let lastTime = 0; let rippleStart = -1; let width = 0; let height = 0;
-    let rendered = 0; let slowFrames = 0; let interval = 1000 / 60; let lastPaint = 0;
+    let rendered = 0; let pulses = 0; let slowFrames = 0; let interval = 1000 / 60; let lastPaint = 0;
     const costs: number[] = [];
     const motionAllowed = () => !reduced.matches && !forcedColors.matches;
     const canRun = () => !disconnected && visible && !document.hidden && motionAllowed();
@@ -83,7 +83,14 @@ export class FlareElement extends HTMLElement {
       state(motionAllowed() ? (visible && !document.hidden ? 'idle' : 'paused') : 'reduced');
     };
     const replay = (x = FLARE_WIDTH / 2, y = FLARE_HEIGHT / 2) => {
+      // Keyboard focus/touch can scroll the artwork before the observer has
+      // delivered its new visibility. An explicit interaction is authoritative.
+      if (!visible && !document.hidden && motionAllowed()) {
+        const rect = this.getBoundingClientRect();
+        visible = rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+      }
       if (!canRun()) return;
+      entered = true; pulses++;
       stimulus.rippleX = x; stimulus.rippleY = y; rippleStart = performance.now(); wake();
     };
     const changePreferences = () => {
@@ -117,10 +124,13 @@ export class FlareElement extends HTMLElement {
     forcedColors.addEventListener('change', changePreferences, { signal });
     finePointer.addEventListener('change', changePreferences, { signal });
     const intersection = new IntersectionObserver(entries => {
+      const wasVisible = visible;
       visible = entries.some(entry => entry.isIntersecting);
       if (!visible) { stop(); state('paused'); return; }
-      settle();
-      if (!entered && canRun()) { entered = true; replay(150, 180); }
+      // Do not erase an explicit ripple when a focus/resize intersection arrives.
+      if (!wasVisible && rippleStart < 0) settle();
+      if (!entered && canRun()) replay(150, 180);
+      else if (rippleStart >= 0 || stimulus.active) wake();
     }, { threshold: .1 });
     intersection.observe(this);
     const resizing = new ResizeObserver(resize); resizing.observe(canvas);
@@ -128,7 +138,7 @@ export class FlareElement extends HTMLElement {
     this.dataset.points = String(dots.length);
     this.readMetrics = () => {
       const sorted = [...costs].sort((a, b) => a - b);
-      return { state: this.dataset.state, frames: rendered, pendingFrame: !!frame, points: dots.length,
+      return { state: this.dataset.state, frames: rendered, pulses, pendingFrame: !!frame, points: dots.length,
         markedPoints: dots.filter(dot => dot.color >= 0).length,
         targetFps: interval > 20 ? 30 : 60, backingWidth: canvas.width, backingHeight: canvas.height,
         paintP95Ms: sorted[Math.floor(sorted.length * .95)] ?? 0,
