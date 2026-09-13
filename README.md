@@ -8,7 +8,7 @@ Chat in the browser, choose the models you use, manage API keys, and inspect usa
 
 ![VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
 
-VibeFlare is an MIT-licensed, self-hosted. You control the Cloudflare deployment, its data, and who can sign in. Dark and light themes, responsive navigation, and visibly selected tabs and buttons.
+VibeFlare is MIT-licensed, self-hosted software. You control the Cloudflare deployment, its data, and who can sign in. The browser includes dark and light themes, responsive navigation, and visible states for tabs and buttons.
 
 ## What is included
 
@@ -98,7 +98,7 @@ You can stop wiring a separate provider connection into every prototype. VibeFla
 ## Ask an agent to install and set it up
 
 ```text
-Install Spargax VibeFlare for me using
+Install VibeFlare for me using
 https://github.com/alexcodeplace/vibeflare and its current README.
 Inspect my environment and any existing VibeFlare install receipt first.
 Preserve an existing installation; use its update/recovery workflow rather than
