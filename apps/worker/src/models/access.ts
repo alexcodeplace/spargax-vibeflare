@@ -59,7 +59,7 @@ export async function excludePaidModelsEnabled(db: D1Database): Promise<boolean>
 
 export function filterPaidModels(models: ModelInfo[], excludePaid: boolean): ModelWithAccess[] {
   const decorated = models.map(withModelAccess);
-  return excludePaid ? decorated.filter((model) => model.paid_required !== true) : decorated;
+  return decorated.filter((model) => model.paid_required !== null && (!excludePaid || model.paid_required === false));
 }
 
 export class PaidModelExcludedError extends Error {
@@ -69,9 +69,17 @@ export class PaidModelExcludedError extends Error {
   }
 }
 
+export class ModelAccessUnavailableError extends Error {
+  constructor() {
+    super('This model is not in the verified catalog. Refresh models or choose another model.');
+    this.name = 'ModelAccessUnavailableError';
+  }
+}
+
 /** Guard actual inference too, including stale tabs and direct API requests. */
 export async function assertModelAllowed(env: Env, name: string): Promise<void> {
   const model = await getModel(env.DB, name);
+  if (model && modelRequiresPaid(model) === null) throw new ModelAccessUnavailableError();
   if (model && modelRequiresPaid(model) === true && await excludePaidModelsEnabled(env.DB)) {
     throw new PaidModelExcludedError();
   }

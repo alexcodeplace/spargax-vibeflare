@@ -1,7 +1,7 @@
 import worker, { AuthRateLimiter, CronScheduler, QuotaCounter } from '../src/index';
 import { sign } from 'hono/jwt';
 import type { Env } from '../src/env';
-import { MODEL_CATALOG_READY_KEY, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
+import { MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
 import { resolveSessionSecret } from '../src/auth/session';
 import { setSetting } from '../src/db/queries';
 
@@ -57,7 +57,7 @@ async function reset(env: Env) {
   await env.QUOTA.get(env.QUOTA.idFromName('global')).fetch('https://q/reset', { method: 'POST' });
   await seedModel(env, { name: '@cf/meta/e2e-chat', task: 'text-generation' });
   const now = Date.now();
-  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', now);
+  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, now);
   await setSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY, String(now), now);
 }
 
@@ -80,16 +80,16 @@ async function seedSession(env: Env, role: 'owner' | 'user') {
   });
 }
 
-async function seedModel(env: Env, body: { name?: string; task?: string; paid_required?: boolean }) {
+async function seedModel(env: Env, body: { name?: string; task?: string; paid_required?: boolean | null }) {
   const name = body.name ?? '@cf/meta/e2e-chat';
   const task = body.task ?? 'text-generation';
-  const properties = JSON.stringify({ paid_required: body.paid_required === true });
+  const properties = JSON.stringify({ paid_required: body.paid_required === null ? null : body.paid_required === true });
   await env.DB.prepare(
     `INSERT INTO models (name, task, description, properties, neurons_input, neurons_output, neurons_flat, beta, enabled, synced_at)
      VALUES (?, ?, 'E2E model', ?, 1, 1, 1, 0, 1, ?)
      ON CONFLICT(name) DO UPDATE SET task=excluded.task, properties=excluded.properties, enabled=1, synced_at=excluded.synced_at`,
   ).bind(name, task, properties, Date.now()).run();
-  return { name, task, paid_required: body.paid_required === true };
+  return { name, task, paid_required: body.paid_required === null ? null : body.paid_required === true };
 }
 
 export { AuthRateLimiter, CronScheduler, QuotaCounter };
@@ -112,7 +112,7 @@ export default {
       return seedSession(env, body.role);
     }
     if (testMode && req.method === 'POST' && url.pathname === '/__e2e/seed-model') {
-      const body = await req.json<{ name?: string; task?: string; paid_required?: boolean }>().catch(() => ({}));
+      const body = await req.json<{ name?: string; task?: string; paid_required?: boolean | null }>().catch(() => ({}));
       return Response.json(await seedModel(env, body));
     }
     if (testMode && req.method === 'POST' && url.pathname === '/__e2e/seed-audit') {

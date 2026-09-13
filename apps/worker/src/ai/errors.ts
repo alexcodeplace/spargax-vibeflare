@@ -1,4 +1,4 @@
-import { PaidModelExcludedError } from '../models/access';
+import { ModelAccessUnavailableError, PaidModelExcludedError } from '../models/access';
 
 /** Workers AI error code 4006: the account's neuron allocation for the day is spent. */
 export function isUpstreamQuotaError(message: string): boolean {
@@ -15,13 +15,14 @@ export function isPaidPlanRequiredError(message: string): boolean {
 }
 
 export type UpstreamFailure = {
-  status: 403 | 429 | 500;
-  type: 'paid_model_excluded' | 'paid_plan_required' | 'quota_exceeded' | 'server_error';
+  status: 403 | 429 | 500 | 503;
+  type: 'model_catalog_unavailable' | 'paid_model_excluded' | 'paid_plan_required' | 'quota_exceeded' | 'server_error';
   message: string;
 };
 
 export function classifyUpstreamError(e: unknown): UpstreamFailure {
   const message = e instanceof Error ? e.message : String(e);
+  if (e instanceof ModelAccessUnavailableError) return { status: 503, type: 'model_catalog_unavailable', message };
   if (e instanceof PaidModelExcludedError) {
     return { status: 403, type: 'paid_model_excluded', message };
   }

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { env } from 'cloudflare:test';
-import { ensureModelCatalog, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_REFRESH_MS, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
+import { ensureModelCatalog, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, MODEL_CATALOG_REFRESH_MS, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
 import { countModels, getSetting, setModelEnabled, setSetting, upsertModel } from '../src/db/queries';
 
 const model = {
@@ -23,7 +23,7 @@ describe('ensureModelCatalog', () => {
     await expect(ensureModelCatalog(env as never, sync as never)).resolves.toEqual({ initialized: true, count: 1 });
     await expect(ensureModelCatalog(env as never, sync as never)).resolves.toEqual({ initialized: false, count: 1 });
     expect(sync).toHaveBeenCalledTimes(1);
-    expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe('1');
+    expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe('2');
   });
 
   it('refreshes lazily after the 24-hour catalog TTL expires', async () => {
@@ -40,6 +40,24 @@ describe('ensureModelCatalog', () => {
     });
     await expect(ensureModelCatalog(env as never, refresh as never)).resolves.toEqual({ initialized: false, count: 2 });
     expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('refreshes old HTML-derived catalogs immediately, regardless of their 24-hour timestamp', async () => {
+    await upsertModel(env.DB, model);
+    await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', Date.now());
+    await setSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY, String(Date.now()), Date.now());
+    const sync = vi.fn(async () => ({ count: 1, delisted: 0, rearmed: 0 }));
+    await ensureModelCatalog(env as never, sync);
+    expect(sync).toHaveBeenCalledOnce();
+    expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe(MODEL_CATALOG_READY_VALUE);
+  });
+
+  it('retains the last verified catalog if a refresh fails', async () => {
+    await upsertModel(env.DB, preferred);
+    await setSetting(env.DB, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, Date.now());
+    const sync = vi.fn(async () => { throw new Error('registry offline'); });
+    await expect(ensureModelCatalog(env as never, sync)).resolves.toEqual({ initialized: false, count: 1 });
+    expect(await countModels(env.DB)).toBe(1);
   });
 
   it('does not mistake partially inserted rows for a completed catalog', async () => {

@@ -6,16 +6,21 @@ Settings > Models contains an **Exclude paid** checkbox. It is enabled on new an
 
 With the policy enabled, known paid-required models are removed from the browser picker and `/v1/models`. The inference dispatcher also rejects a stale selection or direct API request before calling Workers AI. With the policy disabled, paid models are selectable and carry a **💲 Paid** marker. Models compatible with the free allocation remain ahead of paid models in automatic selection.
 
-The setting is not a spending cap. Free-compatible requests still consume neurons, and Cloudflare's plan, allocation and other products determine the bill. A model with unknown billing is labeled **billing unknown**, not represented as free.
+The setting is not a spending cap. Free-compatible requests still consume neurons, and Cloudflare's plan, allocation and other products determine the bill. Only models with resolved access metadata are selectable. Internal metadata gaps never become labels in the picker, and no missing price is treated as evidence of paid-only access.
 
 ## Classification without inference probes
 
-Classification comes from Cloudflare's public catalog and the explicit paid-billing note in its pricing documentation:
+Classification comes from the structured model registry that Cloudflare uses to build its own documentation:
 
-- https://developers.cloudflare.com/workers-ai/platform/pricing/
-- https://developers.cloudflare.com/workers-ai/platform/errors/
+- Public registry: https://ai-cloudflare-com.pages.dev/api/models
+- Cloudflare's consumer of that registry: https://github.com/cloudflare/cloudflare-docs/blob/production/bin/fetch-ai-models.js
+- General billing rules: https://developers.cloudflare.com/workers-ai/platform/pricing/
 
-A daily/lazy metadata refresh makes ordinary HTTP requests, not model requests. A small dated fallback handles old cached rows and temporary documentation outages. Missing or unrecognized metadata stays unknown. A newer explicit classification can supersede the fallback.
+The model property `require_workers_paid` is the access flag. In a validated registry record, a true flag requires paid billing; an absent/false flag does not. `price`, beta status, and plan access are different properties. A zero-price beta model or a model without a neuron-table row can still have fully resolved plan access.
+
+Daily/lazy refresh makes HTTP metadata requests, not model requests. The optional pricing page supplies neuron estimates only; failure of that request does not invalidate access classification. The complete registry snapshot is validated before database updates. Deprecated entries and elapsed retirement dates are not offered. Previously scraped rows that are no longer present in the active registry are disabled without deleting conversation history.
+
+If the registry is unavailable or changes shape, the last verified catalog remains usable; a new installation has a small documented fallback. Unclassified records are withheld instead of labeled or guessed. An explicit refresh failure keeps the current selector available and reports a single catalog-level retry message. The catalog format marker forces older installations to refresh without waiting 24 hours.
 
 Workers AI error `5035` observed during a real user request records paid-required status immediately. That observation survives subsequent catalog refreshes. It is not counted as an unhealthy-model failure and does not disable a model for users who explicitly enable paid access. No scheduled or synthetic inference probes are used.
 
@@ -25,7 +30,7 @@ Workers AI error `5035` observed during a real user request records paid-require
 { "models.exclude_paid": "1" }
 ```
 
-Only the owner can write this key, and only `"0"` and `"1"` are accepted. Changes notify other open tabs to refresh their model metadata. `/admin/models` exposes `paid_required: true | false | null`; the OpenAI-compatible model response exposes the same metadata as `x-paid-required`.
+Only the owner can write this key, and only `"0"` and `"1"` are accepted. Changes notify other open tabs to refresh their model metadata. `/admin/models` returns only resolved `paid_required: true | false` entries; the OpenAI-compatible model response exposes the same metadata as `x-paid-required`. Records retain `access_source` and `access_checked_at` for auditability. Null is reserved for incomplete internal/legacy records and is not offered to the user.
 
 ## Workspace conversations
 

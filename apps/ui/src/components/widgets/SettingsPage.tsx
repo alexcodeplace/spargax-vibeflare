@@ -269,7 +269,7 @@ function SettingsPageInner() {
               onCheckedChange={handleExcludePaidChange}
             />
             <p className="text-xs text-[var(--color-muted)]">
-              Hide and block models known to require paid billing. Enabled by default for this workspace; only the owner can change it. Unknown billing is labeled in the picker. This is not a spending cap on your Cloudflare account.
+              Show models available on Workers Free. Turn this off to include 💲 Paid models. Access comes from Cloudflare’s model registry, not a pricing guess or an inference probe. This is not an account spending cap.
             </p>
             {settingsError && <p role="alert" className="text-xs text-[var(--color-danger)]">Settings could not be loaded. Reload to retry.</p>}
           </Card>

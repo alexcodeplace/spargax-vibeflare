@@ -229,8 +229,8 @@ export async function upsertModel(
            THEN json_patch(CASE WHEN json_valid(models.properties) THEN models.properties ELSE '{}' END,
                            json_remove(excluded.properties, '$.paid_required'))
            ELSE excluded.properties END,
-         neurons_input = excluded.neurons_input,
-         neurons_output = excluded.neurons_output,
+         neurons_input = COALESCE(excluded.neurons_input, models.neurons_input),
+         neurons_output = COALESCE(excluded.neurons_output, models.neurons_output),
          neurons_flat = excluded.neurons_flat,
          beta = excluded.beta,
          synced_at = excluded.synced_at`

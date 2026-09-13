@@ -86,7 +86,7 @@ try {
       d1: { name: 'release-demo-db', status: 'owned' },
       r2: { name: 'release-demo-files', status: 'owned' },
     },
-    release: { installed: '0.9.3', source: 'release-candidate' },
+    release: { installed: '0.9.4', source: 'release-candidate' },
     deployment: { url: baseUrl, versionId: 'local-e2e', deployedAt: now },
     migrationsApplied: ['0001_init.sql', '0002_auth_invites.sql', '0006_model_health.sql'],
     createdAt: now,

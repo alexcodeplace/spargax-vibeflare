@@ -59,6 +59,14 @@ describe('chooseDefaultModel', () => {
       .toBe('@cf/meta/llama-3.2-3b-instruct');
   });
 
+  it('never displays internal billing uncertainty or selects an unresolved row', () => {
+    const missing: ModelInfo = { name: '@cf/test/legacy', task: 'text-generation', paid_required: null };
+    const usable = model('@cf/test/usable');
+    expect(modelLabelForPicker(missing)).not.toMatch(/unknown|unverified/i);
+    expect(sortModelsForPicker([missing, usable])).toEqual([usable]);
+    expect(chooseDefaultModel([missing])).toBeUndefined();
+  });
+
   it('prefers FLUX Schnell for image generation without hiding the rest', () => {
     const models = [
       model('@cf/example/other-image', 'text-to-image'),

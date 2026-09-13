@@ -2,6 +2,14 @@
 
 All notable VibeFlare changes are documented here.
 
+## 0.9.4 - 2026-09-13
+
+- Remove the internal "billing unknown" suffix from model selection. Unclassified records are withheld, not presented as free or paid.
+- Read Cloudflare's structured model registry and explicit `require_workers_paid` flag instead of inferring plan access from the pricing table. Missing prices, beta status and plan access are handled separately.
+- Stop offering models absent from the current registry or past their documented retirement date. Existing conversations remain intact.
+- Retain the last verified catalog during metadata outages and keep the picker usable when an explicit refresh fails. Older catalogs upgrade immediately on first use.
+- Keep Exclude paid enabled by default and preserve the dollar marker for paid models after opt-in. No inference probes are added.
+
 ## 0.9.3 - 2026-09-12
 
 - Add owner-controlled **Exclude paid**, enabled by default, with a persisted policy and dollar markers for paid models when explicitly included.

@@ -18,6 +18,13 @@ test('paid models are excluded by default and tagged when explicitly included', 
       data: { name: PAID_MODEL, task: 'text-generation', paid_required: true },
     });
     expect(seed.status()).toBe(200);
+    expect((await page.request.post('/__e2e/seed-model', {
+      data: { name: '@cf/test/metadata-gap', paid_required: null },
+    })).status()).toBe(200);
+    expect((await page.request.post('/__e2e/seed-model', {
+      data: { name: '@cf/google/embeddinggemma-300m', task: 'text-embeddings', paid_required: false },
+    })).status()).toBe(200);
+
 
     const defaultList = await page.request.get('/admin/models?task=text-generation');
     expect(defaultList.status()).toBe(200);
@@ -26,6 +33,8 @@ test('paid models are excluded by default and tagged when explicitly included', 
       models: Array<{ name: string; paid_required: boolean }>;
     };
     expect(defaultBody.exclude_paid).toBe(true);
+    expect(defaultBody.models.every(m => typeof m.paid_required === 'boolean')).toBe(true);
+    expect(defaultBody.models.some(m => m.name === '@cf/test/metadata-gap')).toBe(false);
     expect(defaultBody.models.some((model) => model.name === PAID_MODEL)).toBe(false);
 
     await page.goto('/settings');
@@ -48,6 +57,7 @@ test('paid models are excluded by default and tagged when explicitly included', 
       models: Array<{ name: string; paid_required: boolean }>;
     };
     expect(includedBody.exclude_paid).toBe(false);
+    expect(includedBody.models.some(m => m.name === '@cf/test/metadata-gap')).toBe(false);
     expect(includedBody.models).toContainEqual(expect.objectContaining({
       name: PAID_MODEL,
       paid_required: true,
@@ -57,6 +67,7 @@ test('paid models are excluded by default and tagged when explicitly included', 
     await waitForHydratedIsland(page, 'vibeflare-chat');
     await page.getByRole('combobox', { name: /Select a Model/i }).click();
     await expect(page.getByText(`💲 Paid · ${PAID_MODEL}`, { exact: true })).toBeVisible();
+    await expect(page.getByText(/billing unknown|metadata-gap/i)).toHaveCount(0);
     await page.screenshot({ path: 'test-results/paid-model-tag.png', fullPage: true, animations: 'disabled' });
     await page.keyboard.press('Escape');
     await page.goto('/settings');
