@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-09-13T11:31:24.262Z",
+  "capturedAt": "2026-09-13T14:16:15.425Z",
   "version": "0.9.6",
-  "sourceCommit": "3f964b42a6a230c45a0eb304db65558ef68bb9c8",
+  "sourceCommit": "4af727da306dac5bc22e3b2d6ad0a2585c38c377",
   "environment": "isolated local E2E Worker; not a deployed production environment",
   "inference": "deterministic fakeAI fixture; no paid or production inference",
   "catalog": "small seeded demonstration catalog; not a live availability or billing claim",
   "privacy": "local fixture accounts only; one-time key masked; fixture reset after capture",
   "buildHtmlSha256": {
-    "chat": "12a10052c4cbbdeaa559f2b7b47f1c060d0d1d15ee666b85b39c4b699b3dbe6b",
-    "login": "e9e21452f3dcbb61e0f7993d955ecbd16ca6ba9a7791afad154a591fed44ab1c",
-    "keys": "84c03843500fe4a7d063e6f940205d0d091411ace6e67f29716c76b8f509f876",
-    "settings/models": "026b87a7047541cd132e40fd1648e540505c73f34a0a37a5378c7d7d7eed0199",
-    "settings/cache": "a4dcb7bb1e8243c14270332f73b9066817a9e02dedcffb77523a4b2741b9ef85"
+    "chat": "af184ad6be0bda8c275442eddcf426f8b22c7bf8109304ccd83cfe17c9020e1b",
+    "login": "5ceb77ee6b11060bf4e515fa15153c1dbc80adadb07d5b9b63ab81408de791f9",
+    "keys": "5f96c31a404cd94e6b1b39295ea5fc0077767360031cb3d8415cc4f6a08074cc",
+    "settings/models": "6162816936b4a780230c035d4e388819e6fe122be3ac68e376addbaa50c99c78",
+    "settings/cache": "738ac049e4762dfbe7d067357e2815759c39a9bfcc0dc4546361010c19c1e842"
   },
   "screenshots": [
     {
@@ -24,8 +24,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "0db707e42e5ebc49dace20454444c154e6c906cc410a86a4f14d89574d9feedd",
-      "bytes": 537388
+      "sha256": "282a141380ae0f25d31d04042de99a60f76a7447d94640078db7badc26e50aec",
+      "bytes": 535113
     },
     {
       "file": "vibeflare-settings-models.png",
@@ -36,8 +36,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "7594c16c4c5c85a1fbbac5e39902571bd9d9777dfe554ac2c7db8037154cd283",
-      "bytes": 723445
+      "sha256": "d0e7c444c62654b2c8b9f8b6b69a588321735478a17811d1857f608bf4ee9c25",
+      "bytes": 721450
     },
     {
       "file": "vibeflare-settings-light.png",
@@ -48,8 +48,8 @@
         "height": 1000
       },
       "theme": "light",
-      "sha256": "63b8bc186084144361d7a865904d4e2a06dbe599daf692f7ca9e85645a3a4e3d",
-      "bytes": 682051
+      "sha256": "6c7da802593b1c449f0210b7a06f884ebc59df497089a891cf319b7be0470b9f",
+      "bytes": 679895
     },
     {
       "file": "vibeflare-settings-mobile.png",
@@ -60,8 +60,8 @@
         "height": 950
       },
       "theme": "light",
-      "sha256": "8ac2f3f085135bfdc7b881d38bfd57d0e678c6ec0f6b3df7d676083fac1e7c89",
-      "bytes": 203073
+      "sha256": "128dd667a6532559e573b28582170bb18f772bf26f0d750eb810764a67b36563",
+      "bytes": 202037
     },
     {
       "file": "vibeflare-chat.png",
@@ -72,8 +72,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "29e2f29d3a325646d93b015d00f1e5bd30622e4813f06c772cfdc25f1a310a71",
-      "bytes": 524479
+      "sha256": "e031629cd582aae4df7692fd57318f308beb84d4e6dc1e0ebd932f81ab094caa",
+      "bytes": 522297
     },
     {
       "file": "vibeflare-key-creation.png",
@@ -84,8 +84,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "059d19315947d1151136d9852538d9a7d3b65806d1ea1fd4fcb8196180ebf2b5",
-      "bytes": 532985
+      "sha256": "c183b9575a86751ae3f04f106f546dcdeb9895f40e137fd089c1503ea7bfde9a",
+      "bytes": 530948
     },
     {
       "file": "vibeflare-status-doctor.png",
@@ -96,8 +96,8 @@
         "height": 1000
       },
       "theme": "terminal",
-      "sha256": "8b81fee5c6651cdcc31dfd6d7874b52c9e1c2f6f26f415c1726b5e2994ac2e71",
-      "bytes": 69182
+      "sha256": "219bace3b03c4e70607903ed67f07da72e3455c236dd7e09bfc79f3229a037a2",
+      "bytes": 68435
     },
     {
       "file": "vibeflare-login.png",
@@ -108,8 +108,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "60ddcb6449a0ed976220e12ecd07592896766e850e7a7d4ad95a3a779c19c720",
-      "bytes": 519564
+      "sha256": "2485711ed77301c060a18cbf18c44daf17e5a77a65bf2acb125915571ead99a0",
+      "bytes": 516871
     }
   ]
 }
