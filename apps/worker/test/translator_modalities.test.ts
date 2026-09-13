@@ -80,10 +80,12 @@ describe('Workers AI modality translation', () => {
     expect(body).toContain('data: [DONE]');
   });
 
-  it('uses byte arrays for classic Whisper and base64 for turbo/Deepgram STT', () => {
+  it('uses each provider’s actual file-transcription input contract', async () => {
     expect(sttReqToWai(bytes(1, 2, 3), '@cf/openai/whisper')).toEqual({ audio: [1, 2, 3] });
-    expect(sttReqToWai(bytes(1, 2, 3), '@cf/openai/whisper-large-v3-turbo')).toEqual({ audio: 'AQID' });
-    expect(sttReqToWai(bytes(1, 2, 3), '@cf/deepgram/nova-3')).toEqual({ audio: 'AQID' });
+    expect(sttReqToWai(bytes(1, 2, 3), '@cf/openai/whisper-large-v3-turbo')).toEqual({ audio: 'AQID', task: 'transcribe' });
+    const nova = sttReqToWai(bytes(1, 2, 3), '@cf/deepgram/nova-3', 'audio/mpeg') as { audio: { body: ReadableStream; contentType: string } };
+    expect(nova.audio.contentType).toBe('audio/mpeg');
+    expect([...new Uint8Array(await new Response(nova.audio.body).arrayBuffer())]).toEqual([1, 2, 3]);
   });
 
   it('uses Deepgram text input while retaining prompt input for other TTS models', () => {
