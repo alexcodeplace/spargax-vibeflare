@@ -26,7 +26,13 @@ The canvas caps its backing store at 900×570 and device-pixel ratio at 1.5. Pat
 - The renamed repository's real GitHub PR gate must finish successfully before merge; runtime state alone is not a CI pass.
 - Deployment must preserve existing Worker bindings, secrets and data, and the normal live URL must serve the tested build.
 
-Measured performance and release receipts will be appended after verification, not inferred from the implementation.
+## Measured verification — 2026-09-13
+
+All nine focused browser checks passed against the final supplied-symbol geometry: pointer response/reformation at desktop/mobile widths in both themes, keyboard replay, touch scrolling, reduced motion, forced colors, no-JavaScript/no-canvas fallbacks, hidden/disconnected suspension and CPU-throttled behavior. The final geometry has607 colored logo dots within the3,080-point grid. Frame counters stopped at rest, with no pending animation frame.
+
+Observed canvas-paint p95 was2.3–2.8ms in the local desktop/mobile runs and3.6ms with4× CPU throttling. These are canvas paint measurements, not whole-application latency claims. The emitted interactive module is8,328bytes,2,925bytes gzip. No new runtime dependency was added. The renderer and logo deformation were also visually inspected in a headed browser using the VM display and real pointer movement.
+
+The zero-traffic Cloudflare version`e8aee05e-64fe-434d-b9b4-2fc871cf1565` passed same-host staged verification: exact HTML/assets, all seven runtime logo derivatives, both themes at1440/390px, and actual rendered pointer interaction returning to rest. Production promotion is guarded by both GitHub jobs passing for the exact PR head, followed by the same checks without a version override. Final CI and deployment receipts are recorded in PR#6 and the private VM release archive; a staged pass alone is not a production release claim.
 
 ## Canonical logo integration
 

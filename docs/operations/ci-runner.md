@@ -24,3 +24,7 @@ Registration tokens belong only in process memory/environment, not terminal outp
 Official references:
 - https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners
 - https://docs.github.com/en/actions/reference/runners/self-hosted-runners
+
+## Repair evidence
+
+The actual `VibeFlare runner readiness` job completed successfully on the re-registered private runner in workflow run `34765927873`. The independent hosted `Full gate` ran the complete build, type/runtime tests and browser suite. Its initial failure was the intentionally changed logo screenshot baselines, not a missing runner. Both jobs must be green on the final integration commit.
