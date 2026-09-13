@@ -1,7 +1,7 @@
-/* Reuse the canonical Club kit without resampling or duplicating its artwork.
-   The SVGs include a 12px glow gutter and 12px corners. Nine-slicing at 24px
-   preserves both at any label width; the gutter sits outside the hit target.
-   Artwork stays decorative. Native buttons, labels and focus remain intact. */
+/* Reuse only the center fill of the canonical Club artwork. Its 12px glow
+   gutter, rounded strokes and inset keylines must not stack with the CSS edge.
+   A 24px slice with zero-width image borders paints the center, not the frame.
+   The host owns one 1px perimeter; keyboard focus remains a separate outline. */
 :root[data-astryx-theme='neutral'], [data-astryx-theme='neutral'] {
   --vf-button-primary-idle: url('/assets/club/dark/surfaces/button-primary-idle.svg');
   --vf-button-primary-hover: url('/assets/club/dark/surfaces/button-primary-hover.svg');
@@ -50,16 +50,19 @@
   white-space: nowrap;
   vertical-align: middle;
   cursor: pointer;
-  box-shadow: 0 2px 6px #00000018, inset 0 1px 0 var(--vf-highlight);
+  box-shadow: 0 2px 6px #00000018;
+  outline: none;
 }
 .vf-button::before, .vf-tab::before {
   content: '';
   position: absolute;
   z-index: -1;
-  inset: -12px;
+  inset: 0;
   pointer-events: none;
-  border: 24px solid transparent;
-  border-image: var(--vf-control-image) 24 fill / 24px stretch;
+  border: 0 solid transparent;
+  border-image: var(--vf-control-image) 24 fill / 0 / 0 stretch;
+  /* Clip decoration only, never the host or its keyboard focus outline. */
+  clip-path: inset(0 round 11px);
   filter: var(--vf-control-filter);
 }
 .vf-button[data-vf-size='sm'] { min-height: 40px; padding: 8px 14px; font-size: 12px; }
@@ -67,7 +70,7 @@
 .vf-button[data-vf-variant='primary'] {
   --vf-control-image: var(--vf-button-primary-idle);
   /* The supplied cyan highlight is decorative, not a white-text background. */
-  --vf-control-filter: brightness(.68);
+  --vf-control-filter: brightness(.62);
   background: linear-gradient(115deg, #075fbf, #063aab);
   border-color: #3989db;
   color: #fff;
@@ -94,7 +97,7 @@
   .vf-button:hover:not(:disabled, [aria-disabled='true']), .vf-tab:hover:not([aria-disabled='true']) {
     --vf-control-image: var(--vf-button-secondary-hover);
     border-color: var(--vf-link);
-    box-shadow: 0 3px 12px #007aff20, inset 0 1px 0 var(--vf-highlight);
+    box-shadow: 0 3px 12px #007aff20;
   }
   .vf-button[data-vf-variant='primary']:hover:not(:disabled, [aria-disabled='true']) {
     --vf-control-image: var(--vf-button-primary-hover);
@@ -105,7 +108,7 @@
     border-color: #ffa3ad;
   }
 }
-.vf-button:active:not(:disabled, [aria-disabled='true']) { box-shadow: inset 0 2px 4px #00000038; }
+.vf-button:active:not(:disabled, [aria-disabled='true']) { box-shadow: none; }
 .vf-button[data-vf-variant='primary']:active:not(:disabled, [aria-disabled='true']) {
   --vf-control-image: var(--vf-button-primary-pressed);
 }
@@ -123,7 +126,7 @@
   border: 1px solid var(--vf-line);
   border-radius: 18px;
   background: var(--vf-input);
-  box-shadow: inset 0 1px 0 var(--vf-highlight);
+  box-shadow: none;
 }
 .vf-tabs .astryx-tab-strip {
   display: flex;
@@ -134,10 +137,10 @@
   padding: 0;
   overflow: visible;
 }
-.vf-tabs .vf-tab { flex: 1 0 auto; min-height: 44px; padding: 10px 16px; font-size: 13px; }
+.vf-tabs .vf-tab { flex: 1 0 auto; min-height: 44px; padding: 10px 16px; border-radius: 12px; font-size: 13px; }
 .vf-tabs .vf-tab:is([aria-selected='true'], [aria-current='true']) {
   --vf-control-image: var(--vf-language-segment-active);
-  --vf-control-filter: brightness(.68);
+  --vf-control-filter: brightness(.62);
   background: #0957b4;
   color: #fff;
   border-color: #57bfff;

@@ -204,8 +204,7 @@ button:not(:disabled), a { touch-action: manipulation; }
 .vf-auth-form h1 { font-size: 30px; font-weight: 500; letter-spacing: -.04em; line-height: 1.25; }
 .vf-auth-form h1 + p { margin-top: 12px; font-size: 13px; line-height: 1.8; }
 .vf-auth-form .vf-button { min-height: 48px; }
-.vf-auth-form .vf-auth-action { width: 100%; justify-content: center; padding-inline: 20px; border: 1px solid #7cafff80; border-radius: 12px; background: linear-gradient(115deg, var(--vf-blue), #064ccc); color: #fff; box-shadow: inset 0 1px 0 #ffffff33, 0 6px 18px #0b5ee51f; }
-.vf-auth-form .vf-auth-action:hover:not(:disabled) { box-shadow: inset 0 1px 0 #ffffff40, 0 8px 22px #0b5ee538; }
+.vf-auth-form .vf-auth-action { width: 100%; justify-content: center; padding-inline: 20px; }
 .vf-auth-note { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 9px; color: var(--color-text-tertiary); margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--vf-line); }
 .vf-auth-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; color: var(--color-text-tertiary); font-size: 10px; padding-top: 16px; }
 .vf-auth-footer > span:last-child { font-size: 9px; letter-spacing: .18em; }
