@@ -144,6 +144,20 @@ export async function listModels(task?: string): Promise<ModelInfo[]> {
   return r.models;
 }
 
+export interface ModelPreference extends ModelInfo { visible: boolean }
+
+export async function listModelPreferences(): Promise<ModelPreference[]> {
+  const result = await apiFetch<{ models: ModelPreference[] }>('/admin/models/preferences', { cache: 'no-store' });
+  return result.models;
+}
+
+export async function setModelVisibility(name: string, visible: boolean): Promise<void> {
+  await apiFetch('/admin/models/visibility', {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, visible }),
+  });
+  notifyModelsChanged();
+}
+
 export async function syncModels(): Promise<{ synced: number }> {
   return apiFetch('/admin/models/sync', { method: 'POST' });
 }

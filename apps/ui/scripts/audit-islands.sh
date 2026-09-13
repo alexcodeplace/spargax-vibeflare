@@ -24,6 +24,8 @@ fi
 LOAD_ALLOWLIST="chat.astro|login.astro|setup.astro|signup.astro|files.astro|history.astro|settings.astro|keys.astro|analytics.astro"
 
 while IFS= read -r -d '' file; do
+  # Direct Settings sections have first-paint interactive controls too.
+  if [[ "$file" == "$PAGES_DIR/settings/[tab].astro" ]]; then continue; fi
   basename=$(basename "$file")
   if grep -q 'client:load' "$file" 2>/dev/null; then
     if ! echo "$basename" | grep -qE "$LOAD_ALLOWLIST"; then

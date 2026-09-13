@@ -49,6 +49,21 @@ describe('Astryx compatibility adapters', () => {
     expect(screen.getByText('Invites panel')).toBeInTheDocument();
   });
 
+  it('navigation tabs expose real links and preserve modified-click browser behavior', () => {
+    const onValueChange = vi.fn();
+    render(<Tabs navigation label="Settings sections" value="account" onValueChange={onValueChange} items={[
+      { value: 'account', label: 'Account', href: '/settings/account/', content: 'Account settings' },
+      { value: 'models', label: 'Models', href: '/settings/models/', content: 'Model settings' },
+    ]} />);
+    const models = screen.getByRole('link', { name: 'Models' });
+    expect(models).toHaveAttribute('href', '/settings/models/');
+    expect(screen.getByRole('link', { name: 'Account' })).toHaveAttribute('aria-current', 'true');
+    fireEvent.click(models, { ctrlKey: true });
+    expect(onValueChange).not.toHaveBeenCalled();
+    fireEvent.click(models);
+    expect(onValueChange).toHaveBeenCalledWith('models');
+  });
+
   it('Dialog trigger preserves its existing click handler and opens', async () => {
     const triggerClick = vi.fn();
     const onOpenChange = vi.fn();

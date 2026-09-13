@@ -86,7 +86,7 @@
     "expectStatus": 200,
     "elements": [
       { "testid": "settings-page", "state": "visible" },
-      { "role": "tab", "name": "Invites", "state": "present", "count": 1 }
+      { "role": "link", "name": "Invites", "state": "present", "count": 1 }
     ]
   },
   {
@@ -95,7 +95,7 @@
     "expectStatus": 200,
     "elements": [
       { "testid": "settings-page", "state": "visible" },
-      { "role": "tab", "name": "Invites", "state": "absent", "count": 0 }
+      { "role": "link", "name": "Invites", "state": "absent", "count": 0 }
     ]
   }
 ]

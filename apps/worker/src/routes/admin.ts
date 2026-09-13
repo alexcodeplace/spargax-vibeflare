@@ -31,6 +31,7 @@ import { withCache } from '../lib/cache';
 import { ensureModelCatalog, refreshModelCatalog } from '../models/catalog';
 import { EXCLUDE_PAID_MODELS_SETTING, excludePaidModelsEnabled, filterPaidModels } from '../models/access';
 import adminInvites from './admin.invites';
+import { hiddenModels, saveModelVisibility, isModelVisibilitySetting } from '../models/preferences';
 import { startRegistration, finishRegistration } from '../auth/passkey';
 import { GITHUB_PRIVATE_SETTING_KEYS, isPrivateGithubSettingKey } from '../auth/github_web';
 
@@ -50,7 +51,7 @@ export function publicSettingsObject(
 ): Record<string, string> {
   const visible: Record<string, string> = {};
   for (const row of settings) {
-    if (!PRIVATE_SETTING_KEYS.has(row.key) && !isPrivateGithubSettingKey(row.key)) visible[row.key] = row.value;
+    if (!PRIVATE_SETTING_KEYS.has(row.key) && !isPrivateGithubSettingKey(row.key) && !isModelVisibilitySetting(row.key)) visible[row.key] = row.value;
   }
   return visible;
 }
@@ -217,8 +218,9 @@ admin.get('/models', async (c) => {
     await ensureModelCatalog(c.env);
     const models = await listModels(c.env.DB, task);
     const excludePaid = await excludePaidModelsEnabled(c.env.DB);
+    const hidden = await hiddenModels(c.env.DB, c.get('userId'));
     return c.json({
-      models: filterPaidModels(models, excludePaid),
+      models: filterPaidModels(models, excludePaid).filter(model => !hidden.has(model.name)),
       exclude_paid: excludePaid,
     }, 200, { 'Cache-Control': 'private, no-store' });
   } catch (error) {
@@ -226,6 +228,35 @@ admin.get('/models', async (c) => {
     console.error('[models/bootstrap] error:', error);
     return c.json({ error: { type: 'sync_failed', message } }, 502);
   }
+});
+
+// Settings must include unchecked models so they can always be reselected.
+admin.get('/models/preferences', async (c) => {
+  await ensureModelCatalog(c.env);
+  const [models, excludePaid, hidden] = await Promise.all([
+    listModels(c.env.DB), excludePaidModelsEnabled(c.env.DB), hiddenModels(c.env.DB, c.get('userId')),
+  ]);
+  return c.json({
+    models: filterPaidModels(models, excludePaid).map(model => ({ ...model, visible: !hidden.has(model.name) })),
+    exclude_paid: excludePaid,
+  }, 200, { 'Cache-Control': 'private, no-store' });
+});
+
+admin.patch('/models/visibility', async (c) => {
+  const body = await c.req.json<{ name?: unknown; visible?: unknown }>().catch(() => null);
+  if (!body || typeof body.name !== 'string' || body.name.length > 255 || typeof body.visible !== 'boolean'
+    || Object.keys(body).some(key => key !== 'name' && key !== 'visible')) {
+    return c.json({ error: { type: 'invalid_request', message: 'Expected model name and boolean visible' } }, 400);
+  }
+  const userId = c.get('userId');
+  if (!await getUserById(c.env.DB, userId)) return c.json({ error: { type: 'auth', message: 'User no longer exists' } }, 401);
+  const model = await getModel(c.env.DB, body.name);
+  if (!model || model.enabled !== 1) return c.json({ error: { type: 'not_found', message: 'Model not found' } }, 404);
+  if (filterPaidModels([model], await excludePaidModelsEnabled(c.env.DB)).length === 0) {
+    return c.json({ error: { type: 'forbidden', message: 'This model is not available under the current access policy' } }, 403);
+  }
+  await saveModelVisibility(c.env.DB, userId, body.name, body.visible);
+  return c.json({ name: body.name, visible: body.visible }, 200, { 'Cache-Control': 'private, no-store' });
 });
 
 // ── POST /admin/models/sync ───────────────────────────────────────────────────
@@ -275,7 +306,7 @@ admin.put('/settings', async (c) => {
   }
   const now = Date.now();
   for (const [key, value] of Object.entries(body)) {
-    if (typeof value !== 'string' || PRIVATE_SETTING_KEYS.has(key) || isPrivateGithubSettingKey(key)) continue;
+    if (typeof value !== 'string' || PRIVATE_SETTING_KEYS.has(key) || isPrivateGithubSettingKey(key) || isModelVisibilitySetting(key)) continue;
     await setSetting(c.env.DB, key, value, now);
   }
   return c.json({ ok: true });
