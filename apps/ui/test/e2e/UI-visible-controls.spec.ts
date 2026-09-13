@@ -74,6 +74,9 @@ for (const theme of ['dark', 'light'] as const) {
     await page.addInitScript(mode => localStorage.setItem('vf-theme', mode), theme);
     await applyAuth(context, 'owner', baseURL!, '/design-system');
     await page.goto('/design-system/');
+    // Demos must not trap the entire gallery behind an initially open dialog.
+    await expect(page.getByRole('button', { name: 'Open invite form', exact: true })).toBeAttached();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     for (const variant of ['primary', 'secondary', 'outline', 'ghost', 'danger']) {
       for (const size of ['sm', 'md', 'lg']) {
         const control = page.getByRole('button', { name: `${variant} ${size}`, exact: true });
@@ -94,6 +97,11 @@ for (const theme of ['dark', 'light'] as const) {
     await expect(page.getByRole('button', { name: 'Disabled', exact: true })).toBeDisabled();
     await expect(page.getByRole('button', { name: 'Loading', exact: true })).toBeDisabled();
     await page.getByRole('heading', { name: 'Button', exact: true }).locator('xpath=ancestor::section[1]').screenshot({ path: testInfo.outputPath(`buttons-${theme}.png`), animations: 'disabled' });
+    await page.getByRole('button', { name: 'Open invite form', exact: true }).click();
+    const inviteDemo = page.getByRole('dialog', { name: 'New invite', exact: true });
+    await expect(inviteDemo).toBeVisible();
+    await inviteDemo.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(inviteDemo).not.toBeVisible();
   });
 }
 

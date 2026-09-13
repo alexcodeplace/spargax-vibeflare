@@ -16,7 +16,11 @@ Each file is selected from the existing `dark/surfaces` or `light/surfaces` dire
 
 The tab rail has a boundary, spacing between targets, and a filled selected tab. Tabs wrap at narrow widths instead of squeezing labels together or clipping the final section. Tab and mobile button hit targets are at least 44px tall. Desktop small buttons are 40px tall.
 
-Astryx continues to own button activation, loading/disabled behavior and tab keyboard navigation. Every tab controls an existing panel with an instance-unique ID and an accessible name. Inactive panels remain empty and hidden, so their content does not mount early. The selected panel is keyboard focusable. Focus outlines, reduced motion and system forced colors remain supported.
+Astryx continues to own button activation, loading/disabled behavior and keyboard navigation. In-page tabs control existing panels with instance-unique IDs and accessible names. Settings sections remain real navigation links with `/settings/<section>/` URLs and `aria-current`, and their visible regions are labelled by the corresponding link. Inactive panels remain empty and hidden, so their content does not mount early. The selected panel is keyboard focusable. Focus outlines, reduced motion and system forced colors remain supported.
+
+The model-visibility checkboxes and direct Settings routes from v0.9.5 are retained, including reload, Back/Forward and opening a section in a new tab. Both navigation links and in-page tabs receive the same selected surface.
+
+The design-system gallery opens its invite-form demo on demand and lets it close. An always-open demo must not block interaction with the button samples.
 
 Buttons expose stable variant and size attributes for styling. Composed JSX labels now produce their actual accessible name instead of the generic name `Action`; explicitly supplied accessible names still take precedence.
 
@@ -44,3 +48,9 @@ git diff --check
 ## Deployment safeguards
 
 This is a presentation-only change. Worker source, authentication, database schema and production resource identities are unchanged. Upload a version using the verified live resource configuration, stage it with zero ordinary traffic, verify its HTML and assets against the tested build, and promote only after the staged check passes. Repeat the checks without the version override after promotion. Preserve existing variables, bindings, schedules and Worker URL settings; do not run a remote database migration for this change.
+
+## Verified on 2026-09-13
+
+The final candidate incorporates main's v0.9.5 model-selection and Settings-route changes. The 17-route production build, island audit, Astro diagnostics (zero errors or warnings), 35 UI unit tests, 134 Worker unit tests, and all 85 browser tests passed. The final browser run had no retries, failures, skipped cases or snapshot updates. Both themes and desktop/mobile screenshots were visually checked. All 128 canonical Club assets remain byte-for-byte intact. Worker and shared-runtime source are unchanged relative to v0.9.5 main.
+
+Local verification used the installed executable entrypoints directly because the VM's pnpm store returned a disk I/O error. The same checked-in browser suite and fixture configuration were used, with an isolated local D1/R2/Durable Object state directory. No production account or data was used by the tests. The ignored `.internal/qa/` directory contains final build, diagnostic, unit, browser and visual evidence.
