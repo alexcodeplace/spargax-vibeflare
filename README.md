@@ -4,7 +4,7 @@
 
 Chat in the browser, choose the models you use, manage API keys, and inspect usage from one place. Point your apps and coding tools at the same OpenAI-compatible `/v1` endpoint instead of building authentication, model selection, and request tracking into every project.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/spargax-vibeflare)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/vibeflare)
 
 ![Spargax VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
 
@@ -99,7 +99,7 @@ You can stop wiring a separate provider connection into every prototype. VibeFla
 
 ```text
 Install Spargax VibeFlare for me using
-https://github.com/alexcodeplace/spargax-vibeflare and its current README.
+https://github.com/alexcodeplace/vibeflare and its current README.
 Inspect my environment and any existing VibeFlare install receipt first.
 Preserve an existing installation; use its update/recovery workflow rather than
 creating duplicate resources. Ask me to choose the Cloudflare account and
@@ -164,8 +164,8 @@ https://developers.cloudflare.com/workers/wrangler/install-and-update/
 ### 2. Download VibeFlare
 
 ```bash
-git clone https://github.com/alexcodeplace/spargax-vibeflare.git
-cd spargax-vibeflare
+git clone https://github.com/alexcodeplace/vibeflare.git
+cd vibeflare
 ./install.sh
 ```
 
