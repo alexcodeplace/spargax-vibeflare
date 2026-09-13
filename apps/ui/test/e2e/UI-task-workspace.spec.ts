@@ -30,10 +30,17 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390, 320]) {
     const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
     const bounds: Array<{ x: number; y: number; width: number; height: number }> = [];
     const toolbars: Array<{ y: number; height: number }> = [];
+    const selectedModels: Record<string, string> = {
+      Text: '@cf/meta/e2e-chat', Image: '@cf/test/e2e-image',
+      Embeddings: '@cf/test/e2e-embedding', Audio: '@cf/openai/whisper-large-v3-turbo',
+    };
     for (const tab of ['Text', 'Image', 'Embeddings', 'Audio', 'Text']) {
       await page.getByRole('tab', { name: tab, exact: true }).click();
       await expect(page.getByRole('tab', { name: tab, exact: true })).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByRole('combobox')).toBeVisible();
+      // Task selection and the picker update are separate React effects.
+      // Wait for this task's model, not the previous task's still-visible picker,
+      // before measuring the settled panel (Audio can briefly show a notice).
+      await expect(page.getByRole('combobox')).toContainText(selectedModels[tab]!);
       await page.evaluate(async () => { await document.fonts.ready; document.querySelector('.vf-main')!.scrollTop = 0; });
       const input = await page.getByTestId('task-input').boundingBox(); expect(input).not.toBeNull(); bounds.push(input!);
       toolbars.push((await page.locator('.vf-chat-toolbar').boundingBox())!);
