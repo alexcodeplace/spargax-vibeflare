@@ -3,6 +3,8 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import '../styles/brand.css';
 import '../styles/controls.css';
+import '@platform-modules/ui-accessibility/styles.css';
+import '../styles/accessibility.css';
 
 export interface Props {
   title?: string;
@@ -32,6 +34,20 @@ const { title = 'Spargax VibeFlare', bodyClass = 'h-screen overflow-hidden bg-[v
     })();
   </script>
   <script>
+    import { mountAccessibility, type AccessibilityController } from '@platform-modules/ui-accessibility/browser';
+    import { accessibilityReportHref } from '../lib/accessibility-copy';
+    let accessibility: AccessibilityController | undefined;
+    const mountPanel = () => {
+      accessibility?.destroy();
+      try {
+        const locale = document.documentElement.lang === 'he' ? 'he' : document.documentElement.lang === 'es' ? 'es' : 'en';
+        accessibility = mountAccessibility({ document, locale, storageKey: 'spargax.a11y.v1', statementHref: '/accessibility', reportHref: accessibilityReportHref });
+      } catch (error) { console.error('Accessibility controls could not initialize', error); }
+    };
+    document.addEventListener('astro:before-swap', () => { accessibility?.destroy(); accessibility = undefined; });
+    document.addEventListener('astro:page-load', mountPanel);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountPanel, { once: true });
+    else mountPanel();
     import { initTheme } from '../lib/theme';
     import { initBrandInteractions } from '../lib/brand-interactions';
     const boot = () => { initTheme(); initBrandInteractions(); };

@@ -31,6 +31,7 @@ export default function UsageChartImpl({ data, metric }: Pick<UsageChartProps, '
 
   const options = {
     responsive: true,
+    animation: false as const,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
@@ -47,7 +48,7 @@ export default function UsageChartImpl({ data, metric }: Pick<UsageChartProps, '
 
   return (
     <div className="h-[180px] min-h-[180px] w-full">
-      <Line data={chartData} options={options} />
+      <Line data={chartData} options={options} role="img" aria-label={`${label} over time. The same values are available in the data table below.`} />
     </div>
   );
 }

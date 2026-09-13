@@ -1,5 +1,6 @@
-import { useRef, useState, type DragEvent, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type DragEvent, type ChangeEvent } from 'react';
 import { Card } from '../primitives/Card';
+import { Button } from '../primitives/Button';
 import { Spinner } from '../primitives/Spinner';
 import { Badge } from '../primitives/Badge';
 import { Icon } from '../primitives/Icon';
@@ -28,7 +29,10 @@ export function FileDropzone({ onUploaded, accept, className }: FileDropzoneProp
   const [errorMsg, setErrorMsg] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+
   async function handleFile(file: File) {
+    if (state === 'uploading') return;
     setFileName(file.name);
     setState('uploading');
     setErrorMsg('');
@@ -49,6 +53,7 @@ export function FileDropzone({ onUploaded, accept, className }: FileDropzoneProp
 
   function onDrop(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
+    if (state === 'uploading') return;
     setState('idle');
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
@@ -56,16 +61,17 @@ export function FileDropzone({ onUploaded, accept, className }: FileDropzoneProp
 
   function onDragOver(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    setState('dragging');
+    if (state !== 'uploading') setState('dragging');
   }
 
   function onDragLeave() {
-    setState('idle');
+    if (state === 'dragging') setState('idle');
   }
 
   function onInputChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (file) void handleFile(file);
+    e.target.value = '';
   }
 
   const isDragging = state === 'dragging';
@@ -81,19 +87,22 @@ export function FileDropzone({ onUploaded, accept, className }: FileDropzoneProp
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      onClick={() => state !== 'uploading' && inputRef.current?.click()}
     >
       <input
         ref={inputRef}
         type="file"
         data-testid="file-upload-input"
         accept={accept}
+        aria-label="Choose a file to upload"
+        disabled={state === 'uploading'}
         className="hidden"
         onChange={onInputChange}
       />
 
+      <Button type="button" disabled={state === 'uploading'} onClick={() => inputRef.current?.click()}>Choose a file</Button>
+      <p role="status" aria-live="polite" aria-atomic="true">{state === 'uploading' ? `Uploading ${fileName}` : state === 'done' ? `Uploaded ${fileName}` : ''}</p>
       {state === 'uploading' && <Spinner size="md" />}
-      {state === 'error' && <Badge variant="danger">{errorMsg}</Badge>}
+      {state === 'error' && <div role="alert"><Badge variant="danger">{errorMsg}</Badge></div>}
       {state === 'done' && previewUrl && (
         <img
           src={previewUrl}
@@ -110,7 +119,7 @@ export function FileDropzone({ onUploaded, accept, className }: FileDropzoneProp
         <>
           <Icon name="Upload" size="lg" className="text-[var(--color-accent)]" />
           <p className="text-sm text-[var(--color-muted)]">
-            {isDragging ? 'Drop to upload' : 'Drag & drop or click to select a file'}
+            {isDragging ? 'Drop to upload' : 'Drag and drop a file, or use the Choose a file button'}
           </p>
         </>
       )}

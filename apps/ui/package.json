@@ -44,7 +44,8 @@
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.0.0",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "@platform-modules/ui-accessibility": "file:../../vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
