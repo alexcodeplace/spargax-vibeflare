@@ -15,5 +15,5 @@ else
   corepack pnpm --filter @vibeflare/ui build
 fi
 cd "$ROOT/apps/worker"
-corepack pnpm exec wrangler d1 migrations apply DB --local --config wrangler.e2e.toml --persist-to "$STATE"
-corepack pnpm exec wrangler dev --config wrangler.e2e.toml --local-protocol http --port "$PORT" --var "RP_ORIGIN:http://localhost:$PORT" --persist-to "$STATE"
+node "$ROOT/apps/worker/node_modules/wrangler/bin/wrangler.js" d1 migrations apply DB --local --config wrangler.e2e.toml --persist-to "$STATE"
+node "$ROOT/apps/worker/node_modules/wrangler/bin/wrangler.js" dev --config wrangler.e2e.toml --local-protocol http --port "$PORT" --var "RP_ORIGIN:http://localhost:$PORT" --persist-to "$STATE"

@@ -1,67 +1,112 @@
-# VibeFlare
+# Spargax VibeFlare
 
-**Your own AI gateway on Cloudflare, with a normal web app and an OpenAI-compatible API.**
+**Your AI workspace and API gateway, running in your own Cloudflare account.**
+
+Chat in the browser, choose the models you use, manage API keys, and inspect usage from one place. Point your apps and coding tools at the same OpenAI-compatible `/v1` endpoint instead of building authentication, model selection, and request tracking into every project.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/spargax-vibeflare)
 
-### One-click install
+![Spargax VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
 
-Click **Deploy to Cloudflare** above, choose your Cloudflare account, and accept the generated resource names. Cloudflare provisions the Worker, D1 database, R2 bucket, Workers AI binding, and Durable Objects, runs the database migrations, builds the UI, and deploys VibeFlare. No terminal, API token, or pre-generated session secret is required.
+VibeFlare is an MIT-licensed, self-hosted part of the Spargax ecosystem. You control the Cloudflare deployment, its data, and who can sign in. The browser app uses Spargax Club's shared artwork, dark and light themes, responsive navigation, and visibly selected tabs and buttons.
 
-When Cloudflare finishes, open the Worker URL. A fresh install routes you to `/setup`, where you can become the owner with GitHub or a passkey. **GitHub requires no deployment environment variables or pre-created OAuth credentials**: VibeFlare uses GitHub's App Manifest flow to create a small GitHub App owned by your GitHub account, then stores that instance's generated OAuth credentials privately in D1.
+## What is included
 
-VibeFlare loads the full public Workers AI catalog directly from Cloudflare with no API token. The current model registry refreshes lazily when models are opened after 24 hours, and **Refresh models** forces an immediate sync. Known-good models are ranked first, with `@cf/meta/llama-3.2-3b-instruct` as the default text model. **Settings > Models > Exclude paid** is on by default. The owner can turn it off to include models marked **💲 Paid**. Classification reads Cloudflare’s explicit paid-access flag, not the presence of a price-table row. Only current, verified entries are offered. Metadata refresh and local titles make no synthetic inference calls.
+| Area | What you can do |
+| --- | --- |
+| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text chats from the sidebar or History. Image-generation and audio-transcription panels are also available; see the current limitations below. |
+| **Models** | Search the catalog, save your personal model checkboxes, and refresh metadata. The owner controls whether paid-access models are offered. |
+| **API Keys** | Create labelled keys, reveal a new secret once, and revoke keys you no longer use. Owners can create admin keys. |
+| **Projects** | Manage private uploaded files. The current sidebar label opens `/files`; it is not a separate project-management system. |
+| **Data** | Inspect usage summaries and request audit events at `/analytics`. |
+| **Settings** | Open Account, Devices, Auth, Models, Cache, or the owner-only Invites section by its own URL. Manage passkeys, model choices, response-cache settings, prompt templates, and invitations. |
+| **CLI and API** | Use `vf` for chat, models, usage, installation checks, updates, and receipt-based uninstall; integrate applications through `/v1`. |
 
-Choose which models appear in your chat with the checkboxes at **Settings > Models** (`/settings/models/`). Choices save for your account and survive catalog refreshes. Every Settings section has its own URL, so it can be bookmarked or opened directly.
+### Current scope
 
-Saved conversations appear directly under **Workspace** as soon as the first message is submitted, without replacing the other menus. Titles come from the first message and do not consume neurons. See [model access and Workspace behavior](docs/model-access.md) for the policy and API details.
+Persistent browser history currently covers **text conversations**. Generated image results and audio transcripts are not yet added to that history. The `/v1/embeddings` API produces vectors for workflows such as similarity search; the browser's **Embeddings** tab is not yet a dedicated vector-input/output interface. Text-to-speech is an API capability, not a browser speech-generation screen.
 
-VibeFlare is for people building with AI who want one private place for Cloudflare Workers AI instead of wiring authentication, API keys, model lists, usage tracking, files, and chat history into every project themselves.
-
-You deploy it to **your Cloudflare account**. You get:
-
-- a browser chat UI;
-- an OpenAI-compatible `/v1` API for apps and coding tools;
-- API keys you can create and revoke;
-- the full public Workers AI model catalog with automatic daily lazy refresh and preferred-model ranking;
-- chat history and private file storage;
-- usage and audit views;
-- passkey login plus zero-config GitHub sign-in by default;
-- an optional Cloudflare Access mode for a custom domain;
-- `vf` commands for setup, health checks, updates, and safe uninstall.
-
-You do **not** need to read or edit the source code to use VibeFlare.
+Model capabilities and access depend on the selected provider model and your account. The screenshots below demonstrate the actual interface using isolated test data, not successful production inference across every modality.
 
 ## Screenshots
 
-### Chat landing
+These captures were refreshed from the **v0.9.5 source on main, including the shared-control refresh**, on 2026-09-13. They use the real production UI build served by an isolated local test Worker. Account details, model entries, conversation responses, and CLI ownership data are fixtures. The API-key secret is masked. They are not mockups and do not certify the state of an existing live deployment.
 
-![VibeFlare chat landing](docs/screenshots/vibeflare-landing.png)
+[Capture provenance and regeneration instructions](docs/screenshots/README.md) include the source commit, build hashes, viewport sizes, themes, and image checksums.
 
-### Browser chat
+### Personal model choices and clear Settings navigation
 
-![VibeFlare browser chat](docs/screenshots/vibeflare-chat.png)
+Use **Settings > Models** to search the catalog and choose what appears in your chat picker. Changes save per account without disabling the model for another user or API client. Direct section links support reload, Back/Forward, and opening a section in another tab.
 
-### API key creation
+![Dark Settings Models screen with a filled selected tab, personal model checkboxes, search and the Exclude paid policy](docs/screenshots/vibeflare-settings-models.png)
 
-![VibeFlare one-time API key reveal](docs/screenshots/vibeflare-key-creation.png)
+### A conversation with saved history
+
+The sidebar's **Recent chats** list updates when a text conversation is created. Titles come from the first message rather than an extra model call. This screenshot intentionally retains the local fixture's response text.
+
+![Text conversation showing the local test response and saved conversation in the Workspace sidebar](docs/screenshots/vibeflare-chat.png)
+
+### Light theme
+
+The same control assets have light-theme variants. Primary actions, secondary actions, disabled states, and the selected section remain visually distinct.
+
+![Light Settings Cache screen with visible Save TTL and Clear cache buttons and prompt-template inputs](docs/screenshots/vibeflare-settings-light.png)
+
+<details>
+<summary>More screenshots: mobile, sign-in, API keys, and CLI checks</summary>
+
+### Mobile Settings
+
+Settings sections wrap into separate targets instead of squeezing their labels into one line. This is the 390px-wide interface, not a scaled desktop screenshot.
+
+<img src="docs/screenshots/vibeflare-settings-mobile.png" width="390" alt="Mobile light-theme Settings with six separate navigation targets and personal model choices" />
+
+### Sign-in
+
+The shared Spargax identity extends to the authentication screens. The local fixture shown here offers passkey sign-in.
+
+![Spargax VibeFlare sign-in screen using the shared dark Club artwork and visible passkey action](docs/screenshots/vibeflare-login.png)
+
+### API-key creation
+
+A new key is revealed once. The secret block in this capture is deliberately masked, even though it belongs only to the disposable local fixture.
+
+![API Keys screen after creating a labelled key, with the one-time secret block masked](docs/screenshots/vibeflare-key-creation.png)
 
 ### CLI status and doctor
 
-![VibeFlare CLI status and doctor](docs/screenshots/vibeflare-status-doctor.png)
+This image renders actual `vf status` and `vf doctor` output in a terminal-style frame. The commands ran against the isolated local Worker with a synthetic ownership receipt; this is not a production health report.
+
+![Current VibeFlare CLI status and doctor output against a labelled local screenshot fixture](docs/screenshots/vibeflare-status-doctor.png)
+
+</details>
+
+## One-click install
+
+Click **Deploy to Cloudflare**, choose your account, and accept the generated resource names. The deployment configuration provisions the Worker, D1 database, R2 bucket, Workers AI binding, and Durable Objects, runs migrations, builds the UI, and deploys the app. This path does not require entering an API token or generating a session secret in a terminal.
+
+Open the Worker URL when deployment finishes. A fresh standalone installation routes to `/setup`, where the first user can become the owner with a passkey or GitHub. The GitHub setup path uses the App Manifest flow to create a GitHub App owned by your account and stores the generated OAuth credentials privately in D1. You do not have to create those credentials before deployment.
+
+### Your first session
+
+Open **Workspace**, choose a text model, and send a message. Open **Settings > Models** to choose which models appear in your picker. Open **API Keys** to create a key for another application, then use your Worker URL followed by `/v1` as its API base. Owners can invite another user from **Settings > Invites**.
+
+The catalog refreshes lazily after 24 hours, and **Refresh models** requests an immediate metadata sync. The picker prioritizes configured preferred models; `@cf/meta/llama-3.2-3b-instruct` is the preferred text default when it is available and selected. Models without verified paid-access metadata are not offered. Catalog refresh and chat-title generation do not make synthetic inference calls.
+
+**Exclude paid** is on by default. The owner can turn it off to offer models marked **💲 Paid**. This classification uses Cloudflare's explicit access metadata, not the presence of a price-table row. It is a model filter, **not an account spending cap**. See [model access and Workspace behavior](docs/model-access.md) for the policy and API details.
 
 ## What does it cost?
 
-Cloudflare currently includes **10,000 Workers AI Neurons per day at no charge** on both Free and Paid Workers plans. VibeFlare shows the live neuron count consumed through that VibeFlare installation against the daily allocation and refreshes it after inference. The Cloudflare allocation is account-wide, so usage from other Workers AI apps in the same account is not visible to a zero-config VibeFlare install. Some models require a paid billing method even while free Neurons remain; Cloudflare currently allows those through Workers Paid or prepaid AI Gateway credits.
+VibeFlare itself adds no application usage fee. Workers AI, Workers, D1, and R2 are Cloudflare services with their own allocations, limits, and billing. Your account plan, enabled models, and actual usage determine the provider bill.
 
-VibeFlare also uses Cloudflare Workers, D1, and R2. Those services have their own free allocations, limits, and paid pricing. VibeFlare itself does not add a usage fee; your Cloudflare plan and actual usage determine your Cloudflare bill.
+The quota indicator reports usage through this VibeFlare installation. It does not include requests from other Workers AI applications in the same Cloudflare account, so it should not be treated as a complete account-wide billing dashboard. Enabling a paid model does not establish that your account has the required provider access or budget.
 
-Current Cloudflare pricing:
+Check the provider's current terms before enabling paid usage:
 
-- Workers AI: https://developers.cloudflare.com/workers-ai/platform/pricing/
-- Workers: https://developers.cloudflare.com/workers/platform/pricing/
-- D1: https://developers.cloudflare.com/d1/platform/pricing/
-- R2: https://developers.cloudflare.com/r2/pricing/
+- [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/)
+- [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
+- [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/)
+- [R2 pricing](https://developers.cloudflare.com/r2/pricing/)
 
 ## Advanced: CLI-managed install
 
@@ -96,7 +141,7 @@ cd spargax-vibeflare
 From the VibeFlare folder:
 
 ```bash
-pnpm exec wrangler login
+pnpm --filter @vibeflare/worker exec wrangler login
 ```
 
 A browser window opens. Sign in to the Cloudflare account where you want VibeFlare to live.
@@ -104,7 +149,7 @@ A browser window opens. Sign in to the Cloudflare account where you want VibeFla
 If `pnpm` is available only through Corepack, use:
 
 ```bash
-corepack pnpm exec wrangler login
+corepack pnpm --filter @vibeflare/worker exec wrangler login
 ```
 
 ### 4. No model-catalog token required
@@ -293,7 +338,6 @@ Implemented OpenAI-style surfaces include chat completions, embeddings, image ge
 
 ## Security model
 
-The short version:
 
 - API keys are stored as SHA-256 hashes, not plaintext.
 - Browser auth is either VibeFlare session auth **or** Cloudflare Access, never both at once.
@@ -319,7 +363,9 @@ pnpm validate:wrangler
 pnpm --filter @vibeflare/ui test:e2e
 ```
 
-The UI uses Astryx components/theme primitives. Browser journeys and the deterministic UI matrix are release gates, not optional screenshots.
+The UI combines Astryx semantic components with the shared Spargax Club asset kit. `Button` and `Tabs` adapters supply consistent visible control states in both themes, including linked Settings sections. This is not a claim of legal accessibility certification.
+
+Browser journeys and the deterministic UI matrix verify user flows. README captures have a separate [reproducible screenshot workflow](docs/screenshots/README.md); they do not replace those tests.
 
 ## License
 

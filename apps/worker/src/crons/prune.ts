@@ -3,10 +3,16 @@ import type { Env } from '../env';
 export async function pruneExpired(env: Env): Promise<{ files: number; chats: number; cache: number; devices: number }> {
   const now = Date.now();
 
-  // Delete expired files: remove R2 object then D1 row
+  // Retain attachments referenced by active history. Unreferenced files and
+  // inactive conversations keep the existing 14-day retention policy.
   const expired = await env.DB.prepare(
-    'SELECT id, r2_key FROM files WHERE expires_at < ?'
-  ).bind(now).all<{ id: string; r2_key: string }>();
+    `SELECT f.id, f.r2_key FROM files f WHERE f.expires_at < ? AND NOT EXISTS (
+       SELECT 1 FROM chat_messages cm JOIN chats c ON c.id = cm.chat_id,
+       json_each(CASE WHEN json_valid(cm.attachments) THEN cm.attachments ELSE '{}' END, '$.files') attachment
+       WHERE f.purpose = 'chat-history' AND c.user_id = f.user_id AND c.updated_at >= ?
+         AND json_extract(CASE WHEN attachment.type = 'object' THEN attachment.value ELSE '{}' END, '$.id') = f.id
+     )`
+  ).bind(now, now - 14 * 86400_000).all<{ id: string; r2_key: string }>();
   for (const row of expired.results) {
     await env.R2.delete(row.r2_key);
     await env.DB.prepare('DELETE FROM files WHERE id = ?').bind(row.id).run();

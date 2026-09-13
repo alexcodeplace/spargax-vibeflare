@@ -1,0 +1,73 @@
+/* Shared task geometry: only the content changes when choosing another tab. */
+.vf-chat { min-height: 100%; height: auto; }
+.vf-chat-toolbar { display: grid; grid-template-columns: 356px minmax(0, 1fr); gap: 16px; min-height: 76px; }
+.vf-task-tabs { min-width: 0; width: 100%; }
+.vf-model-control { min-width: 0; min-height: 44px; display: flex; align-items: center; }
+.vf-model-control > div { width: 100%; flex-wrap: nowrap; }
+.vf-model-control .vf-button { flex: 0 0 auto; }
+.vf-model-control [role='combobox'] { overflow: hidden; max-width: 100%; }
+.vf-model-control [role='combobox'] > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vf-task-workspace { width: min(100%, 920px); margin-inline: auto; padding: 20px 20px 32px; display: flex; flex-direction: column; gap: 18px; }
+.vf-task-heading { height: 228px; display: grid; grid-template-rows: 58px 64px 72px; gap: 12px; justify-items: center; align-items: center; text-align: center; flex: 0 0 auto; }
+.vf-task-heading .vf-welcome-emblem { width: 58px; height: 58px; border-radius: 18px; margin: 0; }
+.vf-task-heading .vf-welcome-emblem img { width: 50px; height: 50px; }
+.vf-task-heading h1 { max-width: 100%; color: var(--color-text); font-size: clamp(26px, 3vw, 36px); font-weight: 500; line-height: 1.22; letter-spacing: -.04em; }
+.vf-task-heading > p { max-width: 630px; color: var(--color-muted); font-size: 13px; line-height: 1.7; }
+.vf-task-input { min-width: 0; min-height: 280px; }
+.vf-task-input .vf-composer-wrap { height: 280px; min-width: 0; border-radius: 20px; overflow: visible; }
+.vf-task-input .astryx-chat-composer { height: 100%; }
+.vf-task-input .astryx-chat-composer > div { height: 100%; min-width: 0; justify-content: space-between; border-radius: 20px; }
+.vf-task-input .astryx-chat-composer [class]:has(> .vf-dropzone) { flex: 1; min-width: 0; }
+.vf-task-input .astryx-chat-composer [contenteditable] { overflow-y: auto; overflow-wrap: anywhere; }
+.vf-composer-operation { color: var(--color-muted); font-size: 11px; line-height: 1.5; }
+.vf-task-help { min-height: 52px; padding-inline: 8px; color: var(--color-muted); font-size: 11px; line-height: 1.75; }
+.vf-task-help p { max-width: 760px; }
+.vf-task-results { display: grid; gap: 14px; width: 100%; min-width: 0; }
+.vf-task-results:empty { display: none; }
+.vf-task-results .astryx-chat-message { font-family: var(--font-family-body); }
+.vf-history-result { overflow-wrap: anywhere; }
+.vf-inline-notice { margin: 10px 0 0; padding: 12px 14px; border: 1px solid var(--vf-line); border-radius: 12px; background: var(--vf-panel); color: var(--color-text); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.vf-inline-notice--error { border-color: #df657788; background: color-mix(in srgb, var(--vf-panel) 92%, #d14c63); }
+.vf-dropzone { min-width: 0; width: 100%; border: 1px dashed var(--vf-line); border-radius: 12px; background: var(--vf-input); padding: 10px; transition: border-color 120ms, background-color 120ms; }
+.vf-dropzone[data-dragging='true'] { border-color: var(--vf-link); background: var(--vf-active); box-shadow: inset 0 0 0 1px var(--vf-link); }
+.vf-dropzone:focus-within { border-color: var(--vf-link); }
+.vf-dropzone-picker { display: flex; align-items: center; justify-content: start; gap: 12px; min-height: 54px; width: 100%; color: var(--color-text); text-align: start; background: transparent; border: 0; cursor: pointer; }
+.vf-dropzone-picker:disabled { opacity: .55; cursor: not-allowed; }
+.vf-dropzone-picker > svg, .vf-dropzone-picker > span:first-child { flex-shrink: 0; color: var(--vf-link); }
+.vf-dropzone-copy { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.vf-dropzone-copy strong { font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.vf-dropzone-copy > span { color: var(--color-muted); font-size: 10px; line-height: 1.6; }
+.vf-dropzone-browse { border: 1px solid var(--vf-line); border-radius: 9px; padding: 8px 10px; color: var(--color-text); background: var(--vf-panel); font-size: 11px; }
+.vf-dropzone--compact { padding: 6px 10px; }
+.vf-dropzone--compact .vf-dropzone-picker { min-height: 58px; }
+.vf-file-status { display: block; font-size: 11px; color: var(--color-muted); padding-top: 6px; }
+.vf-audio-composer { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.vf-audio-dropzone { padding: 6px 10px; }
+.vf-audio-dropzone .vf-dropzone-picker { min-height: 58px; }
+.vf-audio-selection { min-height: 100px; display: flex; flex-direction: column; align-items: start; justify-content: center; flex: 1; gap: 12px; padding-inline: 4px; color: var(--color-muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.vf-audio-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.vf-audio-actions > span { font-size: 11px; color: var(--color-muted); }
+.vf-file-remove { color: var(--vf-link); text-decoration: underline; text-underline-offset: 3px; font-size: 11px; min-height: 32px; cursor: pointer; }
+@media (max-width: 1100px) {
+  .vf-chat-toolbar { grid-template-columns: 1fr; gap: 8px; }
+  .vf-task-tabs { max-width: 440px; }
+}
+@media (max-width: 700px) {
+  .vf-chat-toolbar { padding: 8px; }
+  .vf-task-tabs { max-width: none; }
+  .vf-model-control .vf-button { min-height: 40px; font-size: 10px; }
+  .vf-task-workspace { padding: 20px 4px; gap: 16px; }
+  .vf-task-heading { height: 250px; grid-template-rows: 58px 64px 96px; gap: 10px; }
+  .vf-task-heading h1 { font-size: 27px; padding-inline: 6px; }
+  .vf-task-heading > p { font-size: 12px; line-height: 1.65; padding-inline: 10px; }
+  .vf-task-input .vf-composer-wrap { height: 300px; }
+  .vf-task-input { min-height: 300px; }
+  .vf-dropzone-browse { display: none; }
+  .vf-dropzone-copy > span { font-size: 10px; }
+  .vf-dropzone-copy strong { font-size: 11px; }
+  .vf-task-help { min-height: 80px; padding-inline: 8px; }
+  .vf-audio-actions > span { max-width: 48%; }
+  .vf-task-input .astryx-chat-composer .astryx-chat-send-button { min-width: 44px; min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { .vf-dropzone { transition: none; } }
+@media (forced-colors: active) { .vf-dropzone { border: 1px dashed CanvasText; } .vf-dropzone[data-dragging='true'] { outline: 2px solid Highlight; } }

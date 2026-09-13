@@ -320,6 +320,7 @@ export interface ChatMessageRecord {
   chat_id: string;
   role: 'system' | 'user' | 'assistant' | 'tool';
   content: string;
+  attachments?: string | null;
   tokens_in: number | null;
   tokens_out: number | null;
   neurons: number | null;
@@ -327,12 +328,12 @@ export interface ChatMessageRecord {
 }
 
 export interface ChatDetail {
-  chat: { id: string; title: string; model: string };
+  chat: { id: string; title: string; model: string; task?: string | null };
   messages: ChatMessageRecord[];
 }
 
-export async function getChatMessages(chatId: string): Promise<ChatDetail> {
-  const r = await apiFetch<ChatDetail>(`/admin/chats/${encodeURIComponent(chatId)}/messages`);
+export async function getChatMessages(chatId: string, signal?: AbortSignal): Promise<ChatDetail> {
+  const r = await apiFetch<ChatDetail>(`/admin/chats/${encodeURIComponent(chatId)}/messages`, { signal, cache: 'no-store' });
   return r;
 }
 
@@ -479,8 +480,9 @@ export interface TranscriptionResult {
   text: string;
 }
 
-export async function transcribeAudio(form: FormData): Promise<TranscriptionResult> {
-  const res = await fetch('/v1/audio/transcriptions', {
+export async function transcribeAudio(form: FormData, chatId?: string, signal?: AbortSignal): Promise<TranscriptionResult> {
+  const res = await fetch(`/v1/audio/transcriptions${chatId ? `?chat_id=${encodeURIComponent(chatId)}` : ''}`, {
+    signal,
     method: 'POST',
     credentials: 'same-origin',
     headers: { 'x-vf-browser': '1' },
@@ -491,8 +493,9 @@ export async function transcribeAudio(form: FormData): Promise<TranscriptionResu
     throw new Error('Unauthorized');
   }
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`Transcription failed: ${text}`);
+    const error = await res.json().catch(() => null) as { error?: { type?: string; message?: string } } | null;
+    if (error?.error?.type === 'paid_plan_required' || error?.error?.type === 'paid_model_excluded') notifyModelsChanged();
+    throw new Error(error?.error?.message ?? 'Audio transcription failed. Try again or choose another audio model.');
   }
   return res.json() as Promise<TranscriptionResult>;
 }

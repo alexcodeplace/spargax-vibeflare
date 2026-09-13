@@ -15,13 +15,16 @@ export function isPaidPlanRequiredError(message: string): boolean {
 }
 
 export type UpstreamFailure = {
-  status: 403 | 429 | 500 | 503;
-  type: 'model_catalog_unavailable' | 'paid_model_excluded' | 'paid_plan_required' | 'quota_exceeded' | 'server_error';
+  status: 400 | 403 | 429 | 500 | 503;
+  type: 'unsupported_transport' | 'model_catalog_unavailable' | 'paid_model_excluded' | 'paid_plan_required' | 'quota_exceeded' | 'server_error';
   message: string;
 };
 
 export function classifyUpstreamError(e: unknown): UpstreamFailure {
   const message = e instanceof Error ? e.message : String(e);
+  if (/\b8006\b.*only supports? websocket|only supports? websocket connections/i.test(message)) {
+    return { status: 400, type: 'unsupported_transport', message: 'This model needs live audio streaming. For an uploaded file, choose Whisper or Nova-3.' };
+  }
   if (e instanceof ModelAccessUnavailableError) return { status: 503, type: 'model_catalog_unavailable', message };
   if (e instanceof PaidModelExcludedError) {
     return { status: 403, type: 'paid_model_excluded', message };

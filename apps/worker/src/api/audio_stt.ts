@@ -1,10 +1,12 @@
+import { supportsAudioFile, LIVE_AUDIO_MESSAGE, audioFileProblem, audioContentType } from '@vibeflare/shared';
+import { historyTarget, storeHistoryFile, saveHistoryTurn, discardHistoryFiles } from './history';
 import type { Context } from 'hono';
 import type { Env, Variables } from '../env';
 import { getModel } from '../db/queries';
 import { peekQuota, chargeQuota } from '../quota/client';
 import { audit } from '../audit/log';
 import { actualNeuronsFromOutput, estimateNeurons } from '../ai/neurons';
-import { sttReqToWai, sttOutToOpenAI } from './translator';
+import { sttReqToWai, sttOutToOpenAI, normalizeTranscription } from './translator';
 import { runner } from '../ai/dispatch';
 import { classifyUpstreamError } from '../ai/errors';
 
@@ -25,18 +27,29 @@ export async function handle(c: C): Promise<Response> {
     return c.json({ error: { type: 'invalid_request', message: 'multipart body required' } }, 400);
   }
 
-  const file = formData.get('file') as File | null;
-  if (!file) {
+  const file = formData.get('file');
+  if (!(file instanceof File)) {
     return c.json({ error: { type: 'invalid_request', message: 'file field required' } }, 400);
   }
 
-  const modelName = (formData.get('model') as string | null) ?? DEFAULT_MODEL;
-  const responseFormat = (formData.get('response_format') as string | null) ?? 'json';
+  const modelName = formData.get('model') ?? DEFAULT_MODEL;
+  const responseFormat = formData.get('response_format') ?? 'json';
+  if (typeof modelName !== 'string' || typeof responseFormat !== 'string' || !['json', 'text', 'verbose_json'].includes(responseFormat)) {
+    return c.json({ error: { type: 'invalid_request', message: 'Choose a model and a supported response format.' } }, 400);
+  }
+  if (!supportsAudioFile(modelName)) return c.json({ error: { type: 'unsupported_transport', message: LIVE_AUDIO_MESSAGE } }, 400);
+  const fileProblem = audioFileProblem(file);
+  if (fileProblem) return c.json({ error: { type: 'invalid_request', message: fileProblem } }, file.size > 25 * 1024 * 1024 ? 413 : 400);
 
   const modelRow = await getModel(env.DB, modelName);
   if (!modelRow || modelRow.enabled === 0) {
     return c.json({ error: { type: 'not_found', message: `model '${modelName}' not found` } }, 404);
   }
+
+  if (modelRow.task !== 'automatic-speech-recognition') return c.json({ error: { type: 'invalid_request', message: 'Choose a speech-to-text model for an audio file.' } }, 400);
+
+  const chatId = await historyTarget(c);
+  if (chatId instanceof Response) return chatId;
 
   const quota = await peekQuota(env);
   if (quota.used >= quota.limit) {
@@ -45,14 +58,13 @@ export async function handle(c: C): Promise<Response> {
 
   const audio = await file.arrayBuffer();
 
-  if (audio.byteLength > 25 * 1024 * 1024) {
-    return c.json({ error: { type: 'payload_too_large', message: 'audio > 25MB' } }, 413);
-  }
-
-  const waiInput = sttReqToWai(audio, modelName);
+  const mime = audioContentType(file)!;
+  const waiInput = sttReqToWai(audio, modelName, mime);
   let out: Record<string, unknown>;
+  let normalized: ReturnType<typeof normalizeTranscription>;
   try {
     out = await runner(env, modelName, waiInput) as Record<string, unknown>;
+    normalized = normalizeTranscription(out);
   } catch (e: unknown) {
     const failure = classifyUpstreamError(e);
     await audit(env, {
@@ -75,6 +87,16 @@ export async function handle(c: C): Promise<Response> {
     durationMs: Date.now() - start,
   });
 
+  if (chatId) {
+    const saved = await storeHistoryFile(env, userId, 'audio', file.name || 'audio.wav', mime, audio);
+    try {
+      const metadata = { version: 1 as const, task: 'automatic-speech-recognition' as const, files: [saved.file] };
+      await saveHistoryTurn(env, userId, chatId, { model: modelName, userText: `Transcribe ${file.name || 'audio'}`, assistantText: normalized.text, metadata: { ...metadata, files: [] }, userMetadata: metadata, neurons });
+    } catch (error) {
+      await discardHistoryFiles(env, userId, [saved]);
+      throw error;
+    }
+  }
   const result = sttOutToOpenAI(out, responseFormat);
 
   if (responseFormat === 'text') {
