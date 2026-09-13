@@ -455,5 +455,14 @@
       ],
       "overflow": false
     }
-  ]
+  ],
+  "hosted_snapshot_review": {
+    "run_id": 34766577848,
+    "source_commit": "4f6a210d84e5120a48f357163487d5c5ab7399eb",
+    "artifact": "browser-evidence",
+    "reviewed_baselines": 28,
+    "behavioral_tests_passed": 83,
+    "tolerance_changed": false,
+    "note": "Reviewed hosted captures replace VM-rendered baselines. All initial hosted failures were screenshot comparisons; a fresh gate must verify these baselines without updates."
+  }
 }
