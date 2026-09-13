@@ -17,7 +17,7 @@ jobs:
     # Keep the existing same-repository guard; run the complete gate on a
     # disposable hosted runner rather than waiting for a missing private label.
     if: github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - name: Checkout
@@ -69,3 +69,12 @@ jobs:
       # stood up around this step.
       - name: E2E
         run: pnpm --filter @vibeflare/ui run test:e2e
+
+      - name: Retain browser verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-evidence
+          path: apps/ui/test-results/
+          if-no-files-found: warn
+          retention-days: 3
