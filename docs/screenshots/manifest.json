@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "capturedAt": "2026-09-13T11:25:30.260Z",
-  "version": "0.9.5",
-  "sourceCommit": "abf3e2e6718a43956907f8a856d48dd38e3ff7bc",
+  "capturedAt": "2026-09-13T11:31:24.262Z",
+  "version": "0.9.6",
+  "sourceCommit": "3f964b42a6a230c45a0eb304db65558ef68bb9c8",
   "environment": "isolated local E2E Worker; not a deployed production environment",
   "inference": "deterministic fakeAI fixture; no paid or production inference",
   "catalog": "small seeded demonstration catalog; not a live availability or billing claim",
   "privacy": "local fixture accounts only; one-time key masked; fixture reset after capture",
   "buildHtmlSha256": {
-    "chat": "77a8d989566aba0ab1919f82ebc7d35e03386f1e665840ebcb19f092a1948156",
-    "login": "d685bb8dcd22ec384b9ddf7cdc34e7428b9c8c96024db0f14b895637de67790b",
-    "keys": "13401063504f33d066f388a3a2e49f20dedb067328ffe51035bf05ec5d8f41a7",
-    "settings/models": "b0a89830af981258147017b00123c1056e31596088a424e755c083c4de27b7b8",
-    "settings/cache": "f5452400064f9de929d18ddeae8837911086950e3b3392e99dc18ebc0c361fc8"
+    "chat": "12a10052c4cbbdeaa559f2b7b47f1c060d0d1d15ee666b85b39c4b699b3dbe6b",
+    "login": "e9e21452f3dcbb61e0f7993d955ecbd16ca6ba9a7791afad154a591fed44ab1c",
+    "keys": "84c03843500fe4a7d063e6f940205d0d091411ace6e67f29716c76b8f509f876",
+    "settings/models": "026b87a7047541cd132e40fd1648e540505c73f34a0a37a5378c7d7d7eed0199",
+    "settings/cache": "a4dcb7bb1e8243c14270332f73b9066817a9e02dedcffb77523a4b2741b9ef85"
   },
   "screenshots": [
     {
@@ -24,8 +24,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "f6a1c8aa561dc5a02cee3a7187b20df40f8a1fe4350865e3e201737d00e35bcf",
-      "bytes": 541506
+      "sha256": "0db707e42e5ebc49dace20454444c154e6c906cc410a86a4f14d89574d9feedd",
+      "bytes": 537388
     },
     {
       "file": "vibeflare-settings-models.png",
@@ -36,8 +36,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "e39e72fb96551c48c63e0bb8aef6406133195f92d3d53db3e6f9f9a4b2f2713b",
-      "bytes": 723442
+      "sha256": "7594c16c4c5c85a1fbbac5e39902571bd9d9777dfe554ac2c7db8037154cd283",
+      "bytes": 723445
     },
     {
       "file": "vibeflare-settings-light.png",
@@ -72,8 +72,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "9b9461c107d98b758941d1e3a38caadce8398a4b7cd9d2dbeb24534bd19192f7",
-      "bytes": 415905
+      "sha256": "29e2f29d3a325646d93b015d00f1e5bd30622e4813f06c772cfdc25f1a310a71",
+      "bytes": 524479
     },
     {
       "file": "vibeflare-key-creation.png",
@@ -84,8 +84,8 @@
         "height": 1000
       },
       "theme": "dark",
-      "sha256": "5c30f7af060069744092fdedea09d2d0eb9676ce7b0151a5c2b39295b37a475b",
-      "bytes": 532923
+      "sha256": "059d19315947d1151136d9852538d9a7d3b65806d1ea1fd4fcb8196180ebf2b5",
+      "bytes": 532985
     },
     {
       "file": "vibeflare-status-doctor.png",
@@ -96,8 +96,8 @@
         "height": 1000
       },
       "theme": "terminal",
-      "sha256": "b4c4af36659f24e04debe0099dc3862f299c1d6b8eb230c219bbaf856b8eddd1",
-      "bytes": 69117
+      "sha256": "8b81fee5c6651cdcc31dfd6d7874b52c9e1c2f6f26f415c1726b5e2994ac2e71",
+      "bytes": 69182
     },
     {
       "file": "vibeflare-login.png",
