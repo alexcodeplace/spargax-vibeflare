@@ -27,11 +27,13 @@ for (const theme of ['dark', 'light'] as const) {
         const background = await page.locator(route === '/chat' ? '.vf-workspace' : '.vf-auth-shell').evaluate(el => getComputedStyle(el).backgroundImage);
         expect(background).toContain(`/assets/club/${theme}-${route === '/chat' ? 'dashboard' : 'auth'}-background.webp`);
         const visibleArt = page.locator(`img[data-art-theme="${theme}"]:visible`);
-        if (route === '/chat' || viewport.width > 700) {
+        if (route === '/chat') {
           expect(await visibleArt.count()).toBeGreaterThan(0);
           await expect.poll(() => visibleArt.evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
         }
         if (route === '/login') {
+          await expect(page.getByTestId('flare-logo')).toBeVisible();
+          await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeAttached();
           const action = page.getByRole('button', { name: 'Sign in with passkey', exact: true });
           await expect(action).toHaveCSS('background-image', /linear-gradient/);
           await expect(action).toHaveCSS('color', 'rgb(255, 255, 255)');

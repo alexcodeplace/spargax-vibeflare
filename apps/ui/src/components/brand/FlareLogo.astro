@@ -1,0 +1,59 @@
+---
+import { createFlareDots, FLARE_COLORS, FLARE_HEIGHT, FLARE_WIDTH } from '../../lib/flare-dots';
+const logo = createFlareDots().filter(dot => dot.color >= 0);
+---
+<vf-dot-flare class="vf-dot-flare" data-testid="flare-logo" data-state="static">
+  <div class="vf-dot-stage">
+    <svg class="vf-dot-fallback" viewBox={`0 0 ${FLARE_WIDTH} ${FLARE_HEIGHT}`} width={FLARE_WIDTH} height={FLARE_HEIGHT}
+      role="img" aria-label="VibeFlare logo in red, orange and gold dots">
+      <defs><pattern id="vf-flare-grid" x="3.5" y="3.5" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r=".65" fill="#a6bdce" opacity=".20" /></pattern></defs>
+      <rect width={FLARE_WIDTH} height={FLARE_HEIGHT} fill="url(#vf-flare-grid)" />
+      {logo.map(dot => <circle cx={dot.homeX} cy={dot.homeY} r={dot.radius} fill={FLARE_COLORS[dot.color]} />)}
+    </svg>
+    <canvas width={FLARE_WIDTH} height={FLARE_HEIGHT} aria-hidden="true"></canvas>
+    <span class="vf-dot-corner vf-dot-corner--top" aria-hidden="true"></span>
+    <span class="vf-dot-corner vf-dot-corner--bottom" aria-hidden="true"></span>
+  </div>
+  <div class="vf-dot-caption">
+    <span class="vf-dot-hint"><span class="vf-dot-indicator" aria-hidden="true"></span><span data-flare-hint>A spark, at rest.</span></span>
+    <button type="button" data-flare-replay hidden aria-label="Replay the VibeFlare dot animation">
+      <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><path d="M16 7a6 6 0 1 0 .4 5M16 3v4h-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      Replay
+    </button>
+  </div>
+</vf-dot-flare>
+<script>
+  import '../../lib/flare-element';
+</script>
+<style is:global>
+  .vf-auth-art:has(.vf-dot-flare) { display: block; width: min(100%, 520px); min-height: 0; margin-top: 28px; animation: none; }
+  .vf-dot-flare { display: block; width: 100%; contain: layout style; }
+  .vf-dot-stage { position: relative; width: 100%; aspect-ratio: 504 / 316; overflow: hidden; border: 1px solid #a969302b; border-radius: 20px; background: radial-gradient(ellipse at 52% 48%, #7a290b18, transparent 68%), #0209134d; }
+  :root[data-theme='light'] .vf-dot-stage { background: radial-gradient(ellipse at 52% 48%, #72230225, transparent 70%), #081725; box-shadow: 0 8px 30px #002a4720; }
+  .vf-dot-stage canvas, .vf-dot-fallback { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .vf-dot-stage canvas { opacity: 0; touch-action: pan-y; }
+  .vf-dot-flare[data-ready='true'] canvas { opacity: 1; }
+  .vf-dot-flare[data-ready='true'] .vf-dot-fallback { opacity: 0; pointer-events: none; }
+  .vf-dot-corner { position: absolute; width: 22px; height: 22px; pointer-events: none; border-color: #efaa654d; border-style: solid; }
+  .vf-dot-corner--top { top: 13px; left: 13px; border-width: 1px 0 0 1px; border-radius: 4px 0 0 0; }
+  .vf-dot-corner--bottom { right: 13px; bottom: 13px; border-width: 0 1px 1px 0; border-radius: 0 0 4px 0; }
+  .vf-dot-caption { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 4px 6px 0; font-size: 10px; color: var(--color-muted); }
+  .vf-dot-hint { display: inline-flex; align-items: center; gap: 8px; }
+  .vf-dot-indicator { width: 4px; height: 4px; flex-shrink: 0; border-radius: 50%; background: #f8892c; box-shadow: 0 0 8px #f07b3740; }
+  .vf-dot-caption button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 64px; min-height: 44px; border: 0; border-radius: 8px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+  .vf-dot-caption button[hidden] { display: none; }
+  .vf-dot-caption button:hover { color: var(--color-text); background: var(--vf-input); }
+  .vf-dot-caption button:focus-visible { outline: 2px solid var(--vf-link); outline-offset: 2px; }
+  @media (max-width: 700px) {
+    .vf-auth-art:has(.vf-dot-flare) { display: block; width: min(100%, 310px); margin: 22px auto 0; }
+    .vf-dot-stage { border-radius: 16px; }
+    .vf-dot-caption { font-size: 10px; }
+  }
+  @media (forced-colors: active) {
+    .vf-dot-stage { border: 1px solid CanvasText; background: Canvas; }
+    .vf-dot-flare[data-ready='true'] canvas { opacity: 0; }
+    .vf-dot-flare[data-ready='true'] .vf-dot-fallback { opacity: 1; }
+    .vf-dot-fallback > circle { fill: CanvasText; }
+    .vf-dot-corner { display: none; }
+  }
+</style>
