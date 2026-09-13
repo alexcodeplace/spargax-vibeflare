@@ -9,7 +9,7 @@
 
 /* Numerals choose Outfit automatically, including inside otherwise Latin/Hebrew text. */
 @font-face {
-  font-family: 'Spargax Numerals';
+  font-family: 'VibeFlare Numerals';
   src: url('@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2') format('woff2');
   font-style: normal;
   font-weight: 100 900;
@@ -19,9 +19,9 @@
 
 /* Brand semantic tokens. Astryx remains the component and accessibility foundation. */
 :root[data-astryx-theme='neutral'], [data-astryx-theme='neutral'] {
-  --font-family-body: 'Spargax Numerals', 'Poppins', 'Noto Sans Hebrew', system-ui, sans-serif;
+  --font-family-body: 'VibeFlare Numerals', 'Poppins', 'Noto Sans Hebrew', system-ui, sans-serif;
   --font-family-heading: var(--font-family-body);
-  --font-family-numeric: 'Spargax Numerals', 'Poppins', sans-serif;
+  --font-family-numeric: 'VibeFlare Numerals', 'Poppins', sans-serif;
   --font-sans: var(--font-family-body);
   --color-background-body: #061329;
   --color-background-surface: #0b203d;
@@ -86,7 +86,7 @@
   color-scheme: light;
 }
 :root[dir='rtl'], :root[dir='rtl'] [data-astryx-theme='neutral'], :lang(he) {
-  --font-family-body: 'Spargax Numerals', 'Noto Sans Hebrew', 'Poppins', system-ui, sans-serif;
+  --font-family-body: 'VibeFlare Numerals', 'Noto Sans Hebrew', 'Poppins', system-ui, sans-serif;
   font-family: var(--font-family-body);
 }
 html, body { font-family: var(--font-family-body); }

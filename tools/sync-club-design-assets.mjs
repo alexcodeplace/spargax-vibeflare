@@ -11,7 +11,7 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const check = process.argv.includes('--check');
 const argument = process.argv.indexOf('--source');
 const source = check ? target : argument >= 0 && process.argv[argument + 1];
-if (!source) throw new Error('Usage: node tools/sync-club-brand.mjs --source <club>/public/assets/club | --check');
+if (!source) throw new Error('Usage: node tools/sync-club-design-assets.mjs --source <club>/public/assets/club | --check');
 const manifestBytes = readFileSync(join(source, 'manifest.json'));
 const manifest = JSON.parse(manifestBytes);
 if (manifest.runtimeOnly !== true || !Array.isArray(manifest.files) || !manifest.files.length) {
@@ -44,8 +44,7 @@ if (!check) {
   }
   copyFileSync(join(source, 'manifest.json'), join(target, 'manifest.json'));
   writeFileSync(join(root, 'docs/design/club-asset-provenance.json'), JSON.stringify({
-    sourceRepository: 'alexcodeplace/spargax-club',
-    sourceDirectory: resolve(source),
+    sourcePackage: 'shared ecosystem Club runtime assets',
     importedAt: new Date().toISOString(),
     sourceManifestSha256: sha256(manifestBytes),
     assetCount: seen.size, bytes: total,

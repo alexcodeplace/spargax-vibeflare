@@ -27,7 +27,7 @@ export function Sidebar({ activePath = '' }: SidebarProps) {
   return (
     <aside className="vf-sidebar flex">
       <div className="px-2 mb-6">
-        <span className="vf-brand"><span className="vf-brand-mark" aria-hidden="true">S</span>Spargax VibeFlare</span>
+        <span className="vf-brand"><span className="vf-brand-mark" aria-hidden="true">V</span>VibeFlare</span>
       </div>
       <nav className="vf-navigation">
         {NAV_LINKS.map(({ href, label, icon }) => {

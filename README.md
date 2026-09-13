@@ -1,14 +1,14 @@
-# Spargax VibeFlare
+# VibeFlare
 
 **Your AI workspace and API gateway, running in your own Cloudflare account.**
 
 Chat in the browser, choose the models you use, manage API keys, and inspect usage from one place. Point your apps and coding tools at the same OpenAI-compatible `/v1` endpoint instead of building authentication, model selection, and request tracking into every project.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/spargax-vibeflare)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/alexcodeplace/vibeflare)
 
-![Spargax VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
+![VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
 
-VibeFlare is an MIT-licensed, self-hosted part of the Spargax ecosystem. You control the Cloudflare deployment, its data, and who can sign in. The browser app uses Spargax Club's shared artwork, dark and light themes, responsive navigation, and visibly selected tabs and buttons.
+VibeFlare is an MIT-licensed, self-hosted. You control the Cloudflare deployment, its data, and who can sign in. Dark and light themes, responsive navigation, and visibly selected tabs and buttons.
 
 ## What is included
 
@@ -63,9 +63,9 @@ Settings sections wrap into separate targets instead of squeezing their labels i
 
 ### Sign-in
 
-The shared Spargax identity extends to the authentication screens. The local fixture shown here offers passkey sign-in.
+The local fixture shown here offers passkey sign-in.
 
-![Spargax VibeFlare sign-in screen using the shared dark Club artwork and visible passkey action](docs/screenshots/vibeflare-login.png)
+![VibeFlare sign-in screen using the shared dark Club artwork and visible passkey action](docs/screenshots/vibeflare-login.png)
 
 ### API-key creation
 
@@ -129,8 +129,8 @@ https://developers.cloudflare.com/workers/wrangler/install-and-update/
 ### 2. Download VibeFlare
 
 ```bash
-git clone https://github.com/alexcodeplace/spargax-vibeflare.git
-cd spargax-vibeflare
+git clone https://github.com/alexcodeplace/vibeflare.git
+cd vibeflare
 ./install.sh
 ```
 
@@ -363,7 +363,7 @@ pnpm validate:wrangler
 pnpm --filter @vibeflare/ui test:e2e
 ```
 
-The UI combines Astryx semantic components with the shared Spargax Club asset kit. `Button` and `Tabs` adapters supply consistent visible control states in both themes, including linked Settings sections. This is not a claim of legal accessibility certification.
+The UI combines Astryx semantic components with the shared ecosystem Club asset kit. `Button` and `Tabs` adapters supply consistent visible control states in both themes, including linked Settings sections. This is not a claim of legal accessibility certification.
 
 Browser journeys and the deterministic UI matrix verify user flows. README captures have a separate [reproducible screenshot workflow](docs/screenshots/README.md); they do not replace those tests.
 

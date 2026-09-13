@@ -1,6 +1,6 @@
 # README screenshot provenance
 
-The images in this directory come from the actual Spargax VibeFlare production UI build, served by the isolated local E2E Worker. They are not generated mockups or captures of a production account.
+The images in this directory come from the actual VibeFlare production UI build, served by the isolated local E2E Worker. They are not generated mockups or captures of a production account.
 
 `manifest.json` records the capture time, package version, source commit, exact served-build HTML hashes, route, theme, viewport, PNG checksum, and size for each capture. The source commit identifies the runtime used for the screenshots; later documentation-only commits do not change that UI.
 
