@@ -1,3 +1,4 @@
+import { supportsAudioFile } from '@vibeflare/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Select } from '../primitives/Select';
 import { Spinner } from '../primitives/Spinner';
@@ -19,6 +20,7 @@ const PREFERRED_MODELS: Record<string, readonly string[]> = {
     '@cf/openai/gpt-oss-20b',
     '@cf/qwen/qwen2.5-coder-32b-instruct',
   ],
+  'automatic-speech-recognition': ['@cf/openai/whisper-large-v3-turbo', '@cf/openai/whisper', '@cf/deepgram/nova-3', '@cf/openai/whisper-tiny-en'],
   'text-to-image': [
     '@cf/black-forest-labs/flux-1-schnell',
     '@cf/bytedance/stable-diffusion-xl-lightning',
@@ -37,7 +39,7 @@ export function modelLabelForPicker(model: ModelInfo): string {
 }
 
 export function sortModelsForPicker(models: ModelInfo[], task?: string): ModelInfo[] {
-  return models.filter((m) => typeof m.paid_required === 'boolean').sort((a, b) => {
+  return models.filter((m) => typeof m.paid_required === 'boolean' && (task !== 'automatic-speech-recognition' || supportsAudioFile(m.name))).sort((a, b) => {
     const billingRank = (m: ModelInfo) => m.paid_required === true ? 1 : 0;
     const paidDelta = billingRank(a) - billingRank(b);
     if (paidDelta !== 0) return paidDelta;

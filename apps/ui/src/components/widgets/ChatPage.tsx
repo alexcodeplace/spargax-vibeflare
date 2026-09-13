@@ -1,27 +1,23 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { parseHistoryMetadata, type HistoryMetadata } from '@vibeflare/shared';
 import { HistoryAttachments } from './HistoryAttachments';
-import { createChat, getChatMessages, notifyModelsChanged, notifyQuotaChanged, redirectToLoginOnce, uploadFile } from '../../lib/api';
+import { createChat, getChatMessages, notifyModelsChanged, notifyQuotaChanged, redirectToLoginOnce } from '../../lib/api';
 import {
   ChatComposer,
-  ChatComposerDrawer,
   ChatComposerInput,
-  ChatLayout,
   ChatMessage as AstryxChatMessage,
   ChatMessageBubble,
   ChatMessageList,
 } from '@astryxdesign/core/Chat';
 import { Avatar } from '@astryxdesign/core/Avatar';
-import { Icon } from '../primitives/Icon';
 import { BrandArtwork } from '../brand/BrandArtwork';
-import { HStack, VStack } from '@astryxdesign/core/Layout';
 import { Markdown } from '@astryxdesign/core/Markdown';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { TaskWorkspace, TASK_PRESENTATION } from './TaskWorkspace';
+import { FileDropzone } from './FileDropzone';
+import { readPromptFile, TEXT_FILE_ACCEPT, PROMPT_FILE_ACCEPT, MAX_TEXT_FILE_BYTES, MAX_IMPORTED_CHARACTERS, fileMatchesAccept } from '../../lib/file-input';
 import { AudioTranscribePanel } from './AudioTranscribePanel';
 import { ModelPicker } from './ModelPicker';
 import { Card } from '../primitives/Card';
-import { Badge } from '../primitives/Badge';
 import { Tabs } from '../primitives/Tabs';
 import { Toast } from '../primitives/Toast';
 import { HydratedIsland } from '../HydratedIsland';
@@ -45,8 +41,7 @@ const TASK_ITEMS = [
   { value: 'automatic-speech-recognition', label: 'Audio' },
 ];
 
-const chatFill: CSSProperties = { minHeight: 0, flex: 1 };
-const composerInputStyle: CSSProperties = { minHeight: 90 };
+const composerInputStyle: CSSProperties = { minHeight: 100, maxHeight: 100, overflowY: 'auto' };
 
 const STARTERS = [
   { title: 'Think it through', detail: 'Turn a thought into a plan', art: 'lightbulb-glass' as const, prompt: 'Help me think through an idea. Ask me a few questions to understand what I am trying to achieve.' },
@@ -65,14 +60,18 @@ function ChatPageInner() {
   const [messages, setMessages] = useState<UiMessage[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<Array<{ id: string; name: string }>>([]);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [readingFile, setReadingFile] = useState(false);
+  const [importedFileName, setImportedFileName] = useState<string | null>(null);
+  const fileReadVersion = useRef(0);
+  const fileReading = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
   const composerRef = useRef<HTMLDivElement>(null);
 
   const [imagePrompt, setImagePrompt] = useState('');
   const [generating, setGenerating] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const latestDraft = useRef({ input, imagePrompt, activeTask });
+  latestDraft.current = { input, imagePrompt, activeTask };
 
   const [toast, setToast] = useState<{ open: boolean; title: string; variant: 'default' | 'danger' }>({
     open: false,
@@ -137,13 +136,14 @@ function ChatPageInner() {
   }
 
   function handleTaskChange(task: string) {
-    if (operationRef.current || audioBusy || loadingHistory) return;
+    if (operationRef.current || audioBusy || loadingHistory || fileReading.current) return;
     setActiveTask(task);
     setModel('');
     setMessages([]);
     chatIdRef.current = null;
     setImageError(null);
-    setAttachedFiles([]);
+    setImportedFileName(null);
+    fileReadVersion.current++;
     setInput('');
     setImagePrompt('');
     const url = new URL(window.location.href);
@@ -157,25 +157,28 @@ function ChatPageInner() {
     if (task) setActiveTask(task);
   }, []);
 
-  async function addFiles(files: File[]) {
-    if (files.length === 0) return;
-    setUploadingFiles(true);
+  async function importTextFile(files: File[]) {
+    if (files.length !== 1) throw new Error('Choose one text file at a time.');
+    if (fileReading.current || operationRef.current) return;
+    const file = files[0]!;
+    const task = activeTask;
+    const version = ++fileReadVersion.current;
+    if (task === 'text-to-image' && !fileMatchesAccept(file, PROMPT_FILE_ACCEPT)) throw new Error('Import a written prompt as .txt or .md. Reference images are not supported by this tab.');
+    fileReading.current = true; setReadingFile(true);
     try {
-      const records = await Promise.all(files.map(uploadFile));
-      setAttachedFiles((previous) => [
-        ...previous,
-        ...records.map((record) => ({ id: record.id, name: record.name })),
-      ]);
-    } catch (error) {
-      notify(error instanceof Error ? error.message : 'File upload failed', 'danger');
-    } finally {
-      setUploadingFiles(false);
-    }
+      const text = await readPromptFile(file);
+      if (version !== fileReadVersion.current || task !== latestDraft.current.activeTask) return;
+      const previous = task === 'text-to-image' ? latestDraft.current.imagePrompt : latestDraft.current.input;
+      const combined = previous.trim() ? `${previous.trim()}\n\n${text}` : text;
+      if (combined.length > MAX_IMPORTED_CHARACTERS) throw new Error('The combined input exceeds 16,000 characters. Shorten it before importing more text.');
+      if (task === 'text-to-image') setImagePrompt(combined); else setInput(combined);
+      setImportedFileName(file.name);
+    } finally { fileReading.current = false; setReadingFile(false); }
   }
 
   async function sendMessage(value = input) {
     const text = value.trim();
-    if (!text || operationRef.current || busy) return;
+    if (!text || operationRef.current || busy || fileReading.current) return;
     if (!model) {
       notify('Choose a model first.');
       return;
@@ -223,7 +226,6 @@ function ChatPageInner() {
           model,
           stream: true,
           messages: [...messages, userMessage].map((message) => ({ role: message.role, content: message.content })),
-          ...(attachedFiles.length > 0 ? { file_ids: attachedFiles.map((file) => file.id) } : {}),
         }),
         signal: abortRef.current.signal,
       });
@@ -285,14 +287,14 @@ function ChatPageInner() {
     } finally {
       operationRef.current = false;
       setSending(false);
-      setAttachedFiles([]);
+      setImportedFileName(null);
       abortRef.current = null;
     }
   }
 
   async function generateImage(value = imagePrompt) {
     const prompt = value.trim();
-    if (!prompt || operationRef.current || busy) return;
+    if (!prompt || operationRef.current || busy || fileReading.current) return;
     if (!model) { notify('Choose an image model first.'); return; }
     operationRef.current = true;
     setGenerating(true);
@@ -315,6 +317,7 @@ function ChatPageInner() {
       await loadHistory(id, controller.signal);
       if (controller.signal.aborted) return;
       setImagePrompt('');
+      setImportedFileName(null);
       notifyQuotaChanged();
     } catch (error) {
       if (!controller.signal.aborted) {
@@ -331,120 +334,52 @@ function ChatPageInner() {
     }
   }
 
-  const attachmentDrawer = attachedFiles.length > 0 ? (
-    <ChatComposerDrawer count={attachedFiles.length}>
-      {attachedFiles.map((file) => (
-        <Token
-          key={file.id}
-          label={file.name}
-          onRemove={() => setAttachedFiles((previous) => previous.filter((candidate) => candidate.id !== file.id))}
-        />
-      ))}
-    </ChatComposerDrawer>
-  ) : undefined;
-
-  const textComposer = (
+  const info = TASK_PRESENTATION[activeTask] ?? TASK_PRESENTATION['text-generation']!;
+  const prompt = isImageMode ? imagePrompt : input;
+  const setPrompt = isImageMode ? setImagePrompt : setInput;
+  const submit = isImageMode ? generateImage : sendMessage;
+  const isRunning = sending || generating;
+  const promptComposer = (
     <div className="vf-composer-wrap" ref={composerRef}>
-    <ChatComposer
-      value={input}
-      onChange={setInput}
-      onSubmit={sendMessage}
-      onStop={() => abortRef.current?.abort()}
-      isStopShown={sending}
-      isDisabled={uploadingFiles || !model || loadingHistory}
-      placeholder="Ask anything"
-      drawer={attachmentDrawer}
-      input={
-        <ChatComposerInput
-          value={input}
-          isDisabled={!model || loadingHistory}
-          aria-disabled={!model || loadingHistory}
-          onChange={setInput}
-          onSubmit={sendMessage}
-          onFiles={(files) => void addFiles(files)}
-          pasteAsToken={false}
-          style={composerInputStyle}
-        />
-      }
-      headerActions={
-        <HStack gap={1} vAlign="center">
-          <Icon name="Upload" size="sm" />
-          <Text type="supporting" color="secondary">
-            {uploadingFiles ? 'Uploading…' : 'Drop or paste files here'}
-          </Text>
-        </HStack>
-      }
-    />
+      <ChatComposer value={prompt} onChange={setPrompt} onSubmit={submit}
+        onStop={() => abortRef.current?.abort()} isStopShown={isRunning}
+        isDisabled={loadingHistory} placeholder={info.prompt}
+        input={<ChatComposerInput value={prompt} onChange={setPrompt} onSubmit={submit}
+          isDisabled={!model || isRunning || readingFile} aria-disabled={!model || isRunning || readingFile}
+          onFiles={files => { void importTextFile(files).catch(error => notify(error instanceof Error ? error.message : 'File import failed.', 'danger')); }}
+          pasteAsToken={false} style={composerInputStyle} />}
+        headerActions={<FileDropzone key={activeTask} compact onFiles={importTextFile}
+          label={isImageMode ? 'Import a written prompt' : isEmbeddingMode ? 'Import text to embed' : 'Import text into your message'}
+          hint={isImageMode ? 'Drop a .txt or .md file, or browse · up to 64 KB' : 'Drop .txt, .md, .csv or .json, or browse · up to 64 KB'}
+          accept={isImageMode ? PROMPT_FILE_ACCEPT : TEXT_FILE_ACCEPT} maxBytes={MAX_TEXT_FILE_BYTES}
+          disabled={busy || readingFile} selectedName={importedFileName} />}
+        footerActions={<span className="vf-composer-operation">{isRunning ? (isImageMode ? 'Creating image…' : isEmbeddingMode ? 'Creating embeddings…' : 'Replying…') : isImageMode ? 'Generate an image' : isEmbeddingMode ? 'Create embeddings' : 'Send a message'}</span>} />
     </div>
   );
 
-  const textSurface = loadingHistory ? (
-    <div className="flex min-h-[360px] items-center justify-center"><Spinner size="lg" /></div>
-  ) : messages.length === 0 ? (
-    <div className="vf-chat-welcome">
-      <div className="vf-welcome-heading">
-        <div className="vf-welcome-emblem"><BrandArtwork name="lightning-glass" size={64}/></div>
-        <p className="vf-eyebrow">A LITTLE SPARK GOES A LONG WAY</p>
-        <h1>What do you want to make?</h1>
-        <p>A thought, a first draft, a working prototype.<br />Pick a model and start wherever you are.</p>
-      </div>
-      {textComposer}
-      <div className="vf-composer-hint"><span>Enter to send · Shift + Enter for a new line</span><span>Your next idea starts here.</span></div>
-      <div className="vf-starters" aria-label="Conversation starters">
-        {STARTERS.map(starter => <button type="button" key={starter.title} className="vf-starter" data-vf-spotlight data-testid="vf-prompt-starter"
-          onClick={() => {
-            setInput(starter.prompt);
-            requestAnimationFrame(() => composerRef.current?.querySelector<HTMLElement>('[contenteditable="true"], textarea')?.focus());
-          }}>
-          <BrandArtwork name={starter.art} size={44}/><span><strong>{starter.title}</strong><small>{starter.detail}</small></span>
-        </button>)}
-      </div>
-    </div>
+  const results = messages.map((message, index) => isImageMode || isAudioMode ? (
+    <Card key={message.id} variant="outlined" className="vf-history-result space-y-3 p-4">
+      <p className="text-xs text-[var(--color-muted)]">{isAudioMode ? (message.role === 'assistant' ? 'Transcript' : 'Audio input') : (message.role === 'assistant' ? 'Generated image' : 'Your prompt')}</p>
+      <p className="whitespace-pre-wrap text-sm text-[var(--color-text)]">{message.content || 'No speech detected in this recording.'}</p>
+      <HistoryAttachments metadata={message.attachments} prompt={message.role === 'assistant' ? messages[index - 1]?.content ?? message.content : message.content} />
+    </Card>
   ) : (
-    <ChatLayout density="spacious" style={chatFill} composer={textComposer}>
-      <ChatMessageList align="top" isStreaming={sending}>
-        {messages.map((message) => (
-          <AstryxChatMessage
-            key={message.id}
-            sender={message.role}
-            avatar={message.role === 'assistant' ? <Avatar name="VibeFlare" size="md" /> : undefined}
-          >
-            <ChatMessageBubble variant={message.role === 'assistant' ? 'ghost' : 'filled'}>
-              {message.role === 'assistant' ? (
-                <Markdown density="compact" isStreaming={sending && message.id === messages.at(-1)?.id}>
-                  {message.content || 'Thinking…'}
-                </Markdown>
-              ) : message.content}
-              <HistoryAttachments metadata={message.attachments} prompt={message.content} />
-            </ChatMessageBubble>
-          </AstryxChatMessage>
-        ))}
-      </ChatMessageList>
-    </ChatLayout>
-  );
-
-  const imageSurface = (
-    <VStack gap={4} height="100%">
-      {imageError && <Badge variant="danger">{imageError}</Badge>}
-      {!messages.length && <VStack gap={2} vAlign="center" style={{ minHeight: 180 }}>
-        <Heading level={1}>Create an image</Heading>
-        <Text color="secondary">Describe what you want. Your prompts and images will be saved in history.</Text>
-      </VStack>}
-      {messages.map((message, index) => <Card key={message.id} variant="outlined" className="space-y-3 overflow-hidden p-4">
-        <p className="whitespace-pre-wrap text-sm text-[var(--color-text)]">{message.content}</p>
-        <HistoryAttachments metadata={message.attachments} prompt={messages[index - 1]?.content ?? message.content} />
-      </Card>)}
-      <div className="w-full max-w-[720px]">
-        <ChatComposer value={imagePrompt} onChange={setImagePrompt} onSubmit={generateImage}
-          onStop={() => abortRef.current?.abort()} isStopShown={generating} isDisabled={!model || loadingHistory}
-          placeholder="Describe the image you want…"
-          input={<ChatComposerInput value={imagePrompt} onChange={setImagePrompt} onSubmit={generateImage} isDisabled={!model || loadingHistory} pasteAsToken={false} />} />
-      </div>
-    </VStack>
-  );
+    <AstryxChatMessage key={message.id} sender={message.role} avatar={message.role === 'assistant' ? <Avatar name="VibeFlare" size="md" /> : undefined}>
+      <ChatMessageBubble variant={message.role === 'assistant' ? 'ghost' : 'filled'}>
+        {message.role === 'assistant' ? <Markdown density="compact" isStreaming={sending && message.id === messages.at(-1)?.id}>{message.content || (isEmbeddingMode ? 'Creating embeddings…' : 'Thinking…')}</Markdown> : message.content}
+        <HistoryAttachments metadata={message.attachments} prompt={message.content} />
+      </ChatMessageBubble>
+    </AstryxChatMessage>
+  ));
+  const starters = activeTask === 'text-generation' && messages.length === 0 ? <div className="vf-starters" aria-label="Conversation starters">
+    {STARTERS.map(starter => <button type="button" key={starter.title} className="vf-starter" data-vf-spotlight data-testid="vf-prompt-starter"
+      onClick={() => { setInput(starter.prompt); requestAnimationFrame(() => composerRef.current?.querySelector<HTMLElement>('[contenteditable="true"], textarea')?.focus()); }}>
+      <BrandArtwork name={starter.art} size={44} /><span><strong>{starter.title}</strong><small>{starter.detail}</small></span>
+    </button>)}
+  </div> : undefined;
 
   return (
-    <div className="vf-chat flex h-full min-w-0 flex-col" data-testid="vibeflare-chat">
+    <div className="vf-chat flex min-w-0 flex-col" data-testid="vibeflare-chat">
       <Toast
         open={toast.open}
         onOpenChange={(open) => setToast((previous) => ({ ...previous, open }))}
@@ -454,15 +389,20 @@ function ChatPageInner() {
       <div className="vf-chat-toolbar">
         <Tabs
           className="vf-task-tabs"
-          items={TASK_ITEMS.map((task) => ({ value: task.value, label: task.label, content: null, disabled: busy }))}
+          items={TASK_ITEMS.map((task) => ({ value: task.value, label: task.label, content: null, disabled: busy || readingFile }))}
           value={activeTask}
           onValueChange={handleTaskChange}
           variant="segmented"
         />
-        <div className="vf-model-control" inert={busy ? true : undefined}>{!loadingHistory && <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />}</div>
+        <div className="vf-model-control" inert={busy ? true : undefined}>{loadingHistory ? <span role="status">Loading saved conversation…</span> : <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />}</div>
       </div>
       <div className="vf-chat-content">
-        {loadingHistory ? <div className="flex min-h-[360px] items-center justify-center"><Spinner size="lg" /></div> : isAudioMode ? <AudioTranscribePanel model={model} history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : isImageMode ? imageSurface : textSurface}
+        <TaskWorkspace task={activeTask} extras={starters}
+          input={isAudioMode ? <AudioTranscribePanel model={model} inputOnly history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : promptComposer}>
+          {loadingHistory && <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div>}
+          {imageError && <p role="alert" className="vf-inline-notice vf-inline-notice--error">{imageError}</p>}
+          {isImageMode || isAudioMode ? results : messages.length > 0 ? <ChatMessageList align="top" isStreaming={sending}>{results}</ChatMessageList> : null}
+        </TaskWorkspace>
       </div>
     </div>
   );

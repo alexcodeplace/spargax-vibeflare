@@ -147,4 +147,30 @@ describe('durable browser media history', () => {
     const form = new FormData(); form.append('file', 'not a file'); expect((await request('/v1/audio/transcriptions', form)).status).toBe(400);
     expect(calls).toEqual([]);
   });
+  it('rejects live-only Flux file requests before inference or history writes', async () => {
+    const form = audioForm(); form.set('model', '@cf/deepgram/flux');
+    const response = await request('/v1/audio/transcriptions', form);
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ error: { type: 'unsupported_transport', message: expect.stringContaining('Whisper or Nova-3') } });
+    expect(calls).toEqual([]); expect(await count('files')).toBe(0); expect(await count('chats')).toBe(0);
+  });
+
+  it('round-trips Nova-3 actual request and response shapes into saved history', async () => {
+    const name = '@cf/deepgram/nova-3';
+    await upsertModel(env.DB, { name, task: 'automatic-speech-recognition', description: null, properties: '{"paid_required":false}', neurons_input: 0, neurons_output: 0, neurons_flat: 0, beta: 0, enabled: 1, synced_at: Date.now() });
+    infer = async (model, input) => {
+      expect(model).toBe(name);
+      const upload = input.audio as { body: ReadableStream; contentType: string };
+      expect(upload.contentType).toBe('audio/wav');
+      expect(new Uint8Array(await new Response(upload.body).arrayBuffer())).toEqual(new Uint8Array([82, 73, 70, 70]));
+      return { results: { channels: [{ alternatives: [{ transcript: 'Nova uploaded-file transcript.' }] }] } };
+    };
+    const id = await chat(name, 'Nova recording');
+    const form = audioForm(); form.set('model', name);
+    const response = await request(`/v1/audio/transcriptions?chat_id=${id}`, form);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ text: 'Nova uploaded-file transcript.' });
+    expect((await detail(id)).messages[1]?.content).toBe('Nova uploaded-file transcript.');
+  });
+
 });

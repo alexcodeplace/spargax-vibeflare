@@ -2,6 +2,15 @@
 
 All notable VibeFlare changes are documented here.
 
+## 0.9.6 - 2026-09-13
+
+- Persist image prompts/results, embedding inputs/vectors, original audio and transcripts in owned conversation history, including refresh and follow-up requests.
+- Exclude live-only Deepgram Flux from uploaded-file transcription; use correct Whisper/Turbo/Nova-3 request formats and normalize Nova transcripts.
+- Keep Text, Image, Embeddings and Audio in one consistent workspace layout with matching input/drop zones across desktop and mobile.
+- Import actual text-file content into the text, image-prompt and embeddings inputs; add audio drag-and-drop, readable errors and retry without losing the selected file.
+- Explain semantic-search embeddings directly in their tab and preserve complete downloadable vector results.
+- Apply private-file ownership checks to legacy file URLs and preserve media attachments for active conversations without changing the 14-day inactive-history policy.
+
 ## 0.9.5 - 2026-09-13
 
 - Add a persistent checkbox beside each available model in Settings > Models. Personal selections determine chat picker visibility without changing other accounts or API access.

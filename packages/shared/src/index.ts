@@ -25,3 +25,4 @@ export type {
 export * from './workers-ai';
 export * from './neurons';
 export * from './history';
+export * from './audio';

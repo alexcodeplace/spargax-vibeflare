@@ -105,7 +105,7 @@ for (const width of [1440, 390]) {
     await page.getByRole('tab', { name: 'Audio', exact: true }).click();
     await expect(page.getByRole('combobox')).toContainText('@cf/test/e2e-audio');
     const wav = Buffer.alloc(46); wav.write('RIFF', 0); wav.writeUInt32LE(38, 4); wav.write('WAVEfmt ', 8); wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22); wav.writeUInt32LE(8000, 24); wav.writeUInt32LE(16000, 28); wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34); wav.write('data', 36); wav.writeUInt32LE(2, 40);
-    await page.getByLabel('Audio file').setInputFiles({ name: 'meeting.wav', mimeType: 'audio/wav', buffer: wav });
+    await page.getByLabel('Audio file', { exact: true }).setInputFiles({ name: 'meeting.wav', mimeType: 'audio/wav', buffer: wav });
     await page.getByRole('button', { name: 'Transcribe', exact: true }).click();
     await expect(page.getByText('A transcript saved in conversation history.', { exact: true })).toBeVisible();
     const id = new URL(page.url()).searchParams.get('chat_id')!;

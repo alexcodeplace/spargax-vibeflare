@@ -493,8 +493,9 @@ export async function transcribeAudio(form: FormData, chatId?: string, signal?: 
     throw new Error('Unauthorized');
   }
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`Transcription failed: ${text}`);
+    const error = await res.json().catch(() => null) as { error?: { type?: string; message?: string } } | null;
+    if (error?.error?.type === 'paid_plan_required' || error?.error?.type === 'paid_model_excluded') notifyModelsChanged();
+    throw new Error(error?.error?.message ?? 'Audio transcription failed. Try again or choose another audio model.');
   }
   return res.json() as Promise<TranscriptionResult>;
 }
