@@ -1,0 +1,150 @@
+{
+  "sourceCommit": "185d0f0b374722f29dd1871e3407d6a0385b5189",
+  "upstreamMain": "2882c21",
+  "workflowRun": 34762652704,
+  "artifactId": 10319661902,
+  "renderer": "ubuntu-24.04; repository-locked Playwright Chromium",
+  "snapshotCount": 28,
+  "snapshots": [
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-desktop-linux.png",
+      "previousSha256": "d8e4e0664b8644f0c9b5b499419a85d5f16050b28b27695bd1541d3a37bf4d8d",
+      "newSha256": "e810a47eb0792d0205d2936fdbffc6ae84c0527426cdd08b66ae0ecc0cc0cda3"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-mobile-linux.png",
+      "previousSha256": "4cc135ab5b6eaf99dde46950e46495c7dadb36084ab0b67644a194557955bb1c",
+      "newSha256": "e09c8229d5253221d069c97bbb715e4711753da019fc45203262cdfd0862cbd3"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-desktop-linux.png",
+      "previousSha256": "d8e4e0664b8644f0c9b5b499419a85d5f16050b28b27695bd1541d3a37bf4d8d",
+      "newSha256": "e810a47eb0792d0205d2936fdbffc6ae84c0527426cdd08b66ae0ecc0cc0cda3"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-mobile-linux.png",
+      "previousSha256": "4cc135ab5b6eaf99dde46950e46495c7dadb36084ab0b67644a194557955bb1c",
+      "newSha256": "e09c8229d5253221d069c97bbb715e4711753da019fc45203262cdfd0862cbd3"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-desktop-linux.png",
+      "previousSha256": "c1ab861cd2c316a62bf8596feb60e5e454bf10871e9500033a39db2d2a9bcddf",
+      "newSha256": "7c3cf34c2a9ef4ea1c5908533f3383e3c08287311a91c0b3504ceff713d0075b"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-mobile-linux.png",
+      "previousSha256": "9d2556e2cb00f224e9942e10f903f8e00c30a39dab376935ef5eb2975867bd19",
+      "newSha256": "185b8874174fbf2ba13e446c82d119a1ba22897a422dcb1a02cf7be8d16c546c"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-desktop-linux.png",
+      "previousSha256": "c1ab861cd2c316a62bf8596feb60e5e454bf10871e9500033a39db2d2a9bcddf",
+      "newSha256": "7c3cf34c2a9ef4ea1c5908533f3383e3c08287311a91c0b3504ceff713d0075b"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-mobile-linux.png",
+      "previousSha256": "9d2556e2cb00f224e9942e10f903f8e00c30a39dab376935ef5eb2975867bd19",
+      "newSha256": "185b8874174fbf2ba13e446c82d119a1ba22897a422dcb1a02cf7be8d16c546c"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-desktop-linux.png",
+      "previousSha256": "ab89188e120ca6d2798ad0deda72d4231a2f830ed2df22fd6e8217d37b54be76",
+      "newSha256": "86092ab3ba4e546d25357e11c0e08efb408f11afa7e07e03a099047c92980f89"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-mobile-linux.png",
+      "previousSha256": "a66ffc5d7a34340344474e040a8e6287c6510513aa47d010a5483600626e804a",
+      "newSha256": "0b3bbdb247004727c9fb6640325bc8401c98de4b3fcd5ebe0890da1b016a5b2b"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-desktop-linux.png",
+      "previousSha256": "ab89188e120ca6d2798ad0deda72d4231a2f830ed2df22fd6e8217d37b54be76",
+      "newSha256": "86092ab3ba4e546d25357e11c0e08efb408f11afa7e07e03a099047c92980f89"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-mobile-linux.png",
+      "previousSha256": "a66ffc5d7a34340344474e040a8e6287c6510513aa47d010a5483600626e804a",
+      "newSha256": "0b3bbdb247004727c9fb6640325bc8401c98de4b3fcd5ebe0890da1b016a5b2b"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-desktop-linux.png",
+      "previousSha256": "1ae365daaf53c5d0524a5fd6d498a72163b3acda58d34a6fcebbf06c2b4c7f36",
+      "newSha256": "ec516a247f3bdbacb4cbfb01a2d75083c2489f17fd0fea96c5acf8c65cb4cea9"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-mobile-linux.png",
+      "previousSha256": "16807da0e1cede823e0b0afd2b44dccffc0695998a405250fa1820766cceef55",
+      "newSha256": "0c8074ffa51bb40125e8d3f2618e3f9e770e5e9b8612ad18baa205533fddd244"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-desktop-linux.png",
+      "previousSha256": "1ae365daaf53c5d0524a5fd6d498a72163b3acda58d34a6fcebbf06c2b4c7f36",
+      "newSha256": "ec516a247f3bdbacb4cbfb01a2d75083c2489f17fd0fea96c5acf8c65cb4cea9"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-mobile-linux.png",
+      "previousSha256": "16807da0e1cede823e0b0afd2b44dccffc0695998a405250fa1820766cceef55",
+      "newSha256": "0c8074ffa51bb40125e8d3f2618e3f9e770e5e9b8612ad18baa205533fddd244"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-desktop-linux.png",
+      "previousSha256": "67b02a3c853564d0712af5ec1c76b69c1ddc481782bef18eccf252321bf4a664",
+      "newSha256": "0f108b5fc4173fc8b04140ab659cef0a52545c3f8ae247733558de5775369800"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-mobile-linux.png",
+      "previousSha256": "2ee7e3c90832a4eefff15c99b9bc5b5690e539d117f8c64f3747ad6f545d4517",
+      "newSha256": "000717cc028632ab3d4e257b2277b8e2992bbb881a9457568c3e9d3c73bb504d"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-desktop-linux.png",
+      "previousSha256": "67b02a3c853564d0712af5ec1c76b69c1ddc481782bef18eccf252321bf4a664",
+      "newSha256": "0f108b5fc4173fc8b04140ab659cef0a52545c3f8ae247733558de5775369800"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-mobile-linux.png",
+      "previousSha256": "2ee7e3c90832a4eefff15c99b9bc5b5690e539d117f8c64f3747ad6f545d4517",
+      "newSha256": "000717cc028632ab3d4e257b2277b8e2992bbb881a9457568c3e9d3c73bb504d"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-desktop-linux.png",
+      "previousSha256": "cb578bc03b8547d190b1335eaebc2e15f75d7337bfa7d6c5b215090579320acc",
+      "newSha256": "b60b1c404f90a6927e9bf84383215724df7936091469a2844db7065e26e37887"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-mobile-linux.png",
+      "previousSha256": "75d92d0cbc6a28864f7add9de4112fd7154a461d3b6a56247db65017666a9e4a",
+      "newSha256": "88f9f309574aa45243fdceff720328f4ce4451fad575e597a903f8fc5f2526ba"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-desktop-linux.png",
+      "previousSha256": "85aeb47b2aa18a89da919ce29d9b2825381ef5d4e76cf56261d2475fe64e741c",
+      "newSha256": "5bb7fc6a705c817b11c02fea4f98f24fc58b26db6e5f821db938933dd19e8e19"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-mobile-linux.png",
+      "previousSha256": "2c6a757a3e0eb824bab052459b2fc08310179b5f7ee885859f1774825f786e0f",
+      "newSha256": "7848c4d5fb95d7cbb5f4ed3b7150ea96e7f9f9b44d455f01b2673cdacadcdf75"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-desktop-linux.png",
+      "previousSha256": "08907a64777c73b6080ec02d3d09d18b26a73df3d8c635138765c73d14cd648c",
+      "newSha256": "a285337461e5e0c2be9d7773f3aa71aa0f4b659848ceba955ed5b2458608b893"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-mobile-linux.png",
+      "previousSha256": "56aa3f65735024ede80848675f0fe41d7ec56504a13b595b0736d6b0ec79c597",
+      "newSha256": "5a18f3c16658daa7de6862557b9fdb9635b44260d775fdaeefe1ed4a9206f8ee"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-desktop-linux.png",
+      "previousSha256": "5831aa731037b0d5c303e03af4634176ca62b2fe010c83c3849ca83b37f3d6ec",
+      "newSha256": "95b166062e86ccb3c088b411ab766209351003b2920fea059a6a1084a3377900"
+    },
+    {
+      "snapshot": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-mobile-linux.png",
+      "previousSha256": "62a6c178173e4b657b60ca86ab8a999e5224662546b62094db687fe09374fc1e",
+      "newSha256": "a1512fdd36d72eb8afc02c55025cd534ad9433b3bccca8aa6a94dc84f5ff21c9"
+    }
+  ]
+}
