@@ -8,13 +8,13 @@ Chat in the browser, choose the models you use, manage API keys, and inspect usa
 
 ![VibeFlare dark workspace with distinct task tabs, model selection, chat starters and the shared Club design](docs/screenshots/vibeflare-landing.png)
 
-VibeFlare is an MIT-licensed, self-hosted. You control the Cloudflare deployment, its data, and who can sign in. Dark and light themes, responsive navigation, and visibly selected tabs and buttons.
+VibeFlare is MIT-licensed, self-hosted software. You control the Cloudflare deployment, its data, and who can sign in. The browser includes dark and light themes, responsive navigation, and visible states for tabs and buttons.
 
 ## What is included
 
 | Area | What you can do |
 | --- | --- |
-| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text chats from the sidebar or History. Image-generation and audio-transcription panels are also available; see the current limitations below. |
+| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text, image, transcription and embedding conversations from the sidebar or History. Each task uses a consistent input/results layout and its own compatible model picker. |
 | **Models** | Search the catalog, save your personal model checkboxes, and refresh metadata. The owner controls whether paid-access models are offered. |
 | **API Keys** | Create labelled keys, reveal a new secret once, and revoke keys you no longer use. Owners can create admin keys. |
 | **Projects** | Manage private uploaded files. The current sidebar label opens `/files`; it is not a separate project-management system. |
@@ -24,13 +24,15 @@ VibeFlare is an MIT-licensed, self-hosted. You control the Cloudflare deployment
 
 ### Current scope
 
-Persistent browser history currently covers **text conversations**. Generated image results and audio transcripts are not yet added to that history. The `/v1/embeddings` API produces vectors for workflows such as similarity search; the browser's **Embeddings** tab is not yet a dedicated vector-input/output interface. Text-to-speech is an API capability, not a browser speech-generation screen.
+Browser history covers text chats, generated images, audio transcripts and embedding requests. Reopening a conversation restores its task and saved results. **Embeddings** turns text into numerical vectors for similarity search or grouping; it is not a chatbot answer and does not build a search index for you. The browser tab now submits actual embedding requests and explains the task on entry. Text-to-speech remains an API capability, not a browser speech-generation screen.
+
+Task inputs differ intentionally. Text chat can attach files; Image and Embeddings accept `.txt`/`.md` prompt imports rather than promising image-to-image editing. Audio accepts recording files up to 25 MB and sends them only when you click **Transcribe**. The interface checks model compatibility and normalizes audio for the selected provider contract; availability still depends on that model and account.
 
 Model capabilities and access depend on the selected provider model and your account. The screenshots below demonstrate the actual interface using isolated test data, not successful production inference across every modality.
 
 ## Screenshots
 
-These captures were refreshed from the **v0.9.5 source on main, including the shared-control refresh**, on 2026-09-13. They use the real production UI build served by an isolated local test Worker. Account details, model entries, conversation responses, and CLI ownership data are fixtures. The API-key secret is masked. They are not mockups and do not certify the state of an existing live deployment.
+These captures were refreshed from the **v0.9.6 source on main, including the shared-control and task-layout refresh**, on 2026-09-13. They use the real production UI build served by an isolated local test Worker. Account details, model entries, conversation responses, and CLI ownership data are fixtures. The API-key secret is masked. They are not mockups and do not certify the state of an existing live deployment.
 
 [Capture provenance and regeneration instructions](docs/screenshots/README.md) include the source commit, build hashes, viewport sizes, themes, and image checksums.
 
@@ -42,7 +44,7 @@ Use **Settings > Models** to search the catalog and choose what appears in your 
 
 ### A conversation with saved history
 
-The sidebar's **Recent chats** list updates when a text conversation is created. Titles come from the first message rather than an extra model call. This screenshot intentionally retains the local fixture's response text.
+The sidebar's **Recent chats** list updates when a conversation is created, including image, audio and embedding tasks. Titles come from the first message rather than an extra model call. This screenshot intentionally retains the local fixture's response text.
 
 ![Text conversation showing the local test response and saved conversation in the Workspace sidebar](docs/screenshots/vibeflare-chat.png)
 
@@ -80,6 +82,39 @@ This image renders actual `vf status` and `vf doctor` output in a terminal-style
 ![Current VibeFlare CLI status and doctor output against a labelled local screenshot fixture](docs/screenshots/vibeflare-status-doctor.png)
 
 </details>
+
+## Which problem does it solve?
+
+You can stop wiring a separate provider connection into every prototype. VibeFlare gives you a browser workspace for everyday AI tasks and one authenticated `/v1` gateway for your apps, with model choices, revocable keys and usage records in the same installation. It is self-hosted software, not free provider compute.
+
+### Three practical examples
+
+**Build an app against your own endpoint.** Deploy VibeFlare, create a labelled API key, and configure the app's OpenAI-compatible base URL as `https://YOUR-VIBEFLARE-URL/v1`. Choose a model from your instance's `/v1/models` list; do not copy an unrelated provider's model name. Revoke the key when the prototype is retired.
+
+**Turn a recording into a reusable transcript.** Open Workspace > Audio, select a compatible speech-recognition model, drop an MP3/WAV/M4A/OGG/WebM/FLAC recording into the audio area, and click Transcribe. Reopen the saved audio conversation from History. The operation processes the selected file; it does not continuously record your microphone.
+
+**Explore semantic search inputs.** Open Embeddings, enter two short descriptions separately or import a text file, and generate vectors using the same model. The returned numbers are the building blocks an application can compare for similarity; the tab is not itself a document-search database. Keep private material out of experimental requests until you have reviewed your deployment and provider settings.
+
+## Ask an agent to install and set it up
+
+```text
+Install VibeFlare for me using
+https://github.com/alexcodeplace/vibeflare and its current README.
+Inspect my environment and any existing VibeFlare install receipt first.
+Preserve an existing installation; use its update/recovery workflow rather than
+creating duplicate resources. Ask me to choose the Cloudflare account and
+confirm resource creation or any billable action. Do not enable paid models,
+change production DNS, or delete resources without my explicit approval.
+For a new CLI-managed install, check Node, Bun, pinned pnpm/Wrangler and R2,
+install the CLI, authenticate through the documented local/browser flow, and
+run vf setup. Keep tokens and API keys out of logs, Git and this chat.
+Guide me through /setup to create the owner account; do not impersonate me or
+invent passkeys. Verify /health, vf status and vf doctor, then show the Workspace
+URL and /v1 API base. Ask before making a real model request. Explain model
+selection, text/image/audio/embedding history, and the difference between
+Exclude paid and a spending cap. Finish with the install receipt location,
+update instructions, and the non-destructive uninstall preview command.
+```
 
 ## One-click install
 
