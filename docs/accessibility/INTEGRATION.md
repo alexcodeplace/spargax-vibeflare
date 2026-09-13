@@ -31,3 +31,7 @@ Open the labelled Accessibility button fixed near the lower corner. Keyboard use
 ## Analytics-specific remediation
 
 The 320px/200%-text page audit found a clipped pagination action. The request-audit widget must wrap its status/navigation controls, expose real table headers and cells, retain complete endpoint/model text, and offer a named keyboard-focusable scroller for its inherently two-dimensional data. Preserve loading geometry and verify against the existing analytics layout-shift and durable-audit journeys.
+
+### Chart loading stability
+
+Keep the accessible chart-data disclosure mounted during loading, error, empty and populated states. Its summary and reserved chart frame must not move when the request or lazy chart import completes. Expanding it while loading exposes an honest loading state, not an empty-data claim. Verify the same native disclosure survives the transition and the existing analytics CLS threshold remains unchanged.
