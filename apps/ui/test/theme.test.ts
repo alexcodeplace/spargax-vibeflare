@@ -82,7 +82,7 @@ describe('Spargax theme continuity', () => {
     try {
       setTheme('light');
       expect(listener).toHaveBeenCalledTimes(1);
-      expect((listener.mock.calls[0][0] as CustomEvent).detail).toBe('light');
+      expect(listener.mock.calls[0]?.[0]).toMatchObject({ detail: 'light' });
       expect(localStorage.getItem('vf-theme')).toBe('light');
     } finally {
       window.removeEventListener(THEME_CHANGED_EVENT, listener);
