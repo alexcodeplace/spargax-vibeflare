@@ -1,4 +1,4 @@
-# Spargax VibeFlare
+# VibeFlare
 
 **Your AI workspace and API gateway, running in your own Cloudflare account.**
 
