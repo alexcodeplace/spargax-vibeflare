@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { applyAuth } from './ui-matrix/matrix-auth';
 
 const ALIASES = {
   'color-bg': 'color-background-body',
@@ -30,7 +31,9 @@ async function rootTheme(page: Page) {
 }
 
 test.describe('Design System: VibeFlare over Astryx semantics', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context, baseURL }) => {
+    // Inspect a settled gallery, not an anonymous island redirecting to setup.
+    await applyAuth(context, 'owner', baseURL!, '/design-system');
     await page.addInitScript(() => localStorage.removeItem('vf-theme'));
   });
 

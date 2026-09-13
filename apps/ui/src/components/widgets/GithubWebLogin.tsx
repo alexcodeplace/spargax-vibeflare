@@ -49,7 +49,7 @@ export function GithubWebLogin({ mode, flow }: GithubWebLoginProps) {
     <div className="space-y-3">
       {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
       <Button
-        variant="outline"
+        variant="primary"
         className="vf-auth-action w-full"
         leftIcon={<Icon name="Github" size="sm" />}
         onClick={start}

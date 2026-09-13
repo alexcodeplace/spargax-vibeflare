@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { resetE2EState, waitForHydratedIsland } from './helpers/webauthn';
 
+const selectedModels: Record<string, string> = {
+  Text: '@cf/meta/e2e-chat', Image: '@cf/test/e2e-image',
+  Embeddings: '@cf/test/e2e-embedding', Audio: '@cf/openai/whisper-large-v3-turbo',
+};
+
 async function setup(page: Page) {
   await resetE2EState(page);
   expect((await page.request.post('/__e2e/session', { data: { role: 'owner' } })).ok()).toBe(true);
@@ -33,7 +38,10 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390, 320]) {
     for (const tab of ['Text', 'Image', 'Embeddings', 'Audio', 'Text']) {
       await page.getByRole('tab', { name: tab, exact: true }).click();
       await expect(page.getByRole('tab', { name: tab, exact: true })).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByRole('combobox')).toBeVisible();
+      // Task selection and the picker update are separate React effects.
+      // Wait for this task's model, not the previous task's still-visible picker,
+      // before measuring the settled panel (Audio can briefly show a notice).
+      await expect(page.getByRole('combobox')).toContainText(selectedModels[tab]!);
       await page.evaluate(async () => { await document.fonts.ready; document.querySelector('.vf-main')!.scrollTop = 0; });
       const input = await page.getByTestId('task-input').boundingBox(); expect(input).not.toBeNull(); bounds.push(input!);
       toolbars.push((await page.locator('.vf-chat-toolbar').boundingBox())!);
@@ -67,6 +75,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390, 320]) {
 for (const tab of ['Text', 'Image', 'Embeddings']) {
   test(`${tab} consumes dropped text as actual model input, without sending on drop`, async ({ page }) => {
     await setup(page); await page.getByRole('tab', { name: tab, exact: true }).click();
+    await expect(page.getByRole('combobox')).toContainText(selectedModels[tab]!);
     const calls: { path: string; body: any }[] = [];
     page.on('request', req => { if (new URL(req.url()).pathname.startsWith('/v1/') && req.method() === 'POST') calls.push({ path: new URL(req.url()).pathname, body: req.postDataJSON() }); });
     await drop(page, 'brief.txt', 'text/plain', 'A small orange planet above a calm lake.');
@@ -85,6 +94,7 @@ for (const tab of ['Text', 'Image', 'Embeddings']) {
 
 test('Audio accepts dropped and browsed recordings; Nova and Whisper save normalized transcripts', async ({ page }) => {
   await setup(page); await page.getByRole('tab', { name: 'Audio', exact: true }).click();
+  await expect(page.getByRole('combobox')).toContainText(selectedModels.Audio!);
   const requests: string[] = []; page.on('request', req => { if (req.url().includes('/v1/audio/transcriptions')) requests.push(req.url()); });
   await drop(page, 'voice.mp3', 'audio/mpeg', 'ID3-local-fixture');
   expect(requests).toHaveLength(0);
@@ -103,6 +113,7 @@ test('Audio accepts dropped and browsed recordings; Nova and Whisper save normal
 
 test('Invalid drops and readable errors do not clear a valid recording or invoke a model', async ({ page }) => {
   await setup(page); await page.getByRole('tab', { name: 'Audio', exact: true }).click();
+  await expect(page.getByRole('combobox')).toContainText(selectedModels.Audio!);
   await drop(page, 'bad.txt', 'text/plain', 'Not audio');
   await expect(page.getByRole('alert')).toContainText('not supported');
   await expect(page.getByRole('button', { name: 'Transcribe', exact: true })).toBeDisabled();
