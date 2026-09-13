@@ -29,7 +29,7 @@ async function rootTheme(page: Page) {
   }));
 }
 
-test.describe('Design System: Spargax brand over Astryx semantics', () => {
+test.describe('Design System: VibeFlare over Astryx semantics', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => localStorage.removeItem('vf-theme'));
   });
@@ -58,7 +58,7 @@ test.describe('Design System: Spargax brand over Astryx semantics', () => {
     });
   });
 
-  test('explicit light mode resolves the Spargax light palette', async ({ page }) => {
+  test('explicit light mode resolves the VibeFlare light palette', async ({ page }) => {
     await page.goto('/design-system');
     await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
     await expect.poll(() => rootTheme(page)).toEqual({

@@ -363,7 +363,7 @@ pnpm validate:wrangler
 pnpm --filter @vibeflare/ui test:e2e
 ```
 
-The UI combines Astryx semantic components with the shared Spargax Club asset kit. `Button` and `Tabs` adapters supply consistent visible control states in both themes, including linked Settings sections. This is not a claim of legal accessibility certification.
+The UI combines Astryx semantic components with the shared ecosystem Club asset kit. `Button` and `Tabs` adapters supply consistent visible control states in both themes, including linked Settings sections. This is not a claim of legal accessibility certification.
 
 Browser journeys and the deterministic UI matrix verify user flows. README captures have a separate [reproducible screenshot workflow](docs/screenshots/README.md); they do not replace those tests.
 

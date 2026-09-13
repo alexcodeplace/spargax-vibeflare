@@ -58,6 +58,8 @@ async function visit(path, testid) {
 
 async function capture(file, route, description, options = {}) {
   await page.evaluate(() => document.fonts.ready);
+  const obsoleteProductName = ['spar', 'gax'].join('');
+  assert.ok(!(await page.locator('body').innerText()).toLowerCase().includes(obsoleteProductName), `${file}: obsolete external product branding is visible`);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${file}: horizontal overflow`);
   assert.deepEqual(problems, [], `${file}: browser/asset failures`);
   await page.screenshot({ path: join(temporary, file), fullPage: true, animations: 'disabled', ...options });
@@ -181,7 +183,7 @@ try {
   assert.ok(!status.includes(admin.full) && !doctor.includes(admin.full), 'CLI output must not reveal the key');
   await page.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
   html,body{margin:0;background:#061329;color:#edf5ff;font-family:system-ui,sans-serif}main{box-sizing:border-box;min-height:1000px;padding:70px 90px}.label{color:#afc7e5;font-size:14px;letter-spacing:.1em}h1{font-size:36px;font-weight:600;margin:14px 0 30px}.terminal{border:1px solid #527da2;border-radius:18px;overflow:hidden;background:#0b203d}.bar{padding:16px 24px;border-bottom:1px solid #315777;color:#afc7e5}pre{margin:0;padding:24px;font:14px/1.65 ui-monospace,monospace;white-space:pre-wrap}.prompt{color:#7bccff}.note{color:#afc7e5;font-size:13px;margin-top:20px}
-  </style></head><body><main><div class="label">SPARGAX VIBEFLARE CLI</div><h1>Inspect your installation before changing it.</h1><section class="terminal"><div class="bar">Actual CLI output against an isolated local fixture</div><pre><span class="prompt">$ vf status --name=screenshot-demo</span>\n${escapeHtml(status)}\n\n<span class="prompt">$ vf doctor --name=screenshot-demo</span>\n${escapeHtml(doctor)}</pre></section><p class="note">Local test installation with a synthetic ownership receipt. This is not a production health report.</p></main></body></html>`);
+  </style></head><body><main><div class="label">VIBEFLARE CLI</div><h1>Inspect your installation before changing it.</h1><section class="terminal"><div class="bar">Actual CLI output against an isolated local fixture</div><pre><span class="prompt">$ vf status --name=screenshot-demo</span>\n${escapeHtml(status)}\n\n<span class="prompt">$ vf doctor --name=screenshot-demo</span>\n${escapeHtml(doctor)}</pre></section><p class="note">Local test installation with a synthetic ownership receipt. This is not a production health report.</p></main></body></html>`);
   await capture('vibeflare-status-doctor.png', 'cli', 'Unedited status and doctor output, rendered in terminal-style HTML using a synthetic local ownership receipt.');
 
   await context.clearCookies();

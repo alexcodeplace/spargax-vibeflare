@@ -10,7 +10,7 @@ The existing Club asset kit already supplies the required artwork. No new or dup
 - Secondary, outline and ghost buttons reuse `button-secondary-idle.svg` and `button-secondary-hover.svg`.
 - Selected tabs reuse `language-segment-active.svg`, the existing filled segment surface. Inactive tabs reuse the secondary button surface.
 
-Each file is selected from the existing `dark/surfaces` or `light/surfaces` directory. `node tools/sync-club-brand.mjs --check` verifies the complete canonical kit without altering it. The controls stylesheet uses nine-slice rendering to retain the original 12px glow gutters and rounded corners at different label widths. SVGs remain decoration, not images of text or replacements for semantic controls. Borders and background colors remain usable when an image request fails. Destructive actions keep a distinct red surface.
+Each file is selected from the existing `dark/surfaces` or `light/surfaces` directory. `node tools/sync-club-design-assets.mjs --check` verifies the complete canonical kit without altering it. The controls stylesheet uses nine-slice rendering to retain the original 12px glow gutters and rounded corners at different label widths. SVGs remain decoration, not images of text or replacements for semantic controls. Borders and background colors remain usable when an image request fails. Destructive actions keep a distinct red surface.
 
 ## Behavior
 
@@ -41,7 +41,7 @@ pnpm --filter @vibeflare/ui build
 pnpm --filter @vibeflare/ui typecheck
 pnpm --filter @vibeflare/ui test
 VF_E2E_PORT=18989 VF_E2E_SKIP_BUILD=1 pnpm --filter @vibeflare/ui exec playwright test
-node tools/sync-club-brand.mjs --check
+node tools/sync-club-design-assets.mjs --check
 git diff --check
 ```
 
