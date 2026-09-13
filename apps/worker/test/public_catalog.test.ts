@@ -1,74 +1,90 @@
-import { describe, expect, it } from 'vitest';
-import { parseCloudflareModelsHtml, parseNeuronPricing, parsePaidRequiredModels } from '../src/models/public_catalog';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  CLOUDFLARE_MODELS_URL, CLOUDFLARE_PRICING_URL,
+  fetchCloudflarePublicCatalog, parseCloudflareModelRegistry, parseNeuronPricing,
+} from '../src/models/public_catalog';
+import snapshot from './fixtures/cloudflare-model-registry.json';
 
-describe('Cloudflare public model catalog parser', () => {
-  it('extracts model ids/tasks and exact token-to-neuron rates from public docs', () => {
-    const html = `
-      <div data-models-cell data-model-id="@cf/meta/llama-3.2-3b-instruct" data-model-task="Text Generation" data-model-author="Meta" data-model-href="/workers-ai/models/llama-3.2-3b-instruct/" data-model-pricing="$0.051" data-model-capabilities=""></div>
-      <div data-models-cell data-model-id="@cf/black-forest-labs/flux-1-schnell" data-model-task="Text-to-Image" data-model-author="Black Forest Labs" data-model-href="/workers-ai/models/flux-1-schnell/" data-model-pricing="$0.0000528" data-model-capabilities=""></div>
-      <div data-models-cell data-model-id="@hf/google/gemma-7b-it" data-model-task="Text Generation" data-model-author="Google" data-model-href="/workers-ai/models/gemma-7b-it/" data-model-pricing="" data-model-capabilities=""></div>
-    `;
-    const pricing = `
-Some models require a paid billing method. This applies to \`@cf/example/frontier\`.
+const model = (name: string, properties: { property_id: string; value: unknown }[] = [], overrides = {}) => ({
+  name, task: { name: 'Text Generation' }, properties, deprecated: false, ...overrides,
+});
+const paid = { property_id: 'require_workers_paid', value: 'true' };
 
-| Model | Price in Tokens | Price in Neurons |
-| @cf/meta/llama-3.2-3b-instruct | $0.051 per M input tokens $0.335 per M output tokens | 4625 neurons per M input tokens 30475 neurons per M output tokens |
-| @cf/black-forest-labs/flux-1-schnell | image | 4.80 neurons per 512x512 tile 9.60 neurons per step |
-`;
-    const models = parseCloudflareModelsHtml(html, pricing);
-    expect(models).toHaveLength(3);
-    expect(models[0]).toMatchObject({
-      name: '@cf/meta/llama-3.2-3b-instruct',
-      task: 'text-generation',
-      author: 'Meta',
-      neuronsInput: 0.004625,
-      neuronsOutput: 0.030475,
-      paidRequired: false,
-    });
-    expect(models[1]).toMatchObject({
-      name: '@cf/black-forest-labs/flux-1-schnell',
-      task: 'text-to-image',
-      neuronsInput: null,
-      neuronsOutput: null,
-      paidRequired: false,
-    });
-    expect(models[2]).toMatchObject({ name: '@hf/google/gemma-7b-it', task: 'text-generation' });
+describe('Cloudflare structured model registry', () => {
+  it('classifies access without pricing rows, including beta and zero-price models', () => {
+    const result = parseCloudflareModelRegistry({ models: [
+      model('@cf/google/embeddinggemma-300m', [{ property_id: 'beta', value: 'true' }]),
+      model('@cf/bytedance/stable-diffusion-xl-lightning', [{ property_id: 'price', value: [{ unit: 'per step', price: 0, currency: 'USD' }] }]),
+      model('@cf/test/expensive-free-plan', [{ property_id: 'price', value: [{ unit: 'per M tokens', price: 99, currency: 'USD' }] }]),
+      model('@cf/deepseek-ai/deepseek-v4-flash-0731', [paid]),
+    ] });
+    expect(result.map(m => m.paidRequired)).toEqual([false, false, false, true]);
+    expect(result[0]?.beta).toBe(true);
+    expect(result[1]?.pricing).toBe('$0 per step');
+    expect(result.every(m => m.neuronsInput === null)).toBe(true);
   });
 
-  it('parses Cloudflare paid-billing model metadata without inference', () => {
-    const markdown = `
-Some models require a paid billing method. This applies to \`@cf/moonshotai/kimi-k2.6\`, \`@cf/zai-org/glm-5.2\`, and \`@cf/deepseek-ai/deepseek-v4-flash-0731\`. You can access these models with Workers Paid.
-
-Requests to other models continue below.
-`;
-    expect([...parsePaidRequiredModels(markdown)]).toEqual([
-      '@cf/moonshotai/kimi-k2.6',
-      '@cf/zai-org/glm-5.2',
-      '@cf/deepseek-ai/deepseek-v4-flash-0731',
-    ]);
-
-    const html = `
-      <div data-models-cell data-model-id="@cf/deepseek-ai/deepseek-v4-flash-0731" data-model-task="Text Generation" data-model-author="DeepSeek"></div>
-      <div data-models-cell data-model-id="@cf/meta/llama-3.2-3b-instruct" data-model-task="Text Generation" data-model-author="Meta"></div>
-    `;
-    const parsed = parseCloudflareModelsHtml(html, markdown);
-    expect(parsed.find((model) => model.name.includes('deepseek'))?.paidRequired).toBe(true);
-    expect(parsed.find((model) => model.name.includes('llama'))?.paidRequired).toBeNull();
+  it('uses flag semantics, not price guesses or hardcoded model-family names', () => {
+    const result = parseCloudflareModelRegistry({ models: [
+      model('@cf/new-provider/new-paid-model', [{ ...paid, value: true }]),
+      model('@cf/new-provider/new-free-model', [{ ...paid, value: 'false' }]),
+      model('@cf/new-provider/absent-optional-flag'),
+    ] });
+    expect(result.map(m => m.paidRequired)).toEqual([true, false, false]);
   });
 
-  it('deduplicates model cells and ignores unrelated markup', () => {
-    const html = `
-      <span data-model-id="not-a-cell">ignored</span>
-      <div data-models-cell data-model-id="@cf/openai/whisper" data-model-task="Automatic Speech Recognition" data-model-author="OpenAI"></div>
-      <div data-models-cell data-model-id="@cf/openai/whisper" data-model-task="Automatic Speech Recognition" data-model-author="OpenAI"></div>
-    `;
-    expect(parseCloudflareModelsHtml(html)).toEqual([
-      expect.objectContaining({ name: '@cf/openai/whisper', task: 'automatic-speech-recognition', paidRequired: null }),
-    ]);
+  it('omits deprecated and expired entries while preserving future retirement dates', () => {
+    const result = parseCloudflareModelRegistry({ models: [
+      model('@cf/test/current'),
+      model('@cf/test/deprecated', [], { deprecated: true }),
+      model('@cf/test/expired', [{ property_id: 'planned_deprecation_date', value: '2026-05-30' }]),
+      model('@cf/test/future', [{ property_id: 'planned_deprecation_date', value: '2027-01-01' }]),
+    ] }, '', Date.parse('2026-09-13'));
+    expect(result.map(m => m.name)).toEqual(['@cf/test/current', '@cf/test/future']);
   });
 
-  it('parses comma-formatted neuron rates', () => {
-    const rates = parseNeuronPricing('| @cf/test/model | price | 45,170 neurons per M input tokens 443,756 neurons per M output tokens |');
+  it('rejects malformed or partial snapshots before the database can be overwritten', () => {
+    for (const bad of [
+      null, {}, { models: [] },
+      { models: [model('@cf/test/current'), { name: '@cf/test/broken' }] },
+      { models: [model('@cf/test/current', [{ ...paid, value: 'maybe' }])] },
+      { models: [model('@cf/test/current', [paid, paid])] },
+      { models: [model('@cf/test/current'), model('@cf/test/current')] },
+      { models: [model('@cf/test/current', [], { properties: null })] },
+    ]) expect(() => parseCloudflareModelRegistry(bad)).toThrow();
+  });
+
+  it('gives every current real catalog entry a definite access classification', () => {
+    const result = parseCloudflareModelRegistry(snapshot);
+    expect(result).toHaveLength(65);
+    expect(result.filter(m => m.paidRequired)).toHaveLength(7);
+    expect(result.filter(m => !m.paidRequired)).toHaveLength(58);
+    expect(result.every(m => typeof m.paidRequired === 'boolean')).toBe(true);
+    expect(result.some(m => m.name === '@cf/microsoft/phi-2')).toBe(false);
+    expect(result.find(m => m.name === '@cf/google/embeddinggemma-300m')?.paidRequired).toBe(false);
+    expect(result.find(m => m.name === '@cf/openai/whisper-tiny-en')?.paidRequired).toBe(false);
+  });
+
+  it('keeps neuron rates independent of access and handles transport annotations', () => {
+    const rates = parseNeuronPricing('| @cf/test/model | price | 45,170 neurons per M input tokens 443,756 neurons per M output tokens |\n| @cf/deepgram/flux (WebSocket) | $0.0077 | 700.00 neurons per audio minute |');
     expect(rates.get('@cf/test/model')).toMatchObject({ input: 0.04517, output: 0.443756 });
+    expect(rates.has('@cf/deepgram/flux')).toBe(true);
+  });
+
+  it.each(['http failure', 'network failure'])('keeps access correct when pricing has a %s', async (failure) => {
+    const mock = vi.fn(async (input: string | URL | Request) => {
+      if (String(input) === CLOUDFLARE_MODELS_URL) return Response.json({ models: [model('@cf/test/current'), model('@cf/test/paid', [paid])] });
+      if (failure === 'network failure') throw new Error('pricing offline');
+      return new Response('offline', { status: 503 });
+    });
+    const result = await fetchCloudflarePublicCatalog(mock as typeof fetch);
+    expect(result.map(m => m.paidRequired)).toEqual([false, true]);
+    expect(mock.mock.calls.map(c => String(c[0])).sort()).toEqual([CLOUDFLARE_MODELS_URL, CLOUDFLARE_PRICING_URL].sort());
+  });
+
+  it('does not fall back to stale HTML pages when the registry is unavailable', async () => {
+    const mock = vi.fn(async () => new Response('offline', { status: 502 }));
+    await expect(fetchCloudflarePublicCatalog(mock as typeof fetch)).rejects.toThrow('registry failed');
+    expect(mock).toHaveBeenCalledTimes(2);
   });
 });

@@ -42,17 +42,17 @@ describe('zero-config Cloudflare deployment', () => {
   });
 
   function mockPublicCatalog() {
-    const html = `
-      <div data-models-cell data-model-id="@cf/meta/llama-3.2-3b-instruct" data-model-task="Text Generation" data-model-author="Meta" data-model-href="/workers-ai/models/llama-3.2-3b-instruct/" data-model-pricing="priced" data-model-capabilities=""></div>
-      <div data-models-cell data-model-id="@cf/black-forest-labs/flux-1-schnell" data-model-task="Text-to-Image" data-model-author="Black Forest Labs" data-model-href="/workers-ai/models/flux-1-schnell/" data-model-pricing="priced" data-model-capabilities=""></div>
-      <div data-models-cell data-model-id="@cf/openai/whisper" data-model-task="Automatic Speech Recognition" data-model-author="OpenAI" data-model-href="/workers-ai/models/whisper/" data-model-pricing="priced" data-model-capabilities=""></div>
-    `;
+    const registry = { models: [
+      { name: '@cf/meta/llama-3.2-3b-instruct', task: { name: 'Text Generation' }, properties: [], deprecated: false },
+      { name: '@cf/black-forest-labs/flux-1-schnell', task: { name: 'Text-to-Image' }, properties: [], deprecated: false },
+      { name: '@cf/openai/whisper', task: { name: 'Automatic Speech Recognition' }, properties: [], deprecated: false },
+    ] };
     const pricing = `
       | @cf/meta/llama-3.2-3b-instruct | $0.051 per M input tokens $0.335 per M output tokens | 4625 neurons per M input tokens 30475 neurons per M output tokens |
     `;
     vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
-      return new Response(url.includes('/pricing/') ? pricing : html, { status: 200 });
+      return new Response(url.includes('/pricing/') ? pricing : JSON.stringify(registry), { status: 200 });
     }));
   }
 
@@ -69,7 +69,7 @@ describe('zero-config Cloudflare deployment', () => {
     expect((await listModels(env.DB, 'automatic-speech-recognition')).map((model) => model.name)).toEqual([
       '@cf/openai/whisper',
     ]);
-    expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe('1');
+    expect(await getSetting(env.DB, MODEL_CATALOG_READY_KEY)).toBe('2');
     expect(Number(await getSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY))).toBeGreaterThan(0);
   });
 
@@ -80,7 +80,7 @@ describe('zero-config Cloudflare deployment', () => {
       .bind(MODEL_CATALOG_READY_KEY).run();
     await env.DB.prepare("INSERT INTO models (name, task, description, properties, beta, enabled, synced_at) VALUES ('@cf/meta/llama-3.2-3b-instruct', 'text-generation', NULL, '[]', 0, 1, 0)").run();
 
-    await expect(ensureModelCatalog(zeroConfig)).resolves.toEqual({ initialized: false, count: 3 });
+    await expect(ensureModelCatalog(zeroConfig)).resolves.toEqual({ initialized: true, count: 3 });
     expect((await listModels(env.DB))).toHaveLength(3);
     expect(Number(await getSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY))).toBeGreaterThan(0);
   });

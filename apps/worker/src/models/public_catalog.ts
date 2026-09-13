@@ -1,122 +1,139 @@
-export const CLOUDFLARE_MODELS_URL = 'https://developers.cloudflare.com/workers-ai/models/';
+// Public metadata feed used by Cloudflare's own documentation sync:
+// https://github.com/cloudflare/cloudflare-docs/blob/production/bin/fetch-ai-models.js
+// Unlike rendered documentation cards, this feed removes retired models and
+// includes the explicit require_workers_paid property. No token or inference.
+export const CLOUDFLARE_MODELS_URL = 'https://ai-cloudflare-com.pages.dev/api/models';
 export const CLOUDFLARE_PRICING_URL = 'https://developers.cloudflare.com/workers-ai/platform/pricing/index.md';
 
 export interface PublicCatalogModel {
   name: string;
   task: string;
   author: string | null;
-  href: string | null;
+  href: string;
+  description: string | null;
   capabilities: string[];
   pricing: string | null;
   neuronsInput: number | null;
   neuronsOutput: number | null;
-  paidRequired: boolean | null;
-}
-
-function decodeHtml(value: string): string {
-  return value
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#(\d+);/g, (_match, code: string) => String.fromCharCode(Number(code)));
-}
-
-function attr(source: string, name: string): string | null {
-  const match = source.match(new RegExp(`data-${name}="([^"]*)"`));
-  return match ? decodeHtml(match[1]!) : null;
+  paidRequired: boolean;
+  beta: boolean;
 }
 
 export function normalizeCloudflareTask(task: string): string {
   return task.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
-interface TokenNeuronRates {
-  input: number | null;
-  output: number | null;
-  raw: string;
-}
+interface TokenNeuronRates { input: number | null; output: number | null; raw: string }
 
-/**
- * Cloudflare explicitly lists models that require a paid billing method in the
- * public pricing markdown. Reading this metadata is free and avoids synthetic
- * inference probes that would consume neurons.
- */
-export function parsePaidRequiredModels(markdown: string): Set<string> {
-  const result = new Set<string>();
-  const paragraph = markdown.replace(/\r\n/g, '\n').match(/Some\s+models\s+require\s+a\s+paid\s+billing\s+method\.[\s\S]*?(?=\n\s*\n|$)/i)?.[0] ?? '';
-  for (const match of paragraph.matchAll(/`(@[^`\s]+\/[^`\s]+)`/g)) {
-    result.add(match[1]!);
-  }
-  return result;
-}
-
+/** Rates are accounting metadata, never evidence of Free/Paid access. */
 export function parseNeuronPricing(markdown: string): Map<string, TokenNeuronRates> {
   const rates = new Map<string, TokenNeuronRates>();
   for (const line of markdown.split('\n')) {
-    const row = line.match(/^\|\s*(@[^|\s]+\/[^|\s]+)\s*\|[^|]*\|\s*([^|]+)\|/);
+    // Cloudflare sometimes appends transport annotations, e.g. (WebSocket).
+    const row = line.match(/^\|\s*(@[^|\s]+\/[^|\s]+)(?:\s+\([^|]*\))?\s*\|[^|]*\|\s*([^|]+)\|/);
     if (!row) continue;
     const name = row[1]!;
     const raw = row[2]!.trim();
-    const inputMatch = raw.match(/([\d,.]+)\s+neurons per M input tokens/i);
-    const outputMatch = raw.match(/([\d,.]+)\s+neurons per M output tokens/i);
-    const toPerToken = (match: RegExpMatchArray | null) => {
+    const toRate = (match: RegExpMatchArray | null) => {
       if (!match) return null;
       const value = Number(match[1]!.replace(/,/g, ''));
       return Number.isFinite(value) ? value / 1_000_000 : null;
     };
     rates.set(name, {
-      input: toPerToken(inputMatch),
-      output: toPerToken(outputMatch),
+      input: toRate(raw.match(/([\d,.]+)\s+neurons per M input tokens/i)),
+      output: toRate(raw.match(/([\d,.]+)\s+neurons per M output tokens/i)),
       raw,
     });
   }
   return rates;
 }
 
-export function parseCloudflareModelsHtml(html: string, pricingMarkdown = ''): PublicCatalogModel[] {
-  const pricing = parseNeuronPricing(pricingMarkdown);
-  const paidRequired = parsePaidRequiredModels(pricingMarkdown);
+function object(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function booleanProperty(value: unknown, name: string): boolean {
+  // These are optional flags in Cloudflare's model registry. Absence means off,
+  // not that a request must be made to discover whether the flag applies.
+  if (value === undefined || value === false || value === 'false') return false;
+  if (value === true || value === 'true') return true;
+  throw new Error(`Cloudflare model registry has an invalid ${name} flag`);
+}
+
+const CAPABILITIES: Record<string, string> = {
+  function_calling: 'Function calling', reasoning: 'Reasoning', vision: 'Vision',
+  lora: 'LoRA', partner: 'Partner', realtime: 'Real-time',
+};
+
+/** Validate the full snapshot before touching the DB. Never publish a partial parse. */
+export function parseCloudflareModelRegistry(
+  data: unknown,
+  pricingMarkdown = '',
+  now = Date.now(),
+): PublicCatalogModel[] {
+  if (!object(data) || !Array.isArray(data.models) || data.models.length === 0) {
+    throw new Error('Cloudflare model registry returned no models');
+  }
+  const rates = parseNeuronPricing(pricingMarkdown);
   const models = new Map<string, PublicCatalogModel>();
-  const cell = /<div\s+data-models-cell\s+([^>]+)>/g;
-  let match: RegExpExecArray | null;
-  while ((match = cell.exec(html)) !== null) {
-    const attrs = match[1]!;
-    const name = attr(attrs, 'model-id');
-    const task = attr(attrs, 'model-task');
-    if (!name?.startsWith('@') || !name.includes('/') || !task) continue;
-    const rates = pricing.get(name);
-    const capabilities = (attr(attrs, 'model-capabilities') ?? '')
-      .split(',')
-      .map((value) => value.trim())
-      .filter(Boolean);
-    models.set(name, {
-      name,
-      task: normalizeCloudflareTask(task),
-      author: attr(attrs, 'model-author'),
-      href: attr(attrs, 'model-href'),
-      capabilities,
-      pricing: rates?.raw ?? attr(attrs, 'model-pricing'),
-      neuronsInput: rates?.input ?? null,
-      neuronsOutput: rates?.output ?? null,
-      paidRequired: paidRequired.has(name) ? true : paidRequired.size > 0 && pricing.has(name) ? false : null,
+  const names = new Set<string>();
+  for (const row of data.models) {
+    if (!object(row) || typeof row.name !== 'string' || !/^@(cf|hf)\/[^/\s]+\/[^/\s]+$/.test(row.name)
+      || !object(row.task) || typeof row.task.name !== 'string' || !row.task.name.trim()
+      || !Array.isArray(row.properties)) {
+      throw new Error('Cloudflare model registry contains an invalid model record');
+    }
+    if (names.has(row.name)) throw new Error('Cloudflare model registry contains duplicate models');
+    names.add(row.name);
+    const properties: Record<string, unknown> = Object.create(null);
+    for (const p of row.properties) {
+      if (!object(p) || typeof p.property_id !== 'string' || !('value' in p) || p.property_id in properties) {
+        throw new Error('Cloudflare model registry contains invalid properties');
+      }
+      properties[p.property_id] = p.value;
+    }
+    const paidRequired = booleanProperty(properties.require_workers_paid, 'require_workers_paid');
+    const deprecated = booleanProperty(row.deprecated, 'deprecated');
+    const deprecatedAt = properties.planned_deprecation_date;
+    let expired = false;
+    if (deprecatedAt !== undefined) {
+      if (typeof deprecatedAt !== 'string' || !Number.isFinite(Date.parse(deprecatedAt))) {
+        throw new Error('Cloudflare model registry contains an invalid retirement date');
+      }
+      expired = Date.parse(deprecatedAt) <= now;
+    }
+    if (deprecated || expired) continue;
+    const pricing = Array.isArray(properties.price) ? properties.price.flatMap(p =>
+      object(p) && typeof p.price === 'number' && typeof p.unit === 'string' && p.currency === 'USD'
+        ? [`$${p.price} ${p.unit}`] : []
+    ).join('; ') || null : null;
+    const price = rates.get(row.name);
+    models.set(row.name, {
+      name: row.name,
+      task: normalizeCloudflareTask(row.task.name),
+      author: row.name.split('/')[1] ?? null,
+      href: `https://developers.cloudflare.com/workers-ai/models/${encodeURIComponent(row.name.split('/')[2]!)}/`,
+      description: typeof row.description === 'string' ? row.description : null,
+      capabilities: Object.entries(CAPABILITIES).filter(([key]) => properties[key] === true || properties[key] === 'true').map(([,label]) => label),
+      pricing: price?.raw ?? pricing,
+      neuronsInput: price?.input ?? null,
+      neuronsOutput: price?.output ?? null,
+      paidRequired,
+      beta: booleanProperty(properties.beta, 'beta'),
     });
   }
+  if (models.size === 0) throw new Error('Cloudflare model registry has no active models');
   return [...models.values()];
 }
 
-export async function fetchCloudflarePublicCatalog(
-  fetchImpl: typeof fetch = fetch,
-): Promise<PublicCatalogModel[]> {
-  const [modelsResponse, pricingResponse] = await Promise.all([
-    fetchImpl(CLOUDFLARE_MODELS_URL, { headers: { Accept: 'text/html' } }),
-    fetchImpl(CLOUDFLARE_PRICING_URL, { headers: { Accept: 'text/markdown' } }),
+export async function fetchCloudflarePublicCatalog(fetchImpl: typeof fetch = fetch): Promise<PublicCatalogModel[]> {
+  // Pricing is optional. A missing price row/endpoint can never turn a model's
+  // access status into "unknown", or discard an otherwise valid registry.
+  const [registry, pricing] = await Promise.all([
+    fetchImpl(CLOUDFLARE_MODELS_URL, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000) }),
+    fetchImpl(CLOUDFLARE_PRICING_URL, { headers: { Accept: 'text/markdown' }, signal: AbortSignal.timeout(8_000) })
+      .then(async r => r.ok ? await r.text() : '').catch(() => ''),
   ]);
-  if (!modelsResponse.ok) throw new Error(`Cloudflare public model catalog failed: ${modelsResponse.status}`);
-  const html = await modelsResponse.text();
-  const pricingMarkdown = pricingResponse.ok ? await pricingResponse.text() : '';
-  const models = parseCloudflareModelsHtml(html, pricingMarkdown);
-  if (models.length === 0) throw new Error('Cloudflare public model catalog returned no models');
-  return models;
+  if (!registry.ok) throw new Error(`Cloudflare model registry failed: ${registry.status}`);
+  return parseCloudflareModelRegistry(await registry.json(), pricing);
 }

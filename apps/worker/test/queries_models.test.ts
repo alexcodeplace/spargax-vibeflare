@@ -36,6 +36,15 @@ describe('upsertModel', () => {
     expect(row?.enabled).toBe(0);
   });
 
+  it('retains usable neuron estimates when the optional pricing endpoint fails', async () => {
+    await upsertModel(env.DB, { ...base, name: '@cf/test/pricing', neurons_input: 0.01, neurons_output: 0.02 });
+    await upsertModel(env.DB, { ...base, name: '@cf/test/pricing', properties: '{"paid_required":false}' });
+    const row = await getModel(env.DB, '@cf/test/pricing');
+    expect(row?.neurons_input).toBe(0.01);
+    expect(row?.neurons_output).toBe(0.02);
+    expect(JSON.parse(row!.properties!).paid_required).toBe(false);
+  });
+
   it('re-sync updates other fields (task, description, synced_at)', async () => {
     await upsertModel(env.DB, { name: '@cf/test/update', ...base, description: 'old' });
     await upsertModel(env.DB, { name: '@cf/test/update', ...base, description: 'new', synced_at: base.synced_at + 1 });

@@ -41,7 +41,7 @@ export async function getHandler(c: C): Promise<Response> {
   const id = c.req.param('id');
   if (!id) return c.json({ error: { type: 'invalid_request', message: 'missing id' } }, 400);
   const model = await getModel(c.env.DB, id);
-  if (!model || model.enabled === 0 || (withModelAccess(model).paid_required === true && await excludePaidModelsEnabled(c.env.DB))) {
+  if (!model || model.enabled === 0 || withModelAccess(model).paid_required === null || (withModelAccess(model).paid_required === true && await excludePaidModelsEnabled(c.env.DB))) {
     return c.json({ error: { type: 'not_found', message: `model '${id}' not found` } }, 404);
   }
   return c.json(toOpenAIModel(withModelAccess(model)));

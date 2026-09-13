@@ -1,7 +1,6 @@
 import type { Env } from '../env';
 import { disableDelistedModels, rearmDisabledModels, upsertModel } from '../db/queries';
-import { fetchCloudflarePublicCatalog } from '../models/public_catalog';
-import { modelRequiresPaid } from '../models/access';
+import { CLOUDFLARE_MODELS_URL, fetchCloudflarePublicCatalog } from '../models/public_catalog';
 
 /** How long a model stays disabled after its last failure before traffic is sent to it again. */
 const FAILURE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
@@ -23,19 +22,21 @@ export async function syncModels(
     await upsertModel(env.DB, {
       name: model.name,
       task: model.task,
-      description: null,
+      description: model.description,
       properties: JSON.stringify({
-        source: 'cloudflare-public-catalog',
+        source: 'cloudflare-model-registry',
+        access_source: CLOUDFLARE_MODELS_URL,
+        access_checked_at: syncedAt,
         author: model.author,
         href: model.href,
         capabilities: model.capabilities,
         pricing: model.pricing,
-        paid_required: model.paidRequired ?? modelRequiresPaid({ name: model.name, properties: null }),
+        paid_required: model.paidRequired,
       }),
       neurons_input: model.neuronsInput,
       neurons_output: model.neuronsOutput,
       neurons_flat: null,
-      beta: 0,
+      beta: model.beta ? 1 : 0,
       enabled: 1,
       synced_at: syncedAt,
     });

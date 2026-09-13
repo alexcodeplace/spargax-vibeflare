@@ -33,12 +33,12 @@ function preferenceRank(model: ModelInfo, task?: string): number {
 }
 
 export function modelLabelForPicker(model: ModelInfo): string {
-  return `${model.paid_required === true ? '💲 Paid · ' : ''}${model.name}${model.paid_required === null ? ' (billing unknown)' : ''}`;
+  return `${model.paid_required === true ? '💲 Paid · ' : ''}${model.name}`;
 }
 
 export function sortModelsForPicker(models: ModelInfo[], task?: string): ModelInfo[] {
-  return [...models].sort((a, b) => {
-    const billingRank = (m: ModelInfo) => m.paid_required === true ? 2 : m.paid_required === null ? 1 : 0;
+  return models.filter((m) => typeof m.paid_required === 'boolean').sort((a, b) => {
+    const billingRank = (m: ModelInfo) => m.paid_required === true ? 1 : 0;
     const paidDelta = billingRank(a) - billingRank(b);
     if (paidDelta !== 0) return paidDelta;
     const rankDelta = preferenceRank(a, task) - preferenceRank(b, task);
@@ -128,8 +128,8 @@ export function ModelPicker({ onChange, task, value }: ModelPickerProps) {
   return (
     <div className="flex min-w-0 items-center gap-2">
       <div className="min-w-0 flex-1">
-        {error ? (
-          <Badge variant="danger">Model catalog error</Badge>
+        {error && models.length === 0 ? (
+          <Badge variant="danger">Could not load models. Try Refresh models.</Badge>
         ) : (
           <Select
             placeholder="Select a Model…"
@@ -140,6 +140,7 @@ export function ModelPicker({ onChange, task, value }: ModelPickerProps) {
           />
         )}
       </div>
+      {error && models.length > 0 && <span role="status" className="text-xs text-[var(--color-muted)]">Could not refresh. Showing saved models.</span>}
       <Button
         type="button"
         variant="ghost"

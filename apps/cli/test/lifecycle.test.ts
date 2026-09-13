@@ -288,7 +288,7 @@ describe('UJ-008 install, diagnose, and update lifecycle', () => {
     const result = await updateInstallation(ctx(provider, env), 'vf-test');
 
     expect(result.receipt.status).toBe('installed');
-    expect(result.receipt.release.installed).toBe('0.9.3');
+    expect(result.receipt.release.installed).toBe('0.9.4');
     expect(result.migrationsApplied).toEqual(['0002_auth_invites.sql', '0006_model_health.sql']);
     expect(provider.calls.some((call) => call.startsWith('createD1:'))).toBe(false);
     expect(provider.calls.some((call) => call.startsWith('createR2:'))).toBe(false);

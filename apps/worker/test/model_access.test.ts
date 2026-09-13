@@ -5,8 +5,9 @@ import {
   excludePaidModelsEnabled,
   filterPaidModels,
   modelRequiresPaid,
+  assertModelAllowed,
 } from '../src/models/access';
-import { setSetting } from '../src/db/queries';
+import { setSetting, upsertModel } from '../src/db/queries';
 import type { ModelInfo } from '@vibeflare/shared';
 
 function model(name: string, paidRequired?: boolean): ModelInfo {
@@ -56,6 +57,16 @@ describe('paid model access policy', () => {
     expect(modelRequiresPaid(model('@cf/test/undocumented'))).toBeNull();
     expect(modelRequiresPaid({ name: '@cf/test/dollars', properties: '{"pricing":"$0.01"}' })).toBeNull();
     expect(modelRequiresPaid(model('@cf/deepseek-ai/deepseek-v4-flash-0731', false))).toBe(false);
+  });
+
+  it('quarantines unclassified rows rather than displaying or automatically selecting them', async () => {
+    const unknown = model('@cf/test/unclassified');
+    const verified = model('@cf/test/verified', false);
+    for (const exclude of [true, false]) {
+      expect(filterPaidModels([unknown, verified], exclude).map(m => m.name)).toEqual([verified.name]);
+    }
+    await upsertModel(env.DB, unknown);
+    await expect(assertModelAllowed({ DB: env.DB } as never, unknown.name)).rejects.toThrow('verified catalog');
   });
 
   it('recognizes the built-in fallback list for catalog rows synced before metadata support', () => {

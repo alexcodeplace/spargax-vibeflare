@@ -4,6 +4,7 @@ import { syncModels } from '../crons/sync_models';
 
 export type ModelSync = typeof syncModels;
 export const MODEL_CATALOG_READY_KEY = 'system.model_catalog_ready';
+export const MODEL_CATALOG_READY_VALUE = '2';
 export const MODEL_CATALOG_SYNCED_AT_KEY = 'system.model_catalog_synced_at';
 export const MODEL_CATALOG_REFRESH_MS = 24 * 60 * 60 * 1000;
 
@@ -37,7 +38,7 @@ async function seedFallbackCatalog(env: Env): Promise<number> {
 }
 
 async function isReady(env: Env): Promise<boolean> {
-  return (await getSetting(env.DB, MODEL_CATALOG_READY_KEY)) === '1';
+  return (await getSetting(env.DB, MODEL_CATALOG_READY_KEY)) === MODEL_CATALOG_READY_VALUE;
 }
 
 async function isFresh(env: Env, now = Date.now()): Promise<boolean> {
@@ -55,7 +56,7 @@ async function syncAndMarkReady(
   const count = await countModels(env.DB);
   if (count === 0) throw new Error('Cloudflare model discovery returned no models');
   const now = Date.now();
-  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', now);
+  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, now);
   await setSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY, String(now), now);
   return { result, count };
 }
@@ -103,7 +104,7 @@ export async function ensureModelCatalog(
         }
         if (sync !== syncModels) throw error;
         const count = await seedFallbackCatalog(env);
-        await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', Date.now());
+        await setSetting(env.DB, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, Date.now());
         return { initialized: true, count };
       }
     })().finally(() => {

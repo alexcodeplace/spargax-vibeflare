@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { env, SELF } from 'cloudflare:test';
 import { sign } from 'hono/jwt';
 import { getSetting, insertUser, setSetting, upsertModel } from '../src/db/queries';
-import { MODEL_CATALOG_READY_KEY, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
+import { MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, MODEL_CATALOG_SYNCED_AT_KEY } from '../src/models/catalog';
 import { runner } from '../src/ai/dispatch';
 import { classifyUpstreamError, isPaidPlanRequiredError } from '../src/ai/errors';
 import type { Env } from '../src/env';
@@ -28,7 +28,7 @@ beforeEach(async () => {
   memberHeaders = await session('user');
   await upsertModel(env.DB, { ...base, name: freeName, properties: '{"paid_required":false}' });
   await upsertModel(env.DB, { ...base, name: paidName, properties: '{"paid_required":true}' });
-  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, '1', now);
+  await setSetting(env.DB, MODEL_CATALOG_READY_KEY, MODEL_CATALOG_READY_VALUE, now);
   await setSetting(env.DB, MODEL_CATALOG_SYNCED_AT_KEY, String(now), now);
 });
 

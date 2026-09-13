@@ -1,5 +1,6 @@
 import type { Env } from '../env';
 import { markModelPaidRequired, recordModelSuccess, recordModelFailure } from '../db/queries';
+import { ModelAccessUnavailableError } from '../models/access';
 import { isPaidPlanRequiredError, isUpstreamQuotaError } from './errors';
 
 /** Consecutive upstream failures on real traffic before a model is taken out of the catalog. */
@@ -33,7 +34,7 @@ export async function recordModelHealth(env: Env, signal: ModelHealthSignal): Pr
     await recordModelSuccess(env.DB, signal.model, now);
     return;
   }
-  if (signal.status < 500) return;
+  if (signal.status < 500 || message === new ModelAccessUnavailableError().message) return;
 
   // A spent neuron allocation says nothing about the model.
   if (isUpstreamQuotaError(message)) return;
