@@ -1,3 +1,4 @@
+import { historyTarget, storeHistoryFile, saveHistoryTurn, discardHistoryFiles, type StoredHistoryFile } from './history';
 import type { Context } from 'hono';
 import type { Env, Variables } from '../env';
 import { nanoid } from 'nanoid';
@@ -41,7 +42,7 @@ export async function handle(c: C): Promise<Response> {
     return c.json({ error: { type: 'invalid_request', message: 'invalid JSON' } }, 400);
   }
 
-  if (!body.model || !body.prompt) {
+  if (!body || typeof body.model !== 'string' || typeof body.prompt !== 'string' || !body.prompt.trim() || (body.n !== undefined && (!Number.isInteger(body.n) || body.n < 1 || body.n > 10))) {
     return c.json({ error: { type: 'invalid_request', message: 'model and prompt required' } }, 400);
   }
 
@@ -49,6 +50,9 @@ export async function handle(c: C): Promise<Response> {
   if (!modelRow || modelRow.enabled === 0) {
     return c.json({ error: { type: 'not_found', message: `model '${body.model}' not found` } }, 404);
   }
+
+  const chatId = await historyTarget(c);
+  if (chatId instanceof Response) return chatId;
 
   const quota = await peekQuota(env);
   if (quota.used >= quota.limit) {
@@ -60,6 +64,7 @@ export async function handle(c: C): Promise<Response> {
   const host = new URL(c.req.url).host;
 
   const results: { url?: string; b64_json?: string }[] = [];
+  const saved: StoredHistoryFile[] = [];
   let measuredNeurons = 0;
   let hasMeasuredNeurons = true;
 
@@ -73,7 +78,13 @@ export async function handle(c: C): Promise<Response> {
 
       const forceUrl = body.response_format === 'url' || imgBuf.byteLength > INLINE_SIZE_LIMIT;
 
-      if (forceUrl) {
+      if (chatId) {
+        const stored = await storeHistoryFile(env, userId, 'image', `${nanoid(8)}.png`, 'image/png', imgBuf);
+        saved.push(stored);
+        results.push(body.response_format === 'b64_json'
+          ? { b64_json: abToB64(imgBuf) }
+          : { url: `${new URL(c.req.url).origin}/v1/files/${stored.file.id}` });
+      } else if (forceUrl) {
         const filename = `${nanoid(8)}.png`;
         const { key } = await putFile(env.R2, userId, filename, 'image/png', imgBuf);
         const fileId = newId();
@@ -87,6 +98,7 @@ export async function handle(c: C): Promise<Response> {
       }
     }
   } catch (e) {
+    await discardHistoryFiles(env, userId, saved);
     const failure = classifyUpstreamError(e);
     await audit(env, {
       userId, apiKeyId,
@@ -109,6 +121,15 @@ export async function handle(c: C): Promise<Response> {
     status: 200, neurons,
     durationMs: Date.now() - start,
   });
+
+  if (chatId) {
+    try {
+      await saveHistoryTurn(env, userId, chatId, { model: body.model, userText: body.prompt, assistantText: `Generated ${saved.length} image${saved.length === 1 ? '' : 's'}.`, metadata: { version: 1, task: 'text-to-image', files: saved.map(item => item.file) }, neurons });
+    } catch (error) {
+      await discardHistoryFiles(env, userId, saved);
+      throw error;
+    }
+  }
 
   return c.json({ created: Math.floor(Date.now() / 1000), data: results });
 }

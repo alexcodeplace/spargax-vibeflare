@@ -1,3 +1,4 @@
+import { supportsAudioFile, LIVE_AUDIO_MESSAGE } from '@vibeflare/shared';
 import { estimateTokens } from '../ai/neurons';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -362,33 +363,53 @@ export function imageOutToOpenAI(
 
 // ── STT ──────────────────────────────────────────────────────────────────────
 
-export function sttReqToWai(audio: ArrayBuffer, model = ''): Record<string, unknown> {
-  const useBase64 = model.includes('large-v3-turbo') || model.includes('deepgram') || model.includes('nova');
-  if (useBase64) {
+export function sttReqToWai(audio: ArrayBuffer, model = '', mime = 'audio/wav'): Record<string, unknown> {
+  if (!supportsAudioFile(model)) throw new Error(LIVE_AUDIO_MESSAGE);
+  // Nova-3's HTTP binding requires a binary body + content type, not Whisper's
+  // base64/byte-array payload. See Cloudflare's workers-ai-partner-models example.
+  if (model === '@cf/deepgram/nova-3') {
+    return { audio: { body: new Blob([audio], { type: mime }).stream(), contentType: mime }, detect_language: true };
+  }
+  if (model === '@cf/openai/whisper-large-v3-turbo') {
     const bytes = new Uint8Array(audio);
     let binary = '';
     for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!);
-    return { audio: btoa(binary) };
+    return { audio: btoa(binary), task: 'transcribe' };
   }
   return { audio: [...new Uint8Array(audio)] };
 }
 
-export function sttOutToOpenAI(
-  out: Record<string, unknown>,
-  format: string = 'json'
-): object {
-  const text = (out.text as string | undefined) ?? '';
-  if (format === 'text') return text as unknown as object;
-  if (format === 'verbose_json') {
-    return {
-      task: 'transcribe',
-      language: out.language ?? 'en',
-      duration: out.duration ?? 0,
-      text,
-      segments: out.segments ?? [],
-    };
+function record(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+export function normalizeTranscription(out: Record<string, unknown>): { text: string; language?: string; duration?: number; segments?: unknown[] } {
+  const info = record(out.transcription_info) ?? record(out.metadata) ?? out;
+  let text: string;
+  if (typeof out.text === 'string') text = out.text;
+  else {
+    const channels = record(out.results)?.channels;
+    if (!Array.isArray(channels) || channels.length === 0) throw new Error('The model returned an invalid transcript. Try another audio model.');
+    text = channels.map(channel => {
+      const alternatives = record(channel)?.alternatives;
+      const transcript = Array.isArray(alternatives) ? record(alternatives[0])?.transcript : undefined;
+      if (typeof transcript !== 'string') throw new Error('The model returned an invalid transcript. Try another audio model.');
+      return transcript;
+    }).join('\n');
   }
-  return { text };
+  return {
+    text,
+    ...(typeof info.language === 'string' ? { language: info.language } : {}),
+    ...(typeof info.duration === 'number' && Number.isFinite(info.duration) ? { duration: info.duration } : {}),
+    ...(Array.isArray(out.segments) ? { segments: out.segments } : {}),
+  };
+}
+
+export function sttOutToOpenAI(out: Record<string, unknown>, format: string = 'json'): object {
+  const result = normalizeTranscription(out);
+  if (format === 'text') return result.text as unknown as object;
+  if (format === 'verbose_json') return { task: 'transcribe', language: result.language ?? 'en', duration: result.duration ?? 0, text: result.text, segments: result.segments ?? [] };
+  return { text: result.text };
 }
 
 // ── TTS ──────────────────────────────────────────────────────────────────────

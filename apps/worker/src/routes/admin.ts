@@ -371,18 +371,19 @@ admin.get('/chats/:id/messages', async (c) => {
   const userId = c.get('userId');
   const chatId = c.req.param('id');
   const chat = await c.env.DB.prepare(
-    'SELECT id, title, model FROM chats WHERE id = ? AND user_id = ?'
-  ).bind(chatId, userId).first<{ id: string; title: string; model: string }>();
+    'SELECT c.id, c.title, c.model, m.task FROM chats c LEFT JOIN models m ON m.name = c.model WHERE c.id = ? AND c.user_id = ?'
+  ).bind(chatId, userId).first<{ id: string; title: string; model: string; task: string | null }>();
   if (!chat) return c.json({ error: { type: 'not_found', message: 'Chat not found' } }, 404);
 
   const messages = await getChatMessages(c.env.DB, chatId, userId);
   return c.json({
-    chat: { id: chat.id, title: chat.title, model: chat.model },
+    chat: { id: chat.id, title: chat.title, model: chat.model, task: chat.task },
     messages: messages.map(m => ({
       id: m.id,
       chat_id: m.chat_id,
       role: m.role,
       content: m.content,
+      attachments: m.attachments,
       tokens_in: m.tokens_in,
       tokens_out: m.tokens_out,
       neurons: m.neurons,
@@ -510,7 +511,8 @@ admin.get('/files/:id/thumbnail', async (c) => {
   return new Response(obj.body, {
     headers: {
       'Content-Type': row.mime,
-      'Cache-Control': 'private, max-age=3600',
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 });
@@ -529,7 +531,9 @@ admin.get('/files/:id/download', async (c) => {
   return new Response(obj.body, {
     headers: {
       'Content-Type': row.mime,
-      'Content-Disposition': `attachment; filename="${row.filename}"`,
+      'Content-Disposition': `attachment; filename="${row.filename.replace(/[\r\n"\\]/g, '_')}"`,
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 });

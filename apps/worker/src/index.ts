@@ -12,7 +12,7 @@ import { countUsers } from './db/queries';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-app.get('/health', (c) => c.json({ ok: true, version: '0.9.5' }));
+app.get('/health', (c) => c.json({ ok: true, version: '0.9.6' }));
 
 // Root routing happens at the Worker edge so the browser never loads /chat only
 // to be bounced again by client-side auth. A fresh install goes straight to
@@ -48,12 +48,15 @@ app.get('/files/:key{.+}', async (c, next) => {
   return requireUserAuth(c, next);
 }, async (c) => {
   const key = decodeURIComponent(c.req.param('key'));
+  const owned = await c.env.DB.prepare('SELECT id FROM files WHERE r2_key = ? AND user_id = ?').bind(key, c.get('userId')).first();
+  if (!owned) return c.json({ error: { type: 'not_found', message: 'file not found' } }, 404);
   const obj = await getFile(c.env.R2, key);
   if (!obj) return c.json({ error: { type: 'not_found', message: 'file not found' } }, 404);
   return new Response(obj.body, {
     headers: {
       'Content-Type': obj.httpMetadata?.contentType ?? 'application/octet-stream',
-      'Cache-Control': 'private, max-age=3600',
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 });

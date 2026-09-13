@@ -74,4 +74,12 @@ describe('chooseDefaultModel', () => {
     ];
     expect(chooseDefaultModel(models, 'text-to-image')?.name).toBe('@cf/black-forest-labs/flux-1-schnell');
   });
+  it('uses file-compatible audio models without changing the billing or global catalog order', () => {
+    const rows = [model('@cf/deepgram/flux', 'automatic-speech-recognition'), model('@cf/deepgram/nova-3', 'automatic-speech-recognition'), model('@cf/openai/whisper', 'automatic-speech-recognition')];
+    expect(chooseDefaultModel(rows, 'automatic-speech-recognition')?.name).toBe('@cf/openai/whisper');
+    expect(sortModelsForPicker(rows, 'automatic-speech-recognition').some(item => item.name === '@cf/deepgram/flux')).toBe(false);
+    expect(sortModelsForPicker(rows).some(item => item.name === '@cf/deepgram/flux')).toBe(true);
+    expect(chooseDefaultModel([rows[0]!], 'automatic-speech-recognition')).toBeUndefined();
+  });
+
 });

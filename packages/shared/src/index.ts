@@ -24,3 +24,5 @@ export type {
 } from './openai';
 export * from './workers-ai';
 export * from './neurons';
+export * from './history';
+export * from './audio';

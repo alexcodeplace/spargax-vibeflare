@@ -24,6 +24,23 @@ const RESET_TABLES = [
 const encoder = new TextEncoder();
 const fakeAI = {
   async run(_model: string, input: Record<string, unknown>) {
+    // Hermetic media responses exercise the real image/embedding/audio routes
+    // and real local D1/R2 persistence without external inference.
+    if (_model === '@cf/test/e2e-image') return Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL1sAAAAASUVORK5CYII='), c => c.charCodeAt(0)).buffer;
+    if (_model === '@cf/test/e2e-embedding') return { data: (input.text as string[]).map(() => [0.125, -0.25, 0.5, 0.75]) };
+    if (_model === '@cf/test/e2e-audio') return { text: 'A transcript saved in conversation history.' };
+    if (_model === '@cf/deepgram/flux') throw new Error('8006: @cf/deepgram/flux only supports websocket connections');
+    if (_model === '@cf/deepgram/nova-3') {
+      const audio = input.audio as { body?: ReadableStream; contentType?: string } | undefined;
+      if (!audio?.body || !audio.contentType) throw new Error('Nova-3 requires a binary audio body and contentType');
+      await new Response(audio.body).arrayBuffer();
+      return { results: { channels: [{ alternatives: [{ transcript: 'Nova file transcription saved successfully.' }] }] } };
+    }
+    if (_model === '@cf/openai/whisper-large-v3-turbo') {
+      if (typeof input.audio !== 'string') throw new Error('Expected Turbo base64 input');
+      return { text: 'Whisper file transcription saved successfully.' };
+    }
+
     if (input.stream === true) {
       return new ReadableStream<Uint8Array>({
         start(controller) {
