@@ -63,8 +63,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.8)
       '@platform-modules/ui-accessibility':
-        specifier: file:../../vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz
-        version: file:vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz
+        specifier: file:../../vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz
+        version: file:vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz
       '@radix-ui/react-checkbox':
         specifier: ^1.3.3
         version: 1.3.11(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -144,6 +144,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.10
         version: 0.9.10(prettier@3.9.6)(typescript@5.9.3)
+      '@axe-core/playwright':
+        specifier: 4.13.0
+        version: 4.13.0(playwright-core@1.61.1)
       '@playwright/test':
         specifier: 1.61.1
         version: 1.61.1
@@ -335,6 +338,11 @@ packages:
     peerDependencies:
       '@astryxdesign/core': 0.5.4
       react: '>=19'
+
+  '@axe-core/playwright@4.13.0':
+    resolution: {integrity: sha512-6YLx+kxXu5GJceG4ozFg+33a2EMTdjYwWGloJ3sb9Kta5pp+ZNS53uxGVog5JetIY8s++P5UrtX+cri+u0VAVg==}
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -1531,8 +1539,8 @@ packages:
     resolution: {integrity: sha512-IYbg1R03CSQGWwl24kGyqrdVtixNSbRaDvBg1r5wyYjTP+VwPQkka1BzTgU5+vxiuwqg04OxdvdJ1xYYFIdUSA==}
     engines: {node: '>=20.0.0'}
 
-  '@platform-modules/ui-accessibility@file:vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz':
-    resolution: {integrity: sha512-jVxAXLvdAXWsBrPD3y0jp8mskHrN5pTc27aYgqBrlvw3Vmu7y92GDB6mBuEp7CULaS5f1sXm0cMQkMhhvSoCHw==, tarball: file:vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz}
+  '@platform-modules/ui-accessibility@file:vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz':
+    resolution: {integrity: sha512-e+aoLkoGqThgsvWX4JndQ2PAl2YCtIyxgViR9VWdArr8J8lYk2rxs8dywyymfTd+LLMBaR0S8SYDRgpH82eejQ==, tarball: file:vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz}
     version: 0.1.0
 
   '@playwright/test@1.61.1':
@@ -2512,6 +2520,10 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  axe-core@4.13.0:
+    resolution: {integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==}
+    engines: {node: '>=4'}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -4487,6 +4499,11 @@ snapshots:
       lucide-react: 1.41.0(react@19.2.8)
       react: 19.2.8
 
+  '@axe-core/playwright@4.13.0(playwright-core@1.61.1)':
+    dependencies:
+      axe-core: 4.13.0
+      playwright-core: 1.61.1
+
   '@babel/code-frame@7.29.7':
     dependencies:
       '@babel/helper-validator-identifier': 7.29.7
@@ -5406,7 +5423,7 @@ snapshots:
       tslib: 2.8.1
       tsyringe: 4.10.0
 
-  '@platform-modules/ui-accessibility@file:vendor/platform-modules-ui-accessibility-0.1.0.fb5bb269f442.tgz': {}
+  '@platform-modules/ui-accessibility@file:vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz': {}
 
   '@playwright/test@1.61.1':
     dependencies:
@@ -6435,6 +6452,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.28
       postcss-value-parser: 4.2.0
+
+  axe-core@4.13.0: {}
 
   axobject-query@4.1.0: {}
 

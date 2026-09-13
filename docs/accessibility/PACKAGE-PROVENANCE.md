@@ -1,7 +1,11 @@
-# Shared accessibility package
+# Shared accessibility package provenance
 
-Source: platform-modules/mod, packages/ui-accessibility.
+Canonical source: `platform-modules/mod`, package `packages/ui-accessibility`.
 
-This is an exact built package snapshot, not a separate implementation. The source is in the feat/ui-accessibility-20260913 platform worktree pending its PR and package release. All three consumers use the identical archive. Replace the dependency with the published package after that release, without rewriting the host adapters.
+- Source commit: `f947ae0d033d9a0a74e26b0c990e87f15fa88dc3`.
+- Package: `@platform-modules/ui-accessibility@0.1.0`.
+- Artifact: `vendor/platform-modules-ui-accessibility-0.1.0.b364b78ec4f9.tgz`.
+- SHA-256: `b364b78ec4f95acc4b848e15d3b2cfcb202990a5e018df71938ebd2fdf8a82f6`.
+- Build: pinned pnpm 11.22.0, `pnpm build` and `pnpm pack` in the package directory.
 
-Archive SHA-256: `fb5bb269f442434b08755d0b6e369985cab3129b6cf0f73eaf72baf38bb4c4e9`.
+The same immutable archive is used by WWW, Club and VibeFlare. Runtime code is not forked in the hosts. The archive contains built ESM, declarations, the explicitly imported stylesheet and its Apache-2.0 license. Future fixes must originate in the canonical package and replace the shared artifact and lockfile together.
