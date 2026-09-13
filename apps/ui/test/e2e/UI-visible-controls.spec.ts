@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { applyAuth } from './ui-matrix/matrix-auth';
+import { expectSingleControlEdge } from './helpers/control-invariants';
 
 async function artwork(control: Locator) {
   return control.evaluate(el => getComputedStyle(el, '::before').borderImageSource);
@@ -88,6 +89,7 @@ for (const theme of ['dark', 'light'] as const) {
         await expect(control).toHaveCSS('display', /^(inline-)?flex$/);
         await expect(control).toHaveCSS('border-top-style', 'solid');
         await expect(control).toHaveCSS('border-radius', '12px');
+        await expectSingleControlEdge(control);
         await expect.poll(async () => (await control.boundingBox())?.height ?? 0, { message: `Visible ${variant} ${size} target` }).toBeGreaterThanOrEqual(size === 'sm' ? 40 : size === 'md' ? 44 : 48);
         if (variant !== 'danger') await expect.poll(() => artwork(control), { message: `Hydrated ${variant} ${size} artwork` }).toContain(`/assets/club/${theme}/surfaces/button-`);
       }

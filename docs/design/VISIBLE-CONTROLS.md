@@ -10,7 +10,13 @@ The existing Club asset kit already supplies the required artwork. No new or dup
 - Secondary, outline and ghost buttons reuse `button-secondary-idle.svg` and `button-secondary-hover.svg`.
 - Selected tabs reuse `language-segment-active.svg`, the existing filled segment surface. Inactive tabs reuse the secondary button surface.
 
-Each file is selected from the existing `dark/surfaces` or `light/surfaces` directory. `node tools/sync-club-design-assets.mjs --check` verifies the complete canonical kit without altering it. The controls stylesheet uses nine-slice rendering to retain the original 12px glow gutters and rounded corners at different label widths. SVGs remain decoration, not images of text or replacements for semantic controls. Borders and background colors remain usable when an image request fails. Destructive actions keep a distinct red surface.
+Each file is selected from the existing `dark/surfaces` or `light/surfaces` directory. `node tools/sync-club-design-assets.mjs --check` verifies the complete canonical kit without altering it. The controls stylesheet reuses only the center fill of each SVG: a 24px slice excludes the supplied glow gutter, rounded edge and inset keylines, and zero-width image borders prevent those strokes from being painted. The clipped fill stays inside the control. One 1px CSS border owns the perimeter and a soft external shadow provides depth without an inset outline. SVGs remain decoration, not images of text or replacements for semantic controls. Borders and background colors remain usable when an image request fails. Destructive actions keep a distinct red surface.
+
+## Control invariants
+
+Every shared button and tab has one visible perimeter in idle, hover and pressed states. Decorative artwork must not add a second or third edge, and controls must not grow or shift between states. A keyboard-only focus outline is intentional and must not be clipped or removed to achieve the single-edge appearance.
+
+Passkey, GitHub OAuth/bootstrap and GitHub device-flow actions use the shared primary Button variant. The auth layout owns only sizing, not foreground/background overrides. This prevents white text being paired with the light secondary/outline SVG. The primary and selected-tab fill filters keep white labels readable across the actual gradient, not only against the fallback CSS background. Enabled labels must achieve at least 4.5:1 rendered contrast in both themes, including hover and pressed states. Disabled/loading behavior remains owned by Astryx.
 
 ## Behavior
 
@@ -29,6 +35,8 @@ Buttons expose stable variant and size attributes for styling. Composed JSX labe
 `VisibleControls.test.tsx` covers styling hooks, activation, loading, composed labels, controlled selection and multiple uniquely associated tab instances.
 
 `UI-visible-controls.spec.ts` covers both themes at 1440px, 390px and 320px; all Settings tabs; target size and separation; loaded artwork; primary/secondary/danger/ghost/outline sizes and states; keyboard focus; disabled/loading behavior; failed-artwork fallback; and forced colors. Its Settings interactions use the isolated local Worker fixture, not production credentials or data.
+
+`UI-control-invariants.spec.ts` adds passkey/GitHub contrast checks in idle, hover and pressed states at desktop and mobile sizes, plus single-perimeter assertions on login and workspace controls in both themes. The contrast helper captures the browser-composited fill with only the ink temporarily hidden, restores the DOM in a `finally` block, and measures against the actual computed label colors. It accounts for SVG fills, transparency and filters, which a CSS-background-only check misses. The shared-gallery checks enforce the same single-edge invariant for every button variant and size.
 
 The existing route/role screenshot matrix intentionally changes with the shared controls. Review those images before accepting updated baselines, then rerun the full browser suite without updating snapshots.
 

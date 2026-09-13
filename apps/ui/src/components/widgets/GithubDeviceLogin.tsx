@@ -140,7 +140,7 @@ export function GithubDeviceLogin({ mode, onSuccess }: GithubDeviceLoginProps) {
           <p className="text-sm text-[var(--color-danger)]">{errorMsg}</p>
         )}
         <Button
-          variant="outline"
+          variant="primary"
           className="vf-auth-action w-full"
           leftIcon={<Icon name="Github" size="sm" />}
           onClick={handleStart}

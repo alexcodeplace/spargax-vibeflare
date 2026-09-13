@@ -134,7 +134,7 @@ export function PasskeyButton({ mode, endpoints, buildVerifyBody, onSuccess, onE
   return (
     <ToastProvider>
       <Button
-        variant="secondary"
+        variant="primary"
         className="vf-auth-action"
         size="md"
         loading={loading}
