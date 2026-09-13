@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode, type MouseEvent } from 'react';
+import { useEffect, useId, useState, type ReactNode, type MouseEvent } from 'react';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 
 export interface TabItem {
@@ -24,16 +24,18 @@ function labelText(label: ReactNode, fallback: string): string {
 }
 
 export function Tabs({ items, defaultValue, value: controlledValue, onValueChange, className, variant = 'underline', touchFriendly = false }: TabsProps) {
+  const id = useId();
   const [internalValue, setInternalValue] = useState(defaultValue ?? items[0]?.value ?? '');
   useEffect(() => {
     if (controlledValue !== undefined) setInternalValue(controlledValue);
   }, [controlledValue]);
   const value = controlledValue ?? internalValue;
-  const active = items.find((item) => item.value === value);
 
   return (
-    <div className={className}>
+    <div className={`vf-tabs ${className ?? ''}`} data-vf-variant={variant}>
       <TabList
+        className="vf-tab-list"
+        overflow="visible"
         role="tablist"
         aria-label="Sections"
         value={value}
@@ -44,14 +46,16 @@ export function Tabs({ items, defaultValue, value: controlledValue, onValueChang
           onValueChange?.(next);
         }}
         layout={variant === 'segmented' ? 'fill' : 'hug'}
-        hasDivider={variant !== 'segmented'}
+        hasDivider={false}
       >
         {items.map((item) => (
           <Tab
             key={item.value}
+            id={`${id}-tab-${item.value}`}
+            className="vf-tab"
             value={item.value}
             label={labelText(item.label, item.value)}
-            panelId={`vf-tab-panel-${item.value}`}
+            panelId={`${id}-panel-${item.value}`}
             data-testid={item.testid}
             style={touchFriendly ? { minWidth: 44, minHeight: 44 } : undefined}
             {...(item.disabled
@@ -63,9 +67,19 @@ export function Tabs({ items, defaultValue, value: controlledValue, onValueChang
           />
         ))}
       </TabList>
-      <div id={`vf-tab-panel-${value}`} role="tabpanel" className="pt-4">
-        {active?.content}
-      </div>
+      {items.map((item) => (
+        <div
+          key={item.value}
+          id={`${id}-panel-${item.value}`}
+          role="tabpanel"
+          aria-labelledby={`${id}-tab-${item.value}`}
+          hidden={item.value !== value}
+          tabIndex={0}
+          className="vf-tab-panel pt-4"
+        >
+          {item.value === value ? item.content : null}
+        </div>
+      ))}
     </div>
   );
 }
