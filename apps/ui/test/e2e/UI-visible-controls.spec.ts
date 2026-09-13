@@ -74,6 +74,10 @@ for (const theme of ['dark', 'light'] as const) {
     await page.addInitScript(mode => localStorage.setItem('vf-theme', mode), theme);
     await applyAuth(context, 'owner', baseURL!, '/design-system');
     await page.goto('/design-system/');
+    // Wait for this specific island, not the header's independent hydration.
+    // The SSG copy is briefly replaced by React; measuring that detached node
+    // returns a null box/empty pseudo styles even when the real control works.
+    await page.locator('[data-vf-hydrated="true"]').filter({ has: page.getByRole('button', { name: 'primary md', exact: true }) }).first().waitFor({ state: 'attached' });
     // Demos must not trap the entire gallery behind an initially open dialog.
     await expect(page.getByRole('button', { name: 'Open invite form', exact: true })).toBeAttached();
     await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -84,7 +88,7 @@ for (const theme of ['dark', 'light'] as const) {
         await expect(control).toHaveCSS('display', /^(inline-)?flex$/);
         await expect(control).toHaveCSS('border-top-style', 'solid');
         await expect(control).toHaveCSS('border-radius', '12px');
-        expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(size === 'sm' ? 40 : size === 'md' ? 44 : 48);
+        await expect.poll(async () => (await control.boundingBox())?.height ?? 0, { message: `Visible ${variant} ${size} target` }).toBeGreaterThanOrEqual(size === 'sm' ? 40 : size === 'md' ? 44 : 48);
         if (variant !== 'danger') await expect.poll(() => artwork(control), { message: `Hydrated ${variant} ${size} artwork` }).toContain(`/assets/club/${theme}/surfaces/button-`);
       }
     }
