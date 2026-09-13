@@ -44,7 +44,8 @@ for (const theme of ['light', 'dark'] as const) {
       const action = page.getByRole('button', { name: 'Sign in with passkey', exact: true });
       await expect(action).toBeVisible();
       await expectSingleControlEdge(action);
-      await expect(action).toHaveCSS('outline-width', '0px');
+      // Astryx can retain a width on an outline whose style is none.
+      await expect(action).toHaveCSS('outline-style', 'none');
       await page.keyboard.press('Tab');
       await action.focus();
       await expect(action).toHaveCSS('outline-width', '3px');
@@ -60,7 +61,7 @@ for (const theme of ['light', 'dark'] as const) {
         await expectSingleControlEdge(tab);
         expect(await renderedControlContrast(tab)).toBeGreaterThanOrEqual(4.5);
       }
-      const refresh = page.getByRole('button', { name: 'Refresh models', exact: true });
+      const refresh = page.getByRole('button', { name: 'Fetch the latest model catalog from Cloudflare', exact: true });
       await expectSingleControlEdge(refresh);
       await refresh.hover();
       await expectSingleControlEdge(refresh);

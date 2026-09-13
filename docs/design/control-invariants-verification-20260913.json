@@ -1,0 +1,459 @@
+{
+  "date": "2026-09-13",
+  "baseline": "2882c21",
+  "integration_base": "054132e",
+  "scope": "Login label contrast and shared button/tab single-perimeter rendering",
+  "source": "Real production UI build on isolated local Worker; synthetic owner/model fixtures, no production sign-in or inference",
+  "before": [
+    {
+      "theme": "light",
+      "width": 1440,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "secondary"
+          },
+          "ratios": {
+            "idle": 1.439646018207248,
+            "hover": 1.2594628173728089,
+            "pressed": 1.2594628173728089
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "outline"
+          },
+          "ratios": {
+            "idle": 1.439646018207248,
+            "hover": 1.2594628173728089,
+            "pressed": 1.2594628173728089
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 5.663537688456643
+        },
+        {
+          "label": "Image",
+          "contrast": 10.687252388512881
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.607338864797834
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.687252388512881
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "secondary"
+          },
+          "ratios": {
+            "idle": 1.4498632988569373,
+            "hover": 1.2712130702017672,
+            "pressed": 1.2626798792162177
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "outline"
+          },
+          "ratios": {
+            "idle": 1.4525083092050883,
+            "hover": 1.2712130702017672,
+            "pressed": 1.2604340897800195
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 5.726836072306792
+        },
+        {
+          "label": "Image",
+          "contrast": 10.667698829954151
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.607338864797834
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.607338864797834
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "secondary"
+          },
+          "ratios": {
+            "idle": 9.643352990961128,
+            "hover": 9.385798893447127,
+            "pressed": 9.362333275782785
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "outline"
+          },
+          "ratios": {
+            "idle": 9.643352990961128,
+            "hover": 9.385798893447127,
+            "pressed": 9.362333275782785
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 5.1476219426190575
+        },
+        {
+          "label": "Image",
+          "contrast": 10.586845163150079
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.743234747120116
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.586845163150079
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "secondary"
+          },
+          "ratios": {
+            "idle": 9.6779866934239,
+            "hover": 9.479391110772386,
+            "pressed": 9.449261171566489
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "24px",
+            "imageInset": "-12px",
+            "variant": "outline"
+          },
+          "ratios": {
+            "idle": 9.788051791712544,
+            "hover": 9.479391110772386,
+            "pressed": 9.235140780907642
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 5.205511528037947
+        },
+        {
+          "label": "Image",
+          "contrast": 10.725373059091744
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.743234747120116
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.743234747120116
+        }
+      ],
+      "overflow": false
+    }
+  ],
+  "after": [
+    {
+      "theme": "light",
+      "width": 1440,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.127431653906886,
+            "hover": 6.127431653906886,
+            "pressed": 6.127431653906886
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.127431653906886,
+            "hover": 6.127431653906886,
+            "pressed": 6.127431653906886
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 8.065696261323838
+        },
+        {
+          "label": "Image",
+          "contrast": 10.587785306239105
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.767624577221406
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.615322667679106
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.198101047988249,
+            "hover": 6.198101047988249,
+            "pressed": 6.122477973909012
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.198101047988249,
+            "hover": 6.198101047988249,
+            "pressed": 6.122477973909012
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 8.056235904534981
+        },
+        {
+          "label": "Image",
+          "contrast": 10.687252388512881
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 10.607338864797834
+        },
+        {
+          "label": "Audio",
+          "contrast": 10.615322667679106
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.2963504676676285,
+            "hover": 6.2963504676676285,
+            "pressed": 6.2963504676676285
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.2963504676676285,
+            "hover": 6.2963504676676285,
+            "pressed": 6.2963504676676285
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 7.753697264059211
+        },
+        {
+          "label": "Image",
+          "contrast": 12.90062066571834
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 12.560390856945189
+        },
+        {
+          "label": "Audio",
+          "contrast": 13.052822967417109
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "login": [
+        {
+          "name": "Sign in with passkey",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.2992955360182865,
+            "hover": 6.2992955360182865,
+            "pressed": 6.2963504676676285
+          }
+        },
+        {
+          "name": "Sign in with GitHub",
+          "style": {
+            "color": "rgb(255, 255, 255)",
+            "border": "1px",
+            "imageWidth": "0",
+            "imageInset": "0px",
+            "variant": "primary"
+          },
+          "ratios": {
+            "idle": 6.2992955360182865,
+            "hover": 6.2992955360182865,
+            "pressed": 6.2963504676676285
+          }
+        }
+      ],
+      "errors": [],
+      "tabs": [
+        {
+          "label": "Text",
+          "contrast": 7.860517929194339
+        },
+        {
+          "label": "Image",
+          "contrast": 12.922846536520591
+        },
+        {
+          "label": "Embeddings",
+          "contrast": 12.730318072838994
+        },
+        {
+          "label": "Audio",
+          "contrast": 13.246381542532736
+        }
+      ],
+      "overflow": false
+    }
+  ]
+}
