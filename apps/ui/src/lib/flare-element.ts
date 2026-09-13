@@ -64,7 +64,9 @@ export class FlareElement extends HTMLElement {
       frame = 0;
       if (!canRun()) { state(motionAllowed() ? 'paused' : 'reduced'); return; }
       if (time - lastPaint < interval - 1) { frame = requestAnimationFrame(tick); return; }
-      stimulus.rippleAge = rippleStart < 0 ? -1 : time - rippleStart;
+      // The first RAF timestamp can precede the click by a fraction of a frame.
+      // Start at age zero instead of treating that first frame as no ripple.
+      stimulus.rippleAge = rippleStart < 0 ? -1 : Math.max(0, time - rippleStart);
       if (stimulus.rippleAge >= 1050) { rippleStart = -1; stimulus.rippleAge = -1; }
       const moving = stepFlare(dots, stimulus, lastTime ? time - lastTime : interval);
       lastTime = lastPaint = time;

@@ -102,10 +102,10 @@ button:not(:disabled), a { touch-action: manipulation; }
 .vf-eyebrow { display: flex; gap: 12px; align-items: center; font-size: 10px; font-weight: 600; letter-spacing: .16em; line-height: 1.6; color: var(--color-muted); }
 .vf-accent-line { display: inline-block; flex-shrink: 0; height: 2px; width: 28px; background: linear-gradient(90deg, #38d9ff, #0866ff); box-shadow: 0 0 10px #00aeff30; }
 .vf-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--color-text); text-decoration: none; flex-shrink: 0; }
-.vf-brand-mark { display: grid; place-items: center; height: 50px; width: 50px; background: var(--vf-brand-tile) center / 128% 128%; font-size: 28px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px #003dc7; }
-.vf-brand-wordmark { display: flex; flex-direction: column; gap: 1px; }
-.vf-brand-wordmark strong { font-size: 20px; font-weight: 600; letter-spacing: -.035em; line-height: 1.2; }
-.vf-brand-wordmark > span { font-size: 10px; letter-spacing: .16em; color: var(--color-muted); }
+.vf-brand-logo { display: block; width: 184px; height: auto; max-width: 100%; }
+.vf-brand-symbol { display: block; width: 40px; height: 36px; object-fit: contain; }
+.vf-brand--compact { min-width: 40px; min-height: 40px; justify-content: center; }
+.vf-brand:focus-visible { outline: 3px solid var(--vf-link); outline-offset: 5px; border-radius: 6px; }
 .vf-icon-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; border: 1px solid var(--vf-line); border-radius: 12px; background: var(--vf-input); color: var(--color-text); cursor: pointer; }
 .vf-icon-button:hover { border-color: var(--vf-link); }
 /* Root image is rasterized once in the canonical Club kit. No full-screen SVG filters. */
@@ -283,8 +283,7 @@ button:not(:disabled), a { touch-action: manipulation; }
   .vf-composer-hint > span:last-child { display: none; }
   .vf-auth-shell { padding: 22px 20px 18px; }
   .vf-auth-header-actions > span { display: none; }
-  .vf-brand-mark { width: 44px; height: 44px; }
-  .vf-brand-wordmark strong { font-size: 18px; }
+  .vf-brand-logo { width: 156px; }
   .vf-auth-main { display: flex; flex-direction: column; align-items: stretch; gap: 30px; margin: 42px auto; max-width: 480px; }
   .vf-auth-story h2 { font-size: 32px; margin: 14px 0; }
   .vf-auth-description { font-size: 12px; }

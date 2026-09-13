@@ -22,7 +22,8 @@
     "validate:deploy-button": "bun tools/validate-deploy-button.ts && pnpm --filter @vibeflare/worker exec wrangler deploy --config ../../wrangler.toml --dry-run --outdir ../../.wrangler/deploy-button-dry-run",
     "build:cloudflare": "pnpm --filter @vibeflare/worker build && pnpm --filter @vibeflare/ui build",
     "build:all": "pnpm -r build",
-    "design-assets:check": "node tools/sync-club-design-assets.mjs --check"
+    "design-assets:check": "node tools/sync-club-design-assets.mjs --check",
+    "logo-assets:check": "node tools/verify-logo-assets.mjs"
   },
   "devDependencies": {
     "typescript": "^5.6.0",

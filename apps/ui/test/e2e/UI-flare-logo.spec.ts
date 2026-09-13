@@ -1,3 +1,4 @@
+import { FLARE_MARKED_COUNT } from '../../src/lib/flare-logo-data';
 import { expect, test, type Page } from '@playwright/test';
 import { applyAuth } from './ui-matrix/matrix-auth';
 
@@ -20,7 +21,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     const logo = page.getByTestId('flare-logo'); const canvas = logo.locator('canvas');
     await expect(page.locator('.vf-auth-art img[src*="workflow-panels"]')).toHaveCount(0);
     expect((await diagnostic(page)).points).toBe(3080);
-    expect((await diagnostic(page)).markedPoints).toBe(941);
+    expect((await diagnostic(page)).markedPoints).toBe(FLARE_MARKED_COUNT);
     await logo.screenshot({ path: info.outputPath(`logo-rest-${theme}-${width}.png`) });
     const before = await canvas.screenshot();
     const bounds = (await canvas.boundingBox())!;
@@ -72,7 +73,7 @@ test('No-JavaScript and unavailable-canvas fallbacks preserve the logo and page 
   await applyAuth(context, 'anonymous', baseURL!, '/login');
   const page = await context.newPage(); await page.goto(baseURL! + '/login');
   await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeVisible();
-  await expect(page.locator('.vf-dot-fallback > circle')).toHaveCount(941);
+  await expect(page.locator('.vf-dot-fallback > circle')).toHaveCount(FLARE_MARKED_COUNT);
   await expect(page.locator('[data-flare-replay]')).toBeHidden();
   await context.close();
   const fail = await browser.newContext();
@@ -111,7 +112,9 @@ test('A touch ripple does not intercept normal vertical scrolling', async ({ bro
   const bounds = (await canvas.boundingBox())!; await page.touchscreen.tap(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await expect.poll(async () => (await diagnostic(page)).maxDisplacement).toBeGreaterThan(1);
   const metrics = await diagnostic(page); expect(metrics.backingWidth).toBeLessThanOrEqual(900); expect(metrics.backingHeight).toBeLessThanOrEqual(570);
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  // Ensure the artwork actually leaves the viewport. A short mobile page
+  // cannot scroll its upper artwork out of view merely by scrolling to bottom.
+  await page.evaluate(() => { const spacer = document.createElement('div'); spacer.style.height = '1200px'; document.body.append(spacer); window.scrollTo(0, document.body.scrollHeight); });
   await expect(page.getByTestId('flare-logo')).toHaveAttribute('data-state', 'paused');
   const frames = (await diagnostic(page)).frames; await page.waitForTimeout(300);
   expect((await diagnostic(page)).frames).toBe(frames);
