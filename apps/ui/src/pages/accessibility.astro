@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Brand from '../components/brand/Brand.astro';
+import { accessibilityCopy, accessibilityReportHref } from '../lib/accessibility-copy';
+const copy = accessibilityCopy.en;
+const sections = [['controlsTitle','controls'],['keyboardTitle','keyboard'],['privacyTitle','privacy'],['limitsTitle','limits']] as const;
+---
+<Base title="Accessibility | Spargax VibeFlare" bodyClass="vf-accessibility-page">
+  <header class="vf-accessibility-header"><Brand/><a href="/">Return to workspace</a></header>
+  <main id="main-content" tabindex="-1" class="accessibility-statement">
+    <h1>{copy.title}</h1><p>{copy.intro}</p><p>{copy.commitment}</p>
+    {sections.map(([heading,body]) => <section><h2>{copy[heading]}</h2><p>{copy[body]}</p></section>)}
+    <section id="report"><h2>{copy.reportTitle}</h2><p>{copy.report}</p><a href={accessibilityReportHref}>{copy.reportLink}</a></section>
+    <p><small>{copy.updated}</small></p>
+  </main>
+</Base>

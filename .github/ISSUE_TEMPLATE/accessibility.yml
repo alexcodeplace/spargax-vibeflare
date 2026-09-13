@@ -1,0 +1,39 @@
+name: Accessibility barrier
+description: Report an accessibility barrier in Spargax WWW, Club or VibeFlare.
+title: "Accessibility: "
+body:
+  - type: markdown
+    attributes:
+      value: "This report is public. Do not include passwords, tokens, payment information, private conversations or other sensitive data."
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      options:
+        - Spargax WWW
+        - Spargax Club
+        - Spargax VibeFlare
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page address or screen name
+      description: Remove account identifiers and private query parameters.
+    validations:
+      required: true
+  - type: textarea
+    id: barrier
+    attributes:
+      label: What were you trying to do, and what prevented it?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen instead?
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and assistive technology (optional)
+      description: No diagnosis or disability information is needed.

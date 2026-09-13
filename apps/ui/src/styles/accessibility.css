@@ -1,0 +1,17 @@
+.accessibility-statement { max-inline-size: 75ch; margin-inline: auto; padding: clamp(1rem, 4vw, 3rem); overflow-wrap: anywhere; line-height: 1.7; }
+.accessibility-statement h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; }
+.accessibility-statement h2 { font-size: 1.4rem; margin-block: 1.8rem .65rem; }
+.accessibility-statement p { margin-block: .75rem 1.2rem; }
+.accessibility-statement a { text-decoration: underline; text-underline-offset: .2em; }
+:root[data-a11y-motion='true'] [data-pointer-glow], :root[data-a11y-motion='true'] [data-vf-spotlight]::before { display: none !important; }
+:root[data-a11y-motion='true'] [data-tilt] { transform: none !important; }
+
+.vf-accessibility-page { min-block-size: 100vh; overflow: auto; }
+.vf-accessibility-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.5rem; }
+.vf-accessibility-footer { padding: .4rem 1rem; flex: 0 0 auto; font-size: .8rem; }
+.vf-accessibility-footer a { text-decoration: underline; }
+.vf-data-table { border-collapse: collapse; inline-size: 100%; font-size: .9rem; }
+.vf-data-table :is(th,td) { padding: .5rem; border-block-end: 1px solid currentColor; text-align: start; }
+.vf-chart-data summary { cursor: pointer; padding-block: .75rem; min-block-size: 44px; }
+:root[data-a11y-scale='200'] .vf-auth-shell { block-size: auto; min-block-size: 100vh; }
+:root[data-a11y-scale='200'] body:has(.vf-auth-shell) { overflow: auto; height: auto; }
