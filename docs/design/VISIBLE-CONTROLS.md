@@ -2,7 +2,7 @@
 
 ## Regular/Pro and Inspect: binding owner amendment (2026-09-14)
 
-This existing interface specification adopts the [shared UX/INSP contract](https://github.com/alexcodeplace/vibeclub/blob/main/docs/specs/spargaxos-product.md#experience-and-inspect-contract)
+This existing interface specification adopts the [shared UX/INSP contract](https://github.com/alexcodeplace/vibeclub/blob/0bd25d33ea614ebcb58b23f33abe25483e2fd634/docs/specs/spargaxos-product.md#experience-and-inspect-contract)
 and defines VibeFlare's required screen/settings/item inventory below. It supersedes
 conflicting older one-size-fits-all onboarding or settings disclosure, not branding,
 existing model-access policy, authentication, ownership or worker boundaries.
@@ -122,6 +122,11 @@ DOM, clipboard or export. Existing public API output contracts are unchanged.
 performance and browser acceptance. Record each ID against exact code/release and
 evidence, distinguishing missing implementation from tests not run. Audit against
 this spec; do not delete requirements to match the current UI or old screenshots.
+
+Shared-contract adoption is pinned to reviewed revision `0bd25d33ea614ebcb58b23f33abe25483e2fd634`.
+The maintained source is `alexcodeplace/vibeclub:docs/specs/spargaxos-product.md`.
+When that contract changes, review and update this adoption and the affected local
+matrices together; do not silently revert to older mockups or infer new acceptance.
 
 ## Design and asset decisions
 
