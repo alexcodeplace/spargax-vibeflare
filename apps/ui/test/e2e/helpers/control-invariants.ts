@@ -52,7 +52,7 @@ export async function renderedControlContrast(control: Locator): Promise<number>
   try {
     png = (await control.screenshot({ animations: 'disabled', scale: 'css' })).toString('base64');
   } finally {
-    await hideInk.evaluate(el => el.remove());
+    await hideInk.evaluate(el => (el as HTMLElement).remove());
     await control.evaluate(el => el.removeAttribute('data-vf-contrast-probe'));
   }
   return page.evaluate(async ({ image, colors }) => {
