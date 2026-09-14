@@ -1,5 +1,16 @@
 # Audio uploads, shared task layout and file drops
 
+## Regular/Pro task presentation (2026-09-14)
+
+[The maintained VF-V02/VF-S05/VF-I02/04 matrix](design/VISIBLE-CONTROLS.md#vibeflare-screen-matrix)
+is binding. Text/Image/Embeddings/Audio are task types, separate from Regular/Pro.
+Regular uses clear explanations and common task inputs; Pro exposes supported
+schema-backed request parameters from first onboarding onward. Both retain the
+same drop validation, model capability/access rules, layout, results and failures.
+Choosing Pro does not execute a request, broaden model access or change file data.
+Inspect reveals safe request/result/artifact metadata, not credentials, whole
+conversations or another user's files. Existing capability limits below still apply.
+
 ## User requirements — 2026-09-13
 
 Fix the Audio tab's `@cf/deepgram/flux only supports websocket connections` failure; retain similar layout across Text, Image, Embeddings and Audio; provide a drag-and-drop zone rather than only Browse; explain embeddings in the tab. Complete this alongside the pending media-history fix, merge tested work and leave only `main` as a branch.

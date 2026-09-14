@@ -1,5 +1,16 @@
 # UJ-001 — First owner creates standalone passkey
 
+## Binding experience amendment (2026-09-14)
+
+Apply [VF-UX01 through VF-UX03 and VF-A01](../design/VISIBLE-CONTROLS.md#regularpro-and-inspect-binding-owner-amendment-2026-09-14).
+A genuinely new user first chooses Regular or Pro before account setup; an existing
+user restores their saved choice without redoing onboarding. Store any pre-auth
+choice as a non-secret draft and bind/reconcile only after successful authentication.
+Both experiences use exactly the auth endpoints and ownership guarantees below.
+The source-line evidence below proves the existing authentication segment only;
+first-choice persistence, mode-specific UI and safe Inspect need new evidence.
+No additional auth endpoint or synthetic completion receipt is invented here.
+
 ```yaml
 id: UJ-001
 title: First owner creates standalone passkey

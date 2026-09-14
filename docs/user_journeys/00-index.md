@@ -1,5 +1,18 @@
 # VibeFlare User Journeys
 
+## Current experience/Inspect release requirements
+
+The owner-approved [VF-UX/V/S/I/A requirements](../design/VISIBLE-CONTROLS.md#regularpro-and-inspect-binding-owner-amendment-2026-09-14)
+are part of each applicable journey, not optional polish. New users choose Regular
+or Pro before product setup. Existing user choices persist; both modes obey the
+same owner/member authorization and paid-model policy. First setup and ongoing
+use must be accepted in both modes, including the relevant Inspect items.
+
+Readiness in the older request/response slices below records the base journey,
+not completed acceptance of the new 2026-09-14 experience contract. Full release
+compliance remains OPEN until VF-A01 through VF-A04 pass. Do not use historical
+source-line evidence or ready flags to waive the mode/Inspect requirements.
+
 These are release contracts, not marketing scenarios. Derived tests must prove visible state, durable state, fresh-read persistence, and forbidden effects.
 
 | id | title | readiness | canonical | canonical file |

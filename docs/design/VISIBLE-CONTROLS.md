@@ -1,4 +1,127 @@
-# Visible tabs and buttons
+# VibeFlare interface and interaction specification
+
+## Regular/Pro and Inspect: binding owner amendment (2026-09-14)
+
+This existing interface specification adopts the [shared UX/INSP contract](https://github.com/alexcodeplace/vibeclub/blob/main/docs/specs/spargaxos-product.md#experience-and-inspect-contract)
+and defines VibeFlare's required screen/settings/item inventory below. It supersedes
+conflicting older one-size-fits-all onboarding or settings disclosure, not branding,
+existing model-access policy, authentication, ownership or worker boundaries.
+The new experience/Inspect implementation and acceptance are **OPEN**. Historical
+control verification later in this document does not prove the new scope.
+
+**VF-UX01. First onboarding decision.** A new user's first product onboarding screen
+is Choose your experience: Regular / Pro, equally prominent, no preselection,
+Continue with Regular / Continue with Pro, and You can change this anytime in
+Settings > Experience. It precedes account setup, model configuration and first
+inference. Only locale/accessibility/help/privacy and required platform security
+may precede it. A pre-auth choice is a local non-secret draft, bound to the new
+user after authentication; no private data is exposed publicly. Existing user
+preferences are reconciled explicitly, never overwritten by another user's draft.
+The selected mode persists immediately and governs setup, errors, help, task use,
+settings, recovery and daily work. Pro never has to finish Regular onboarding first.
+
+**VF-UX02. Persistence and scope.** Store experience per authenticated user using the
+existing personal-preference ownership pattern, not the global `/admin/settings`
+namespace. It is separate from personal model visibility and owner-controlled
+`models.exclude_paid`. Account deletion/sign-out/cache invalidation must respect
+identity boundaries. Standalone deployments work without a Spargax account. Host
+inheritance is offered only through a real authorized connection, never assumed
+cross-origin browser storage. An explicit app override wins. Existing users keep
+configuration and active work while choosing a mode at a safe entry point.
+
+**VF-UX03. Settings and switching.** Settings > Experience is reachable in both
+modes, with a linkable `/settings/experience/` section following the existing tab
+routing contract. It changes presentation, not the current task, model, prompts,
+files, pending request, conversation, authentication, cache, cost policy or hidden
+advanced values. Preserve drafts and context through a mode change. Partial saves
+must not overwrite hidden or concurrent configuration. Search/deep links to Pro-only
+editors show a permitted effective-value summary and explicit Edit in Pro action.
+Do not auto-switch or return a false 404 for a supported but mode-hidden setting.
+Unauthorized roles still receive the existing secure denial/redirect behavior.
+
+### VibeFlare screen matrix
+
+| ID / screen | Regular | Pro |
+| --- | --- | --- |
+| VF-V01 First run / account setup | First-mode choice, guided supported sign-in/owner setup, model choice and first useful task with clear cost/permission consequences. | Same choice, compact setup and supported advanced task/model configuration before first use; same authentication/ownership proof. |
+| VF-V02 Workspace / task tabs | Consistent Text, Image, Embeddings and Audio layout with plain task explanations, input/drop review, model choice, output and useful failures. | Same tasks/layout plus supported request parameters, exact model/capability information and technical result metadata. Task type is not experience mode. |
+| VF-V03 History / conversations / files | Own work, reopen/rename/delete/download, useful timestamps and clear media/partial-failure state. | Supported detailed filters, model/request/file metadata and direct Inspect affordances; no access to another user's records. |
+| VF-V04 Usage / audit / health | Real measured usage/cost, failures, actionable status and existing authorized history/export. | Technical request/operation identifiers, source freshness and safe diagnostics. Unknown usage is not zero in either mode. |
+| VF-V05 Settings / help | Experience, common controls below, actual privacy/security/access state, guided maintenance and practical help. | Advanced editors below with effective/default/source information, configuration references and concise engineering help. Same design tokens and role rules. |
+
+### VibeFlare settings visibility
+
+Every existing editable field must map to a row. Common means both modes, subject
+to the same backend role/ownership checks; Pro-only refers only to UI editing.
+Supported advanced fields must come from actual schemas/capability metadata, not
+assumptions about every model. Inspect in either mode exposes only permitted state.
+
+| ID | Common / Regular | Pro-only supported editing |
+| --- | --- | --- |
+| VF-S01 Experience / accessibility | Experience, language if supported, theme, reduced motion/accessibility and ordinary display preferences. | Optional technical-density defaults. Experience is never a billing tier. |
+| VF-S02 Account / devices / invites | Account identity, sign-in/recovery, add/revoke own passkey device and owner-only invitations. | Additional technical metadata through Inspect, not additional privileges or secret access. |
+| VF-S03 Who can sign in | Owner-authorized guided GitHub allowed-login management, including the consequence of an empty allowlist. | Exact supported auth configuration/allowlist representation. Do not make a secure basic deployment require Pro. |
+| VF-S04 Models / paid policy | Personal model visibility/search, explicit task model selection and owner-controlled Exclude paid with its actual consequences. | Supported per-request model options. Pro never disables Exclude paid, restores hidden models or selects an unsupported/retired model automatically. |
+| VF-S05 Task inputs / parameters | Prompt/file input, ordinary supported output choices, result review, cancel/retry and paid indicators. | Supported model-specific generation, sampling, limits or vector/output parameters where an actual schema permits them. Unsupported parameters are not generic enabled sliders. |
+| VF-S06 Response cache | Effective retention state, relevant privacy implications and authorized Clear cache with scope confirmation. | `cache.responses.ttl_days` TTL editor and other supported tuning. Inspect never sets `cache.flush`. |
+| VF-S07 Prompt templates | Existing template list, label/content editing, choose/add/delete with normal ownership and scope. | Supported advanced template configuration only if present; do not hide the existing useful template feature merely because it currently shares the Cache tab. |
+| VF-S08 API keys / integration | Supported create/revoke key and copy-once secure setup workflow, scope/expiry consequences. | Supported detailed API configuration/reference controls; no privilege escalation or replay of stored key values. |
+| VF-S09 Diagnostics / lifecycle | Actual version/health, safe diagnostics copy/export and supported install/update/uninstall actions. | Supported configuration/provenance/verbosity controls. Mode is not permission to change deployment resources. |
+
+### VibeFlare inspectable inventory
+
+Each eligible rendered card/row/status below offers right-click > Inspect and an
+explicit More actions > Inspect menu. Keyboard uses the Context Menu key or
+Shift+F10; touch uses the visible item menu. Preserve native text/input/link menus,
+never trigger the row's primary action and never intercept the entire page.
+
+The shared side panel contains Summary, Details and Evidence, source timestamps,
+fresh/stale/unsupported/denied states and related authorized objects. Regular starts
+with Summary; both can view safe structured details. Close restores appropriate
+focus without cancelling work. Narrow layouts use an accessible modal equivalent.
+
+| ID / eligible item | Permitted details and evidence / owner |
+| --- | --- |
+| VF-I01 Conversation / history item | Own conversation ID, task, timestamps, associated model/request/result references and lifecycle. Transcript remains in its authorized conversation view, not an automatic diagnostic export. |
+| VF-I02 Message / inference request / result | Request ID, requested/actual model when recorded, safe supported parameters, lifecycle/timing, measured token/unit/cost data with source and failures. No inferred hidden reasoning, request credentials or automatic prompt-body dump. |
+| VF-I03 Model / model-visibility / paid marker | Exact ID/task/capabilities, active/retired state, personal visibility, paid-required policy and actual catalog source/check time. Inspect does not refresh the catalog by inference or change policy. |
+| VF-I04 Uploaded file / generated image/audio/vector/artifact | Authorized artifact identity, type/size, originating task/model/request, timestamps and availability. Actual artifact download uses existing authorization; metadata Inspect does not fetch unrelated file content. |
+| VF-I05 Usage / audit / operation/error row | Actor/scope allowed by existing role, operation/request ID, real measured units/currency/interval, timestamp, safe result/error and related objects. No cross-user usage/history discovery. |
+| VF-I06 API-key / passkey-device / invitation row | Safe record identifier/label, authorized scope/status, creation/expiry/revocation or last-used time when supplied. Never key values, passkey material, invitation bearer token or authentication cookies. |
+| VF-I07 Cache / prompt-template item | Effective retention/config source, permitted template identity/version/label, recorded cache metadata and truncation. Private prompt/response bodies are not implicitly exported; use their ordinary authorized editor/view. |
+| VF-I08 Setting / health / deployment receipt | Effective/default/overridden value, personal versus installation scope, actual source/support/version, owner and observed state/error. Preserve deployment ownership and secret exclusions. |
+
+Inspection projections are authorized and allowlisted by the existing Worker/service,
+not raw records masked in CSS. Bound requests, paginate and declare truncation;
+late responses cannot populate another selected item. Sign-out/revoke clears stale
+private caches. Opening/refreshing Inspect cannot call a model, flush a cache, send
+a request again, repair, deploy or mutate configuration. Explicit Copy summary,
+Copy safe structured details and Export inspection report follow the shared preview,
+privacy and save-failure contract. No automatic support upload or unrestricted raw
+request/log export. Navigation to an existing action does not duplicate it in Inspect.
+
+### VibeFlare acceptance and drift
+
+**VF-A01.** Extend first-owner and new-member journeys with both first-choice modes;
+returning users restore their saved choice. Test provisional choice/account binding,
+conflicts, failed saves, restart, upgrade and two-user isolation without changing
+owner bootstrap or passkey/security guarantees.
+
+**VF-A02.** Exercise every VF-V/VF-S row, including all four task types, permission
+and paid-policy invariants, Pro-only search/deep links and mode changes during an
+unsaved prompt/file upload/inference. Equivalent explicit parameters use the same
+Worker operation and preserve hidden/custom values.
+
+**VF-A03.** Exercise every VF-I object with right-click, item menu, keyboard and touch;
+verify native text menus, focus, narrow layouts, source/error states, stale/late/
+denied data, safe copy/export and no inference/cache/other mutations on inspection.
+Plant secrets and cross-user fixtures; prove they do not reach inspector payload,
+DOM, clipboard or export. Existing public API output contracts are unchanged.
+
+**VF-A04.** Include both modes/Inspect in supported locale, theme, accessibility,
+performance and browser acceptance. Record each ID against exact code/release and
+evidence, distinguishing missing implementation from tests not run. Audit against
+this spec; do not delete requirements to match the current UI or old screenshots.
 
 ## Design and asset decisions
 

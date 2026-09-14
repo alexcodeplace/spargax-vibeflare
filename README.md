@@ -1,5 +1,13 @@
 # VibeFlare
 
+## Interface specification authority
+
+[The maintained interface specification](docs/design/VISIBLE-CONTROLS.md) defines
+the owner-approved first-onboarding Regular/Pro choice, end-to-end differences,
+settings visibility and right-click Inspect inventory. The 2026-09-14 requirements
+are not advertised as implemented by this documentation change. Existing model,
+billing, privacy and ownership contracts remain binding.
+
 **Your AI workspace and API gateway, running in your own Cloudflare account.**
 
 Chat in the browser, choose the models you use, manage API keys, and inspect usage from one place. Point your apps and coding tools at the same OpenAI-compatible `/v1` endpoint instead of building authentication, model selection, and request tracking into every project.
