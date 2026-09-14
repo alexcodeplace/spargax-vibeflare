@@ -34,7 +34,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await expect(sidebar.getByRole('link', { name: 'Workspace', exact: true })).toBeVisible();
     await page.keyboard.press('Space');
     await expect(chatLink).toBeVisible();
-    for (const menu of ['Workspace', 'History', 'Projects', 'Data', 'API Keys', 'Settings']) {
+    for (const menu of ['Workspace', 'History', 'Files', 'Data', 'API Keys', 'Settings']) {
       await expect(sidebar.getByRole('link', { name: menu, exact: true })).toBeVisible();
     }
     await page.screenshot({ path: `test-results/workspace-${viewport.width}.png`, fullPage: true, animations: 'disabled' });

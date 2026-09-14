@@ -24,8 +24,8 @@ export const TASK_PRESENTATION: Record<string, { title: string; description: str
   },
 };
 
-/** Constant-width header, input and help slots prevent task switches from
- * moving the controls. Results extend below the same input, in every mode. */
+/** Stable zero-state and non-chat task geometry. Active text conversations
+ * switch to Astryx ChatLayout in ChatPage, where messages sit above the docked composer. */
 export function TaskWorkspace({ task, input, children, extras }: { task: string; input: ReactNode; children?: ReactNode; extras?: ReactNode }) {
   const info = TASK_PRESENTATION[task] ?? TASK_PRESENTATION['text-generation']!;
   return <section className="vf-task-workspace" data-testid="task-workspace" data-task={task} aria-labelledby="task-heading">

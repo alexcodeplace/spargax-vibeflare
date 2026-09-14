@@ -5,6 +5,7 @@ import { createChat, getChatMessages, notifyModelsChanged, notifyQuotaChanged, r
 import {
   ChatComposer,
   ChatComposerInput,
+  ChatLayout,
   ChatMessage as AstryxChatMessage,
   ChatMessageBubble,
   ChatMessageList,
@@ -82,6 +83,7 @@ function ChatPageInner() {
   };
 
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [conversationStarted, setConversationStarted] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('chat_id'));
   const chatIdRef = useRef<string | null>(null);
   const operationRef = useRef(false);
   const [audioBusy, setAudioBusy] = useState(false);
@@ -108,13 +110,15 @@ function ChatPageInner() {
 
   useEffect(() => {
     const cid = new URLSearchParams(window.location.search).get('chat_id');
-    if (!cid) { setLoadingHistory(false); return; }
+    if (!cid) { setConversationStarted(false); setLoadingHistory(false); return; }
     const controller = new AbortController();
     chatIdRef.current = cid;
+    setConversationStarted(true);
     void loadHistory(cid, controller.signal)
       .catch(() => {
         if (controller.signal.aborted) return;
         chatIdRef.current = null;
+        setConversationStarted(false);
         notify('This chat could not be loaded.', 'danger');
       })
       .finally(() => { if (!controller.signal.aborted) setLoadingHistory(false); });
@@ -126,6 +130,7 @@ function ChatPageInner() {
     const chat = await createChat(title, model, signal);
     if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
     chatIdRef.current = chat.id;
+    setConversationStarted(true);
     const location = new URL(window.location.href);
     location.searchParams.set('chat_id', chat.id);
     window.history.replaceState(null, '', location.toString());
@@ -139,6 +144,7 @@ function ChatPageInner() {
     setActiveTask(task);
     setModel('');
     setMessages([]);
+    setConversationStarted(false);
     chatIdRef.current = null;
     setImageError(null);
     setImportedFileName(null);
@@ -184,6 +190,7 @@ function ChatPageInner() {
     }
 
     operationRef.current = true;
+    if (activeTask === 'text-generation') setConversationStarted(true);
     const userMessage: UiMessage = { id: nextId(), role: 'user', content: text };
     const assistantId = nextId();
     setMessages((previous) => [
@@ -377,8 +384,23 @@ function ChatPageInner() {
     </button>)}
   </div> : undefined;
 
+  const activeTextConversation = activeTask === 'text-generation' && conversationStarted;
+  const activeTextView = activeTextConversation ? (
+    <div className="vf-chat-conversation" data-testid="chat-conversation">
+      <ChatLayout
+        density="balanced"
+        composer={promptComposer}
+        emptyState={loadingHistory ? <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div> : undefined}
+      >
+        {loadingHistory && messages.length === 0 ? null : (
+          <ChatMessageList align="bottom" isStreaming={sending}>{results}</ChatMessageList>
+        )}
+      </ChatLayout>
+    </div>
+  ) : null;
+
   return (
-    <div className="vf-chat flex min-w-0 flex-col" data-testid="vibeflare-chat">
+    <div className={`vf-chat flex min-w-0 flex-col${activeTextConversation ? ' vf-chat--conversation' : ''}`} data-testid="vibeflare-chat">
       <Toast
         open={toast.open}
         onOpenChange={(open) => setToast((previous) => ({ ...previous, open }))}
@@ -396,12 +418,14 @@ function ChatPageInner() {
         <div className="vf-model-control" inert={busy ? true : undefined}>{loadingHistory ? <span role="status">Loading saved conversation…</span> : <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />}</div>
       </div>
       <div className="vf-chat-content">
-        <TaskWorkspace task={activeTask} extras={starters}
-          input={isAudioMode ? <AudioTranscribePanel model={model} inputOnly history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : promptComposer}>
-          {loadingHistory && <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div>}
-          {imageError && <p role="alert" className="vf-inline-notice vf-inline-notice--error">{imageError}</p>}
-          {isImageMode || isAudioMode ? results : messages.length > 0 ? <ChatMessageList align="top" isStreaming={sending}>{results}</ChatMessageList> : null}
-        </TaskWorkspace>
+        {activeTextView ?? (
+          <TaskWorkspace task={activeTask} extras={starters}
+            input={isAudioMode ? <AudioTranscribePanel model={model} inputOnly history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : promptComposer}>
+            {loadingHistory && <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div>}
+            {imageError && <p role="alert" className="vf-inline-notice vf-inline-notice--error">{imageError}</p>}
+            {isImageMode || isAudioMode ? results : messages.length > 0 ? <ChatMessageList align="top" isStreaming={sending}>{results}</ChatMessageList> : null}
+          </TaskWorkspace>
+        )}
       </div>
     </div>
   );

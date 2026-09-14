@@ -14,10 +14,10 @@ VibeFlare is MIT-licensed, self-hosted software. You control the Cloudflare depl
 
 | Area | What you can do |
 | --- | --- |
-| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text, image, transcription and embedding conversations from the sidebar or History. Each task uses a consistent input/results layout and its own compatible model picker. |
+| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text, image, transcription and embedding conversations from the sidebar or History. Text starts on the task landing, then switches to the Astryx conversation layout after the first message so the newest turns sit directly above the bottom composer. Other tasks keep their stable input/results layout. |
 | **Models** | Search the catalog, save your personal model checkboxes, and refresh metadata. The owner controls whether paid-access models are offered. |
 | **API Keys** | Create labelled keys, reveal a new secret once, and revoke keys you no longer use. Owners can create admin keys. |
-| **Projects** | Manage private uploaded files. The current sidebar label opens `/files`; it is not a separate project-management system. |
+| **Files** | Manage private uploaded files at `/files`. |
 | **Data** | Inspect usage summaries and request audit events at `/analytics`. |
 | **Settings** | Open Account, Devices, Auth, Models, Cache, or the owner-only Invites section by its own URL. Manage passkeys, model choices, response-cache settings, prompt templates, and invitations. |
 | **CLI and API** | Use `vf` for chat, models, usage, installation checks, updates, and receipt-based uninstall; integrate applications through `/v1`. |

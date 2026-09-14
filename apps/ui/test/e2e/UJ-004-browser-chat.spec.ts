@@ -16,6 +16,8 @@ test('UJ-004 H1/A1/P1 — browser chat streams and persists real history', async
 
     await page.goto('/chat');
     await expect(page.getByText('What do you want to make?')).toBeVisible();
+    await expect(page.getByTestId('task-workspace')).toBeVisible();
+    await expect(page.getByTestId('chat-conversation')).toHaveCount(0);
 
     // ModelPicker is a real Astryx Selector. Choose the deterministic local model.
     const modelSelector = page.getByLabel(/Select a Model/i);
@@ -28,6 +30,14 @@ test('UJ-004 H1/A1/P1 — browser chat streams and persists real history', async
 
     await expect(page.getByTestId('vibeflare-chat').getByText('Hello VibeFlare', { exact: true })).toBeVisible();
     await expect(page.getByText('Hello from VibeFlare E2E', { exact: true })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('chat-conversation')).toBeVisible();
+    await expect(page.getByTestId('task-workspace')).toHaveCount(0);
+    const lastReply = await page.getByText('Hello from VibeFlare E2E', { exact: true }).boundingBox();
+    const activeComposer = await page.getByLabel('Message input').boundingBox();
+    expect(lastReply).not.toBeNull();
+    expect(activeComposer).not.toBeNull();
+    expect(lastReply!.y + lastReply!.height).toBeLessThan(activeComposer!.y);
+    expect(activeComposer!.y - (lastReply!.y + lastReply!.height)).toBeLessThan(220);
 
     const url = new URL(page.url());
     const chatId = url.searchParams.get('chat_id');
@@ -55,6 +65,8 @@ test('UJ-004 H1/A1/P1 — browser chat streams and persists real history', async
     ]);
 
     await page.reload();
+    await expect(page.getByTestId('chat-conversation')).toBeVisible();
+    await expect(page.getByTestId('task-workspace')).toHaveCount(0);
     await expect(page.getByTestId('vibeflare-chat').getByText('Hello VibeFlare', { exact: true })).toBeVisible();
     await expect(page.getByText('Hello from VibeFlare E2E', { exact: true })).toBeVisible();
 
