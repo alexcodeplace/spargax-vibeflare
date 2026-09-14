@@ -242,8 +242,39 @@ button:not(:disabled), a { touch-action: manipulation; }
 @media (min-width: 1024px) { .vf-topbar #menu-toggle, .vf-sidebar #menu-close { display: none; } }
 @media (max-width: 1023px) {
   .vf-workspace { padding: 16px; }
-  .vf-sidebar { display: none; }
-  .vf-sidebar.sidebar--open { display: flex; position: fixed; inset-block: 12px; inset-inline-start: 12px; z-index: 50; width: min(310px, calc(100vw - 40px)); background: var(--color-surface); }
+  .vf-sidebar {
+    position: fixed;
+    inset-block: 12px;
+    inset-inline-start: 12px;
+    z-index: 50;
+    width: min(310px, calc(100vw - 40px));
+    background: var(--color-surface);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(calc(-100% - 24px), 0, 0);
+    transition: transform 240ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease-out, visibility 0s linear 240ms;
+    will-change: transform;
+  }
+  .vf-sidebar.sidebar--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    transition: transform 240ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease-out, visibility 0s;
+  }
+  .vf-sidebar-backdrop {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms ease-out, visibility 0s linear 200ms;
+  }
+  .vf-sidebar-backdrop.sidebar-backdrop--open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 200ms ease-out, visibility 0s;
+  }
   .vf-topbar { min-height: 64px; padding-bottom: 12px; margin-bottom: 16px; }
   .vf-page-title { font-size: 20px; }
   .vf-auth-main { gap: 40px; }
