@@ -6,7 +6,7 @@ const { title } = Astro.props;
 ---
 <div class="vf-workspace">
   <Sidebar />
-  <div id="sidebar-backdrop" class="hidden fixed inset-0 z-40 bg-black/50 lg:hidden" aria-hidden="true"></div>
+  <div id="sidebar-backdrop" class="vf-sidebar-backdrop fixed inset-0 z-40 bg-black/50 lg:hidden" aria-hidden="true"></div>
   <div class="vf-workspace-main">
     <TopBar title={title} />
     <main id="main-content" class:list={['vf-main', { 'vf-main--chat': Astro.url.pathname === '/chat' }]} tabindex="-1">

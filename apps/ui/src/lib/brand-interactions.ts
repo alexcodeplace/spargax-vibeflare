@@ -15,7 +15,7 @@ export function initBrandInteractions(): void {
     if (!isOpen) return;
     isOpen = false;
     sidebar?.classList.remove('sidebar--open');
-    backdrop?.classList.add('hidden');
+    backdrop?.classList.remove('sidebar-backdrop--open');
     toggle?.setAttribute('aria-expanded', 'false');
     sidebar?.removeAttribute('role');
     sidebar?.removeAttribute('aria-modal');
@@ -30,7 +30,7 @@ export function initBrandInteractions(): void {
     sidebar.classList.add('sidebar--open');
     sidebar.setAttribute('role', 'dialog');
     sidebar.setAttribute('aria-modal', 'true');
-    backdrop?.classList.remove('hidden');
+    backdrop?.classList.add('sidebar-backdrop--open');
     toggle?.setAttribute('aria-expanded', 'true');
     if (main) main.inert = true;
     document.body.style.overflow = 'hidden';

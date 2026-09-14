@@ -78,11 +78,37 @@ test('mobile navigation traps focus, closes with Escape, and survives repeated A
   await page.setViewportSize({ width: 390, height: 844 });
   await applyAuth(context, 'owner', baseURL!, '/chat');
   await page.goto('/chat');
+  await page.evaluate(() => {
+    const sidebar = document.getElementById('sidebar')!;
+    const backdrop = document.getElementById('sidebar-backdrop')!;
+    (window as typeof window & { __vfSidebarMotion?: { sidebar: number; backdrop: number } }).__vfSidebarMotion = { sidebar: 0, backdrop: 0 };
+    sidebar.addEventListener('transitionstart', event => {
+      if ((event as TransitionEvent).propertyName === 'transform') (window as typeof window & { __vfSidebarMotion: { sidebar: number; backdrop: number } }).__vfSidebarMotion.sidebar++;
+    });
+    backdrop.addEventListener('transitionstart', event => {
+      if ((event as TransitionEvent).propertyName === 'opacity') (window as typeof window & { __vfSidebarMotion: { sidebar: number; backdrop: number } }).__vfSidebarMotion.backdrop++;
+    });
+  });
+  const sidebarMotion = () => page.evaluate(() => (window as typeof window & { __vfSidebarMotion: { sidebar: number; backdrop: number } }).__vfSidebarMotion);
+  const transition = await page.locator('#sidebar').evaluate(element => ({
+    property: getComputedStyle(element).transitionProperty,
+    duration: getComputedStyle(element).transitionDuration,
+  }));
+  expect(transition.property).toContain('transform');
+  expect(transition.duration).toContain('0.24s');
   for (const destination of ['History', 'Settings', 'Workspace']) {
     await page.getByRole('button', { name: 'Toggle menu' }).click();
+    if (destination === 'History') {
+      await expect.poll(async () => (await sidebarMotion()).sidebar).toBeGreaterThanOrEqual(1);
+      await expect.poll(async () => (await sidebarMotion()).backdrop).toBeGreaterThanOrEqual(1);
+    }
     await expect(page.locator('#sidebar')).toHaveAttribute('role', 'dialog');
     await expect(page.locator('.vf-workspace-main')).toHaveAttribute('inert', '');
     await page.keyboard.press('Escape');
+    if (destination === 'History') {
+      await expect.poll(async () => (await sidebarMotion()).sidebar).toBeGreaterThanOrEqual(2);
+      await expect.poll(async () => (await sidebarMotion()).backdrop).toBeGreaterThanOrEqual(2);
+    }
     await expect(page.getByRole('button', { name: 'Toggle menu' })).toBeFocused();
     await expect(page.locator('.vf-workspace-main')).not.toHaveAttribute('inert', '');
     await page.getByRole('button', { name: 'Toggle menu' }).click();
