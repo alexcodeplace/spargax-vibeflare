@@ -1,5 +1,18 @@
 # Model access and Workspace conversations
 
+## Experience-mode boundary (2026-09-14)
+
+The [VF-S04 and VF-I03 requirements](design/VISIBLE-CONTROLS.md#vibeflare-settings-visibility)
+apply in Regular and Pro. Neither mode changes personal model visibility or
+owner-controlled Exclude paid. Both must show the actual paid-policy consequences;
+Pro is not a paid-model opt-in. Mode is a separate user-owned preference, never
+written through the generic installation-settings endpoint.
+
+Required new navigation: Settings > Experience at `/settings/experience/`, following
+the same link/Back/Forward/reload contract as existing sections below. This is an
+unimplemented required addition, not evidence that the route already exists.
+Role-restricted sections remain role-restricted even in Pro.
+
 ## Exclude paid
 
 Settings > Models contains an **Exclude paid** checkbox. It is enabled on new and existing installations unless the owner explicitly saves `models.exclude_paid=0`. This is an installation-wide policy; members can see it but cannot change it.
