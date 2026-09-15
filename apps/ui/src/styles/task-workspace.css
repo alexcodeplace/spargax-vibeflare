@@ -1,6 +1,11 @@
-/* Shared task geometry: only the content changes when choosing another tab. */
+/* Shared landing/non-chat task geometry. Active text threads switch to Astryx ChatLayout. */
 .vf-chat { min-height: 100%; height: auto; }
 .vf-chat-toolbar { display: grid; grid-template-columns: 356px minmax(0, 1fr); gap: 16px; min-height: 76px; }
+.vf-chat--conversation { height: 100%; min-height: 0; }
+.vf-chat--conversation .vf-chat-content { display: flex; min-height: 0; overflow: hidden; }
+.vf-chat-conversation { display: flex; flex: 1; min-height: 0; width: 100%; }
+.vf-chat-conversation .astryx-chat-layout { flex: 1; height: 100%; min-height: 0; }
+.vf-chat-conversation .vf-composer-wrap { max-width: 100%; }
 .vf-task-tabs { min-width: 0; width: 100%; }
 .vf-model-control { min-width: 0; min-height: 44px; display: flex; align-items: center; }
 .vf-model-control > div { width: 100%; flex-wrap: nowrap; }
