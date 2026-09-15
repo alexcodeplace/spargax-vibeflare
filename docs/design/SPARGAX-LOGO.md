@@ -29,3 +29,12 @@ The UI build invokes both archive and current runtime checks. Review the unchang
 interaction tests, new identity tests and real light/dark/mobile screenshots before
 merging/deploying. Source, native packages and existing web instances need separate
 release receipts; this document is not one.
+
+## Private runner availability during rollout
+
+The old `vibeflare-debian1` runner is offline during planned disk maintenance.
+The readiness job now selects the dedicated Overdeck-managed
+`vibeflare-arc-k3s` scale set. Its same-repository condition and complete check
+are unchanged. It does not select another repository's runner or remove a gate.
+The full browser gate additionally retains its disposable test-server logs, so a
+server crash cannot be mistaken for a logo assertion failure.
