@@ -97,6 +97,31 @@ describe('durable browser media history', () => {
     const stored = await request(`/admin/files/${metadata.files[0]!.id}/download`); expect(await stored.json()).toEqual(output);
   });
 
+  it('saves a durable cosine-similarity ranking for embedding tests', async () => {
+    const id = await chat(embeddings, 'Refund similarity test');
+    infer = async (_name, input) => ({
+      data: (input.text as string[]).map(text => text === 'refund policy' ? [1, 0] : text.includes('money back') ? [0.9, 0.1] : [0, 1]),
+    });
+    const response = await request(`/v1/embeddings?chat_id=${id}&compare=1`, {
+      model: embeddings,
+      input: ['refund policy', 'How do I get my money back?', 'What time does the office open?'],
+    });
+    expect(response.status).toBe(200);
+    const output = await response.json();
+    const history = await detail(id);
+    expect(history.messages[0]?.content).toContain('Query\nrefund policy');
+    expect(history.messages[0]?.content).toContain('1. How do I get my money back?');
+    expect(history.messages[1]?.content).toContain('Similarity test');
+    expect(history.messages[1]?.content).toMatch(/1\. cosine 0\.99\d+ .*money back/);
+    expect(history.messages[1]?.content).toContain('2. cosine 0.0000');
+    expect(history.messages[1]?.content).toContain('not a probability');
+    const metadata = parseHistoryMetadata(history.messages[1]?.attachments)!;
+    expect(metadata).toMatchObject({ task: 'text-embeddings', count: 3, dimensions: 2 });
+    expect(await (await request(`/admin/files/${metadata.files[0]!.id}/download`)).json()).toEqual(output);
+    expect(calls).toEqual([embeddings]);
+    expect((await request('/v1/embeddings?compare=1', { model: embeddings, input: ['one', 'two'] })).status).toBe(400);
+  });
+
   it.each(['json', 'text'])('saves the original audio and transcript with %s responses', async format => {
     const id = await chat(audio, 'Meeting transcript');
     const form = audioForm(); form.append('response_format', format);

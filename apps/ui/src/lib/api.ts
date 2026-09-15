@@ -474,6 +474,45 @@ export async function githubSetupPoll(device_id: string): Promise<GithubDevicePo
   return res.json() as Promise<GithubDevicePollResult>;
 }
 
+// ── Embeddings ────────────────────────────────────────────────────────────────
+
+export interface EmbeddingResult {
+  object: 'list';
+  model: string;
+  data: Array<{ object: 'embedding'; index: number; embedding: number[] }>;
+  usage: { prompt_tokens: number; total_tokens: number };
+}
+
+export async function createEmbeddings(
+  model: string,
+  input: string | string[],
+  chatId?: string,
+  compare = false,
+  signal?: AbortSignal,
+): Promise<EmbeddingResult> {
+  const params = new URLSearchParams();
+  if (chatId) params.set('chat_id', chatId);
+  if (compare) params.set('compare', '1');
+  const suffix = params.size ? `?${params.toString()}` : '';
+  const res = await fetch(`/v1/embeddings${suffix}`, {
+    signal,
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json', 'x-vf-browser': '1' },
+    body: JSON.stringify({ model, input }),
+  });
+  if (res.status === 401) {
+    redirectToLoginOnce();
+    throw new Error('Unauthorized');
+  }
+  if (!res.ok) {
+    const error = await res.json().catch(() => null) as { error?: { type?: string; message?: string } } | null;
+    if (error?.error?.type === 'paid_plan_required' || error?.error?.type === 'paid_model_excluded') notifyModelsChanged();
+    throw new Error(error?.error?.message ?? 'Embedding request failed. Try again or choose another embedding model.');
+  }
+  return res.json() as Promise<EmbeddingResult>;
+}
+
 // ── Audio transcription ───────────────────────────────────────────────────────
 
 export interface TranscriptionResult {

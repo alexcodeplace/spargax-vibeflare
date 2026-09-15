@@ -92,6 +92,33 @@ for (const tab of ['Text', 'Image', 'Embeddings']) {
   });
 }
 
+test('Embeddings expose a real cosine-similarity test and persist the ranking', async ({ page }) => {
+  await setup(page);
+  await page.getByRole('tab', { name: 'Embeddings', exact: true }).click();
+  await expect(page.getByRole('combobox')).toContainText(selectedModels.Embeddings!);
+  await expect(page.getByTestId('embedding-similarity-test')).toBeVisible();
+  let comparisonRequest: { url: string; body: any } | null = null;
+  page.on('request', request => {
+    if (request.url().includes('/v1/embeddings') && request.url().includes('compare=1')) {
+      comparisonRequest = { url: request.url(), body: request.postDataJSON() };
+    }
+  });
+  await page.getByLabel('Query', { exact: true }).fill('refund policy');
+  await page.getByLabel('Comparison texts', { exact: true }).fill('How can I get my money back?\nOur office opens at 9 AM.');
+  await page.getByRole('button', { name: 'Run similarity test', exact: true }).click();
+  await expect(page.getByText('Similarity test', { exact: true })).toBeVisible();
+  await expect(page.getByText(/cosine 0\.9939/)).toBeVisible();
+  await expect(page.getByText(/cosine 0\.0000/)).toBeVisible();
+  expect(comparisonRequest).not.toBeNull();
+  expect(comparisonRequest!.body.input).toEqual(['refund policy', 'How can I get my money back?', 'Our office opens at 9 AM.']);
+  expect(new URL(comparisonRequest!.url).searchParams.get('compare')).toBe('1');
+  await expect(page.getByRole('link', { name: 'Download full embeddings (JSON)' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('tab', { name: 'Embeddings', exact: true })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByText('Similarity test', { exact: true })).toBeVisible();
+  await expect(page.getByText(/cosine 0\.9939/)).toBeVisible();
+});
+
 test('Audio accepts dropped and browsed recordings; Nova and Whisper save normalized transcripts', async ({ page }) => {
   await setup(page); await page.getByRole('tab', { name: 'Audio', exact: true }).click();
   await expect(page.getByRole('combobox')).toContainText(selectedModels.Audio!);
@@ -100,13 +127,21 @@ test('Audio accepts dropped and browsed recordings; Nova and Whisper save normal
   expect(requests).toHaveLength(0);
   await expect(page.getByRole('button', { name: 'Transcribe', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Transcribe', exact: true }).click();
-  await expect(page.getByText('Whisper file transcription saved successfully.', { exact: true })).toBeVisible();
+  const firstTranscript = page.getByText('Whisper file transcription saved successfully.', { exact: true });
+  await expect(firstTranscript).toBeVisible();
+  await expect(page.getByTestId('chat-conversation')).toBeVisible();
+  await expect(page.getByTestId('task-workspace')).toHaveCount(0);
+  const transcriptBox = await firstTranscript.boundingBox();
+  const composerBox = await page.locator('.vf-chat-conversation .vf-audio-composer').boundingBox();
+  expect(transcriptBox).not.toBeNull(); expect(composerBox).not.toBeNull();
+  expect(transcriptBox!.y + transcriptBox!.height).toBeLessThan(composerBox!.y + 2);
   await page.getByRole('combobox').click(); await page.getByRole('option', { name: '@cf/deepgram/nova-3', exact: true }).click();
   await page.getByLabel('Audio file', { exact: true }).setInputFiles({ name: 'second.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3-second-fixture') });
   await page.getByRole('button', { name: 'Transcribe', exact: true }).click();
   await expect(page.getByText('Nova file transcription saved successfully.', { exact: true })).toBeVisible();
   expect(requests).toHaveLength(2);
   await page.reload();
+  await expect(page.getByTestId('chat-conversation')).toBeVisible();
   await expect(page.getByText('Nova file transcription saved successfully.', { exact: true })).toBeVisible();
   await expect(page.getByText('Whisper file transcription saved successfully.', { exact: true })).toBeVisible();
 });

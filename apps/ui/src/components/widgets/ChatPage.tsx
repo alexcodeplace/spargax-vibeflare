@@ -16,6 +16,7 @@ import { TaskWorkspace, TASK_PRESENTATION } from './TaskWorkspace';
 import { FileDropzone } from './FileDropzone';
 import { readPromptFile, TEXT_FILE_ACCEPT, PROMPT_FILE_ACCEPT, MAX_TEXT_FILE_BYTES, MAX_IMPORTED_CHARACTERS, fileMatchesAccept } from '../../lib/file-input';
 import { AudioTranscribePanel } from './AudioTranscribePanel';
+import { EmbeddingSimilarityPanel } from './EmbeddingSimilarityPanel';
 import { ModelPicker } from './ModelPicker';
 import { Card } from '../primitives/Card';
 import { Tabs } from '../primitives/Tabs';
@@ -87,7 +88,8 @@ function ChatPageInner() {
   const chatIdRef = useRef<string | null>(null);
   const operationRef = useRef(false);
   const [audioBusy, setAudioBusy] = useState(false);
-  const busy = sending || generating || audioBusy || loadingHistory;
+  const [embeddingBusy, setEmbeddingBusy] = useState(false);
+  const busy = sending || generating || audioBusy || embeddingBusy || loadingHistory;
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -130,7 +132,6 @@ function ChatPageInner() {
     const chat = await createChat(title, model, signal);
     if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
     chatIdRef.current = chat.id;
-    setConversationStarted(true);
     const location = new URL(window.location.href);
     location.searchParams.set('chat_id', chat.id);
     window.history.replaceState(null, '', location.toString());
@@ -363,10 +364,30 @@ function ChatPageInner() {
     </div>
   );
 
-  const results = messages.map((message, index) => isImageMode || isAudioMode ? (
+  const audioComposer = (
+    <AudioTranscribePanel
+      model={model}
+      inputOnly
+      history={messages}
+      ensureChat={ensureConversation}
+      onSaved={loadHistory}
+      onCompleted={() => setConversationStarted(true)}
+      onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }}
+    />
+  );
+  const embeddingTester = (
+    <EmbeddingSimilarityPanel
+      model={model}
+      ensureChat={ensureConversation}
+      onSaved={loadHistory}
+      onBusyChange={value => { operationRef.current = value; setEmbeddingBusy(value); }}
+    />
+  );
+
+  const results = messages.map((message, index) => isImageMode ? (
     <Card key={message.id} variant="outlined" className="vf-history-result space-y-3 p-4">
-      <p className="text-xs text-[var(--color-muted)]">{isAudioMode ? (message.role === 'assistant' ? 'Transcript' : 'Audio input') : (message.role === 'assistant' ? 'Generated image' : 'Your prompt')}</p>
-      <p className="whitespace-pre-wrap text-sm text-[var(--color-text)]">{message.content || 'No speech detected in this recording.'}</p>
+      <p className="text-xs text-[var(--color-muted)]">{message.role === 'assistant' ? 'Generated image' : 'Your prompt'}</p>
+      <p className="whitespace-pre-wrap text-sm text-[var(--color-text)]">{message.content}</p>
       <HistoryAttachments metadata={message.attachments} prompt={message.role === 'assistant' ? messages[index - 1]?.content ?? message.content : message.content} />
     </Card>
   ) : (
@@ -384,23 +405,23 @@ function ChatPageInner() {
     </button>)}
   </div> : undefined;
 
-  const activeTextConversation = activeTask === 'text-generation' && conversationStarted;
-  const activeTextView = activeTextConversation ? (
+  const activeConversation = conversationStarted && (activeTask === 'text-generation' || isAudioMode);
+  const activeConversationView = activeConversation ? (
     <div className="vf-chat-conversation" data-testid="chat-conversation">
       <ChatLayout
         density="balanced"
-        composer={promptComposer}
+        composer={isAudioMode ? audioComposer : promptComposer}
         emptyState={loadingHistory ? <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div> : undefined}
       >
         {loadingHistory && messages.length === 0 ? null : (
-          <ChatMessageList align="bottom" isStreaming={sending}>{results}</ChatMessageList>
+          <ChatMessageList align="bottom" isStreaming={sending || audioBusy}>{results}</ChatMessageList>
         )}
       </ChatLayout>
     </div>
   ) : null;
 
   return (
-    <div className={`vf-chat flex min-w-0 flex-col${activeTextConversation ? ' vf-chat--conversation' : ''}`} data-testid="vibeflare-chat">
+    <div className={`vf-chat flex min-w-0 flex-col${activeConversation ? ' vf-chat--conversation' : ''}`} data-testid="vibeflare-chat">
       <Toast
         open={toast.open}
         onOpenChange={(open) => setToast((previous) => ({ ...previous, open }))}
@@ -418,12 +439,12 @@ function ChatPageInner() {
         <div className="vf-model-control" inert={busy ? true : undefined}>{loadingHistory ? <span role="status">Loading saved conversation…</span> : <ModelPicker task={activeTask} value={model} onChange={handleModelChange} />}</div>
       </div>
       <div className="vf-chat-content">
-        {activeTextView ?? (
-          <TaskWorkspace task={activeTask} extras={starters}
-            input={isAudioMode ? <AudioTranscribePanel model={model} inputOnly history={messages} ensureChat={ensureConversation} onSaved={loadHistory} onBusyChange={value => { operationRef.current = value; setAudioBusy(value); }} /> : promptComposer}>
+        {activeConversationView ?? (
+          <TaskWorkspace task={activeTask} extras={isEmbeddingMode ? embeddingTester : starters}
+            input={isAudioMode ? audioComposer : promptComposer}>
             {loadingHistory && <div role="status" className="flex items-center justify-center p-8"><Spinner size="lg" /></div>}
             {imageError && <p role="alert" className="vf-inline-notice vf-inline-notice--error">{imageError}</p>}
-            {isImageMode || isAudioMode ? results : messages.length > 0 ? <ChatMessageList align="top" isStreaming={sending}>{results}</ChatMessageList> : null}
+            {isImageMode ? results : messages.length > 0 ? <ChatMessageList align="top" isStreaming={sending || embeddingBusy}>{results}</ChatMessageList> : null}
           </TaskWorkspace>
         )}
       </div>

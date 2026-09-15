@@ -22,7 +22,7 @@ VibeFlare is MIT-licensed, self-hosted software. You control the Cloudflare depl
 
 | Area | What you can do |
 | --- | --- |
-| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text, image, transcription and embedding conversations from the sidebar or History. Text starts on the task landing, then switches to the Astryx conversation layout after the first message so the newest turns sit directly above the bottom composer. Other tasks keep their stable input/results layout. |
+| **Workspace** | Stream a text conversation, switch models, stop a response, attach files, and reopen saved text, image, transcription and embedding conversations from the sidebar or History. Text and Audio start on their task landing, then switch to the Astryx conversation layout after the first message or transcription so the newest turns sit directly above the bottom composer. Image and Embeddings keep their stable task input/results layout. |
 | **Models** | Search the catalog, save your personal model checkboxes, and refresh metadata. The owner controls whether paid-access models are offered. |
 | **API Keys** | Create labelled keys, reveal a new secret once, and revoke keys you no longer use. Owners can create admin keys. |
 | **Files** | Manage private uploaded files at `/files`. |
@@ -32,7 +32,7 @@ VibeFlare is MIT-licensed, self-hosted software. You control the Cloudflare depl
 
 ### Current scope
 
-Browser history covers text chats, generated images, audio transcripts and embedding requests. Reopening a conversation restores its task and saved results. **Embeddings** turns text into numerical vectors for similarity search or grouping; it is not a chatbot answer and does not build a search index for you. The browser tab now submits actual embedding requests and explains the task on entry. Text-to-speech remains an API capability, not a browser speech-generation screen.
+Browser history covers text chats, generated images, audio transcripts and embedding requests. Reopening a conversation restores its task and saved results. **Embeddings** turns text into numerical vectors for similarity search or grouping; it is not a chatbot answer and does not build a search index for you. The browser tab submits actual embedding requests, can download the raw vector JSON, and includes a cosine-similarity tester that ranks comparison texts using one real batch embedding request. Text-to-speech remains an API capability, not a browser speech-generation screen.
 
 Task inputs differ intentionally. Text chat can attach files; Image and Embeddings accept `.txt`/`.md` prompt imports rather than promising image-to-image editing. Audio accepts recording files up to 25 MB and sends them only when you click **Transcribe**. The interface checks model compatibility and normalizes audio for the selected provider contract; availability still depends on that model and account.
 

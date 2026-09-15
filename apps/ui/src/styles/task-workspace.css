@@ -1,4 +1,4 @@
-/* Shared landing/non-chat task geometry. Active text threads switch to Astryx ChatLayout. */
+/* Shared landing/non-chat task geometry. Active text and audio threads switch to Astryx ChatLayout. */
 .vf-chat { min-height: 100%; height: auto; }
 .vf-chat-toolbar { display: grid; grid-template-columns: 356px minmax(0, 1fr); gap: 16px; min-height: 76px; }
 .vf-chat--conversation { height: 100%; min-height: 0; }
@@ -53,6 +53,17 @@
 .vf-audio-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
 .vf-audio-actions > span { font-size: 11px; color: var(--color-muted); }
 .vf-file-remove { color: var(--vf-link); text-decoration: underline; text-underline-offset: 3px; font-size: 11px; min-height: 32px; cursor: pointer; }
+.vf-chat-conversation .vf-audio-panel { width: 100%; min-width: 0; }
+.vf-chat-conversation .vf-audio-composer { padding: 10px; gap: 6px; }
+.vf-chat-conversation .vf-audio-selection { min-height: 44px; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; }
+.vf-chat-conversation .vf-audio-actions { min-height: 38px; }
+.vf-embedding-test { display: grid; gap: 14px; padding: 16px; min-width: 0; }
+.vf-embedding-test-copy { display: grid; gap: 6px; }
+.vf-embedding-test-copy h2 { color: var(--color-text); font-size: 16px; font-weight: 600; }
+.vf-embedding-test-copy p { color: var(--color-muted); font-size: 11px; line-height: 1.7; }
+.vf-embedding-test-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 12px; align-items: start; }
+.vf-embedding-test-actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.vf-embedding-test-actions > span { color: var(--color-muted); font-size: 11px; line-height: 1.5; }
 @media (max-width: 1100px) {
   .vf-chat-toolbar { grid-template-columns: 1fr; gap: 8px; }
   .vf-task-tabs { max-width: 440px; }
@@ -72,6 +83,11 @@
   .vf-dropzone-copy strong { font-size: 11px; }
   .vf-task-help { min-height: 80px; padding-inline: 8px; }
   .vf-audio-actions > span { max-width: 48%; }
+  .vf-chat-conversation .vf-audio-selection { align-items: start; flex-direction: column; }
+  .vf-embedding-test { padding: 12px; }
+  .vf-embedding-test-form { grid-template-columns: 1fr; }
+  .vf-embedding-test-actions { align-items: stretch; flex-direction: column; }
+  .vf-embedding-test-actions .vf-button { width: 100%; }
   .vf-task-input .astryx-chat-composer .astryx-chat-send-button { min-width: 44px; min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .vf-dropzone { transition: none; } }

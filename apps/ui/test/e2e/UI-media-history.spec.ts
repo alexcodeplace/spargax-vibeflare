@@ -108,8 +108,11 @@ for (const width of [1440, 390]) {
     await page.getByLabel('Audio file', { exact: true }).setInputFiles({ name: 'meeting.wav', mimeType: 'audio/wav', buffer: wav });
     await page.getByRole('button', { name: 'Transcribe', exact: true }).click();
     await expect(page.getByText('A transcript saved in conversation history.', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('chat-conversation')).toBeVisible();
     const id = new URL(page.url()).searchParams.get('chat_id')!;
     await checkSaved(page, id, 'Transcribe meeting.wav', 'Audio');
+    await expect(page.getByTestId('chat-conversation')).toBeVisible();
+    await expect(page.getByTestId('task-workspace')).toHaveCount(0);
     await expect(page.getByText('A transcript saved in conversation history.', { exact: true })).toBeVisible();
     const player = page.locator('audio'); await expect(player).toHaveCount(1);
     const bytes = await (await page.request.get((await player.getAttribute('src'))!)).body(); expect(bytes).toEqual(wav);
