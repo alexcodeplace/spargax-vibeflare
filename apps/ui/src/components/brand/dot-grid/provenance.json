@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "alexcodeplace/vibeclub",
+  "sourceCommit": "1cd8eef667027456c5e011e9a70dfa9fa6970517",
+  "files": [
+    {
+      "name": "physics.ts",
+      "sha256": "d2db8d8a94c6ce59bf777af4f59e8dd423e082176a11f66f1e74b35d4a26ace0",
+      "bytes": 3154
+    },
+    {
+      "name": "element.ts",
+      "sha256": "186e2ea885a3c31ea38cca404d628e2c1ecced7a3661f10285c8700925f82a7a",
+      "bytes": 9312
+    },
+    {
+      "name": "spargax-dots.json",
+      "sha256": "0044f1e14b9e4f971198f81b94aadebd574edb4848bb67398a23d264d872c1e3",
+      "bytes": 3647
+    },
+    {
+      "name": "LICENSE",
+      "sha256": "66176c0c68737710f15ad77e26f2b0c2fea71db637501385c81dc92b5922d076",
+      "bytes": 1079
+    },
+    {
+      "name": "README.md",
+      "sha256": "c0e2351f919136a751b07e996f6d458cc61e19224c632491abdbe4f0d480482e",
+      "bytes": 1084
+    }
+  ]
+}

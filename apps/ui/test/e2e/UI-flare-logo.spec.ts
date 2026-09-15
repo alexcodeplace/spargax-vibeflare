@@ -20,7 +20,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     await load(page, baseURL!, theme);
     const logo = page.getByTestId('flare-logo'); const canvas = logo.locator('canvas');
     await expect(page.locator('.vf-auth-art img[src*="workflow-panels"]')).toHaveCount(0);
-    expect((await diagnostic(page)).points).toBe(3080);
+    expect((await diagnostic(page)).points).toBe(56 * 56);
     expect((await diagnostic(page)).markedPoints).toBe(FLARE_MARKED_COUNT);
     await logo.screenshot({ path: info.outputPath(`logo-rest-${theme}-${width}.png`) });
     const before = await canvas.screenshot();
@@ -36,7 +36,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     await page.waitForTimeout(450);
     expect((await diagnostic(page)).frames).toBe(idleFrames);
     expect((await diagnostic(page)).pendingFrame).toBe(false);
-    await logo.getByRole('button', { name: 'Replay the VibeFlare dot animation' }).focus();
+    await logo.getByRole('button', { name: 'Replay the Spargax dot animation' }).focus();
     const pulses = (await diagnostic(page)).pulses;
     await page.keyboard.press('Enter');
     expect((await diagnostic(page)).pulses).toBe(pulses + 1);
@@ -57,7 +57,7 @@ test('Reduced motion and forced colors keep an unanimated, accessible logo', asy
   const logo = page.getByTestId('flare-logo'); await logo.scrollIntoViewIfNeeded();
   await expect(logo).toHaveAttribute('data-reduced', 'true');
   await expect(logo.getByRole('button')).toHaveCount(0);
-  await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeAttached();
+  await expect(page.getByRole('img', { name: 'Spargax ribbon logo in lavender and peach dots' })).toBeAttached();
   await page.waitForTimeout(200); const frames = (await diagnostic(page)).frames;
   await logo.locator('canvas').hover(); await page.waitForTimeout(300);
   expect((await diagnostic(page)).frames).toBe(frames);
@@ -72,9 +72,9 @@ test('No-JavaScript and unavailable-canvas fallbacks preserve the logo and page 
   const context = await browser.newContext({ javaScriptEnabled: false });
   await applyAuth(context, 'anonymous', baseURL!, '/login');
   const page = await context.newPage(); await page.goto(baseURL! + '/login');
-  await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Spargax ribbon logo in lavender and peach dots' })).toBeVisible();
   await expect(page.locator('.vf-dot-fallback > circle')).toHaveCount(FLARE_MARKED_COUNT);
-  await expect(page.locator('[data-flare-replay]')).toBeHidden();
+  await expect(page.locator('[data-dot-replay]')).toBeHidden();
   await context.close();
   const fail = await browser.newContext();
   await fail.addInitScript(() => { HTMLCanvasElement.prototype.getContext = (() => null) as typeof HTMLCanvasElement.prototype.getContext; });
@@ -87,7 +87,7 @@ test('No-JavaScript and unavailable-canvas fallbacks preserve the logo and page 
 
 test('Hidden pages and removed Astro elements cancel animation work', async ({ page, baseURL }) => {
   await load(page, baseURL!);
-  await page.getByRole('button', { name: 'Replay the VibeFlare dot animation' }).click();
+  await page.getByRole('button', { name: 'Replay the Spargax dot animation' }).click();
   await expect.poll(async () => (await diagnostic(page)).maxDisplacement).toBeGreaterThan(1);
   await page.evaluate(() => {
     Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
@@ -131,7 +131,7 @@ test('Pointer effect keeps bounded paint work under CPU throttling', async ({ pa
   await page.mouse.move(1, 1);
   await expect(page.getByTestId('flare-logo')).toHaveAttribute('data-state', 'idle', { timeout: 10_000 });
   const metrics = await diagnostic(page);
-  expect(metrics.pendingFrame).toBe(false); expect(metrics.points).toBeLessThanOrEqual(3100);
+  expect(metrics.pendingFrame).toBe(false); expect(metrics.points).toBe(56 * 56);
   expect(metrics.backingWidth * metrics.backingHeight).toBeLessThanOrEqual(513_000);
   await info.attach('throttled-performance', { body: JSON.stringify(metrics, null, 2), contentType: 'application/json' });
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 }); await cdp.detach();

@@ -11,3 +11,8 @@ These nine PNG files were supplied by the user on 2026-09-13. Their original fil
 Generated files are under `apps/ui/public/assets/brand/` and the public icon paths. Cropping removes transparent padding and extremely faint alpha noise only; artwork is not redrawn. All versions preserve source colors and proportions. `tools/build-logo-assets.py` (Pillow) reproduces the derivatives and dot-grid data. `node tools/verify-logo-assets.mjs` checks source/runtime hashes, source relationships and the total size budget without Python dependencies.
 
 The standard 320px transparent wordmark is used for ordinary navigation; its 640px counterpart serves high-DPI screens. The complete generated runtime pack is under128 KB. Only the dedicated auth illustration animates; the navigation logos remain static.
+
+## Superseded for runtime use, 2026-09-15
+
+These original images are retained as historical inputs. The current authority is
+[the suite Spargax logo contract](../SPARGAX-LOGO.md), not this former VF selection.

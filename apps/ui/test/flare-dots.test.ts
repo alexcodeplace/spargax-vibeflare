@@ -3,11 +3,11 @@ import { createFlareDots, FLARE_MARKED_COUNT, FLARE_COLORS, FLARE_HEIGHT, FLARE_
 const idle = (): FlareStimulus => ({ x: 0, y: 0, active: false, rippleX: 240, rippleY: 160, rippleAge: -1 });
 
 describe('bounded VibeFlare dot simulation', () => {
-  it('uses the supplied warm silhouette on a finite, deterministic grid', () => {
+  it('uses the supplied Spargax ribbon silhouette on a finite, deterministic grid', () => {
     const dots = createFlareDots();
-    expect(dots).toHaveLength(3080);
+    expect(dots).toHaveLength(56 * 56);
     expect(dots.filter(dot => dot.color >= 0)).toHaveLength(FLARE_MARKED_COUNT);
-    expect(FLARE_COLORS).toHaveLength(8);
+    expect(FLARE_COLORS).toHaveLength(16);
     for (const dot of dots) {
       expect(dot.x).toBeGreaterThan(0); expect(dot.x).toBeLessThan(FLARE_WIDTH);
       expect(dot.y).toBeGreaterThan(0); expect(dot.y).toBeLessThan(FLARE_HEIGHT);

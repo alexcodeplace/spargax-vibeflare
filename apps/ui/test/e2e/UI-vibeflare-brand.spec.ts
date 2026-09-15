@@ -33,14 +33,14 @@ for (const theme of ['dark', 'light'] as const) {
         }
         if (route === '/login') {
           await expect(page.getByTestId('flare-logo')).toBeVisible();
-          await expect(page.getByRole('img', { name: 'VibeFlare logo in red, orange and gold dots' })).toBeAttached();
+          await expect(page.getByRole('img', { name: 'Spargax ribbon logo in lavender and peach dots' })).toBeAttached();
           const action = page.getByRole('button', { name: 'Sign in with passkey', exact: true });
           await expect(action).toHaveCSS('background-image', /linear-gradient/);
           await expect(action).toHaveCSS('color', 'rgb(255, 255, 255)');
         }
         if (route === '/chat') {
-          await expect(page.locator('#sidebar .vf-brand-logo')).toHaveAttribute('src', '/assets/brand/vibeflare-wordmark-320.webp');
-          await expect(page.locator('.vf-topbar .vf-brand-symbol')).toHaveAttribute('src', '/assets/brand/vibeflare-mark.webp');
+          await expect(page.locator(`#sidebar .vf-brand-logo.vf-spargax-${theme}`)).toHaveAttribute('src', `/assets/brand/v-2518955dd2b5ee99/spargax-wordmark-${theme}-320.webp`);
+          await expect(page.locator('.vf-topbar .vf-brand-symbol')).toHaveAttribute('src', '/assets/brand/v-2518955dd2b5ee99/spargax-mark-128.webp');
           await expect(page.locator('.vf-brand-mark')).toHaveCount(0);
           // Inspect painted output, not only a root token: the composer has its own surface.
           const composerBackground = await page.getByLabel('Message input').evaluate(editor => {
@@ -52,6 +52,9 @@ for (const theme of ['dark', 'light'] as const) {
           });
           expect(composerBackground).toBe(theme === 'dark' ? 'rgb(12, 33, 60)' : 'rgb(248, 251, 255)');
         }
+        await expect.poll(() => page.locator('.vf-brand img').evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
+        await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute('href', '/assets/brand/v-2518955dd2b5ee99/spargax-mark-32.png');
+        await expect(page.locator('.vf-brand').first()).toHaveAccessibleName('VibeFlare home');
         await assertNoOverflow(page);
         expect(errors).toEqual([]);
         expect(failedAssets).toEqual([]);

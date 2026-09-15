@@ -391,7 +391,7 @@ function ChatPageInner() {
       <HistoryAttachments metadata={message.attachments} prompt={message.role === 'assistant' ? messages[index - 1]?.content ?? message.content : message.content} />
     </Card>
   ) : (
-    <AstryxChatMessage key={message.id} sender={message.role} avatar={message.role === 'assistant' ? <img src="/assets/brand/vibeflare-mark.webp" width={32} height={32} alt="VibeFlare" style={{ objectFit: 'contain' }} /> : undefined}>
+    <AstryxChatMessage key={message.id} sender={message.role} avatar={message.role === 'assistant' ? <img src="/assets/brand/v-2518955dd2b5ee99/spargax-mark-128.webp" width={32} height={32} alt="VibeFlare" style={{ objectFit: 'contain' }} /> : undefined}>
       <ChatMessageBubble variant={message.role === 'assistant' ? 'ghost' : 'filled'}>
         {message.role === 'assistant' ? <Markdown density="compact" isStreaming={sending && message.id === messages.at(-1)?.id}>{message.content || (isEmbeddingMode ? 'Creating embeddings…' : 'Thinking…')}</Markdown> : message.content}
         <HistoryAttachments metadata={message.attachments} prompt={message.content} />

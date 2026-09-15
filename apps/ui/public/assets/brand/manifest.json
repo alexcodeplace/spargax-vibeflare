@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "ownerApproval": "2026-09-15 suite rebrand",
+  "sourceRepository": "alexcodeplace/vibeclub",
+  "sources": {
+    "spargax-logo.png": "4ed5e6d25c5791215efc758752e310ec0b126dcbc8438d1a2dbbcd7b567cb9e4",
+    "spargax-full-logo.png": "ccf16744ab89a82c7abc21db1a9c3806dc6f8fa1f20be0f71a69e8a048c2c265"
+  },
+  "generatorSha256": "dc480533b9f3a2f3b4d2c467e0c43394568a4a62779f66776162a571ca855131",
+  "version": "v-2518955dd2b5ee99",
+  "textStartsAtSourceX": 497,
+  "derivation": "Originals unchanged. Neutral white matte removal, proportional crop/resize; only wordmark lettering inverts for dark mode. Dots sample the compact mark.",
+  "files": [
+    {
+      "path": "brand/v-2518955dd2b5ee99/favicon.ico",
+      "name": "favicon.ico",
+      "role": "browser-and-windows-icon",
+      "bytes": 64239,
+      "sha256": "aaadfeac0ecaaa6e3c3365b209b907379a326cb438d73a28daee23df916c5683"
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-dots.json",
+      "name": "spargax-dots.json",
+      "role": "dot-grid-geometry",
+      "bytes": 3647,
+      "sha256": "0044f1e14b9e4f971198f81b94aadebd574edb4848bb67398a23d264d872c1e3"
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-dots.svg",
+      "name": "spargax-dots.svg",
+      "role": "static-dot-grid-fallback",
+      "bytes": 42929,
+      "sha256": "030748e7dcde5b1ee48d70c8e7cc23b8cd4fec5603b3a09fd4104bf487f7501c"
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-128.png",
+      "name": "spargax-mark-128.png",
+      "role": "native-icon",
+      "bytes": 13735,
+      "sha256": "a4c538182d2d989c91d8a7c0cb7e52cb32556676eb589fdd74bc00ff734bbf53",
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-128.webp",
+      "name": "spargax-mark-128.webp",
+      "role": "compact-mark",
+      "bytes": 10030,
+      "sha256": "2b83fff88b640410435d1a7944a095ae6d77e361b9ffdb07b3399b6bdd810b6e",
+      "width": 128,
+      "height": 128
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-180.png",
+      "name": "spargax-mark-180.png",
+      "role": "native-icon",
+      "bytes": 22394,
+      "sha256": "20442dd6213f86f7585eac2d588054cfcb68b56534e850cca7cb973f1795eebd",
+      "width": 180,
+      "height": 180
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-192.png",
+      "name": "spargax-mark-192.png",
+      "role": "native-icon",
+      "bytes": 24524,
+      "sha256": "25df2a3eb09fe6c3389a0fd810b276d73d6c76ba64b11a33a569ebe4e3360c12",
+      "width": 192,
+      "height": 192
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-256.png",
+      "name": "spargax-mark-256.png",
+      "role": "native-icon",
+      "bytes": 37780,
+      "sha256": "d6f6fa31e5d213ac2ac19d66686ed76c8fd74dcdb731478577589a81f7cfee3b",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-256.webp",
+      "name": "spargax-mark-256.webp",
+      "role": "compact-mark",
+      "bytes": 25640,
+      "sha256": "3ef6189386d1db3683a37e0942ddac7925e60232985c350e68685c3faaae9ed1",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-32.png",
+      "name": "spargax-mark-32.png",
+      "role": "native-icon",
+      "bytes": 1863,
+      "sha256": "fa40098e799995b223a2f48766810a0a25727ec17bdb7b109a27877e570da43f",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-512.png",
+      "name": "spargax-mark-512.png",
+      "role": "native-icon",
+      "bytes": 108221,
+      "sha256": "eea29d198fbbbb30af305dfb99ef8e041c5d379c4cb2a47e91fadc62f97eff1f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-64.png",
+      "name": "spargax-mark-64.png",
+      "role": "native-icon",
+      "bytes": 5135,
+      "sha256": "daaa9f0d6855270d1980494de68ee1f03e8d853ded2286addd8bf8d6bd81a21d",
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-mark-64.webp",
+      "name": "spargax-mark-64.webp",
+      "role": "compact-mark",
+      "bytes": 3952,
+      "sha256": "d2294d7f3c9f71dab00c6a066949006101906f8844335a03df3f16785867a488",
+      "width": 64,
+      "height": 64
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-dark-1280.webp",
+      "name": "spargax-wordmark-dark-1280.webp",
+      "role": "wordmark-dark",
+      "bytes": 85158,
+      "sha256": "99b1ad8aa8c6e9a0f2fb629a40ad5e42a4918376ce7541fda658329f07cd85ab",
+      "width": 1280,
+      "height": 405
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-dark-320.webp",
+      "name": "spargax-wordmark-dark-320.webp",
+      "role": "wordmark-dark",
+      "bytes": 13720,
+      "sha256": "fdad56d353586b88febe803f645d63f527258c2ecedbda6972c0bc734babf380",
+      "width": 320,
+      "height": 101
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-dark-640.webp",
+      "name": "spargax-wordmark-dark-640.webp",
+      "role": "wordmark-dark",
+      "bytes": 32566,
+      "sha256": "11c22278024883aa067a9ecb719c861b244c1b4d55a699ef5d86168dbf8ce597",
+      "width": 640,
+      "height": 203
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-light-1280.webp",
+      "name": "spargax-wordmark-light-1280.webp",
+      "role": "wordmark-light",
+      "bytes": 85516,
+      "sha256": "0bd9495bf788b56919dfab18db0caa42283b48624bcf5f23b8f96af073e85dbe",
+      "width": 1280,
+      "height": 405
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-light-320.webp",
+      "name": "spargax-wordmark-light-320.webp",
+      "role": "wordmark-light",
+      "bytes": 13406,
+      "sha256": "307482a3bb3c8d7d5a04c6d49a29cab5c891201d049e89c7a6928bb0f790543f",
+      "width": 320,
+      "height": 101
+    },
+    {
+      "path": "brand/v-2518955dd2b5ee99/spargax-wordmark-light-640.webp",
+      "name": "spargax-wordmark-light-640.webp",
+      "role": "wordmark-light",
+      "bytes": 32640,
+      "sha256": "709f09a1835131d79986445c01e0d52834415a79deee19f155c4cc51fd50534c",
+      "width": 640,
+      "height": 203
+    }
+  ]
+}

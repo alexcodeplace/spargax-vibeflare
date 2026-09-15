@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "prebuild": "bash scripts/audit-islands.sh",
-    "build": "astro build",
+    "build": "node ../../tools/verify-logo-assets.mjs && astro build",
     "typecheck": "astro check",
     "preview": "astro preview",
     "test": "vitest run --passWithNoTests",
