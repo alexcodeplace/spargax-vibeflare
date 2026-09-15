@@ -54,9 +54,14 @@ for (const theme of ['dark', 'light'] as const) {
         }
         await expect.poll(() => page.locator('.vf-brand img').evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
         await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute('href', '/assets/brand/v-2518955dd2b5ee99/spargax-mark-32.png');
-        const visibleBrand = page.locator('.vf-brand:visible');
-        await expect(visibleBrand).toHaveCount(1);
-        await expect(visibleBrand).toHaveAccessibleName('VibeFlare home');
+        // The closed mobile drawer has a layout box but is inert and off-screen.
+        // Verify the actual accessible navigation link, not geometric visibility.
+        const activeBrand = page.getByRole('link', { name: 'VibeFlare home', exact: true });
+        await expect(activeBrand).toHaveCount(1);
+        await expect(activeBrand).toBeVisible();
+        await activeBrand.focus();
+        await expect(activeBrand).toBeFocused();
+        await expect(activeBrand).toHaveAttribute('href', '/');
         await assertNoOverflow(page);
         expect(errors).toEqual([]);
         expect(failedAssets).toEqual([]);
