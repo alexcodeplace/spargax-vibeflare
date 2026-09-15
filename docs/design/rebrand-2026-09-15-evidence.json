@@ -1,0 +1,552 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "alexcodeplace/vibeflare",
+  "sourceRevision": "b36e2deda3a5b21dcae9f17d3d13cd33ea0c55f1",
+  "actionsRunId": 34994011090,
+  "actionsJobId": 104465553771,
+  "artifactId": 10406982192,
+  "canonicalAssetVersion": "v-2518955dd2b5ee99",
+  "review": "Inspected all 28 actual desktop/mobile UI matrix images, including full-size login views. The compact mark, full lockup and sampled dot flame render correctly. Non-auth differences are confined to the sidebar/header branding region; auth page height accommodates the new square artwork. Existing baseline bytes were checked against the exact expected images before replacement. Functional dot and product tests remain required and are not suppressed.",
+  "screens": [
+    {
+      "name": "matrix-analytics-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-desktop-linux.png",
+      "oldSha256": "5d84ad408406e5725bc77978085cd46a2de2236c32c78c31809ec6e46bd3e15d",
+      "newSha256": "1b0221e303a55167a9ddc985fca79916db226ee014b5b30a651d6f0348b92bd4"
+    },
+    {
+      "name": "matrix-analytics-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-owner-mobile-linux.png",
+      "oldSha256": "308a23cb56e8b496197925b0f850726c48462755ae716d5c80d5681ec4de9174",
+      "newSha256": "e5c899d402ad171b7acb897e850bef3bf86578735f776122e6f8c470c797ca01"
+    },
+    {
+      "name": "matrix-analytics-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-desktop-linux.png",
+      "oldSha256": "5d84ad408406e5725bc77978085cd46a2de2236c32c78c31809ec6e46bd3e15d",
+      "newSha256": "1b0221e303a55167a9ddc985fca79916db226ee014b5b30a651d6f0348b92bd4"
+    },
+    {
+      "name": "matrix-analytics-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-analytics-user-mobile-linux.png",
+      "oldSha256": "308a23cb56e8b496197925b0f850726c48462755ae716d5c80d5681ec4de9174",
+      "newSha256": "e5c899d402ad171b7acb897e850bef3bf86578735f776122e6f8c470c797ca01"
+    },
+    {
+      "name": "matrix-chat-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-desktop-linux.png",
+      "oldSha256": "1efef1e2bb03dd9f80081fa6d7bc43fda3df5fdd6b105e98812cb8ae30c6a594",
+      "newSha256": "0cfaa845d6317a2f995634201d83327d7f31c2036e78d2ad17cb993833155752"
+    },
+    {
+      "name": "matrix-chat-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-owner-mobile-linux.png",
+      "oldSha256": "f6c681aaeeaabea6e4e934691f4ff7e1418baf44ea21622b6c025cf414e7e22e",
+      "newSha256": "9503f356a78a3b9da630cb205779623091acbfb2511ab7ec0e82fc2f624f7dbf"
+    },
+    {
+      "name": "matrix-chat-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-desktop-linux.png",
+      "oldSha256": "1efef1e2bb03dd9f80081fa6d7bc43fda3df5fdd6b105e98812cb8ae30c6a594",
+      "newSha256": "0cfaa845d6317a2f995634201d83327d7f31c2036e78d2ad17cb993833155752"
+    },
+    {
+      "name": "matrix-chat-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-chat-user-mobile-linux.png",
+      "oldSha256": "f6c681aaeeaabea6e4e934691f4ff7e1418baf44ea21622b6c025cf414e7e22e",
+      "newSha256": "9503f356a78a3b9da630cb205779623091acbfb2511ab7ec0e82fc2f624f7dbf"
+    },
+    {
+      "name": "matrix-files-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-desktop-linux.png",
+      "oldSha256": "6b61efad95e4b0a1adfe9129689684d54120799ebd2e7cb0539e7c111549439e",
+      "newSha256": "d0ec445a9487b9a101d57e0960553bf3d0856d693a5a2c4f921bddfecd29e7eb"
+    },
+    {
+      "name": "matrix-files-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-owner-mobile-linux.png",
+      "oldSha256": "5b937c563750367b816fa085b1372dae3a9139f7df21b26d61c8c20527405d58",
+      "newSha256": "a682939d4a6f4574550908dd5976e9b99d875a77d21e98a7496dec00af44bbed"
+    },
+    {
+      "name": "matrix-files-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-desktop-linux.png",
+      "oldSha256": "6b61efad95e4b0a1adfe9129689684d54120799ebd2e7cb0539e7c111549439e",
+      "newSha256": "d0ec445a9487b9a101d57e0960553bf3d0856d693a5a2c4f921bddfecd29e7eb"
+    },
+    {
+      "name": "matrix-files-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-files-user-mobile-linux.png",
+      "oldSha256": "5b937c563750367b816fa085b1372dae3a9139f7df21b26d61c8c20527405d58",
+      "newSha256": "a682939d4a6f4574550908dd5976e9b99d875a77d21e98a7496dec00af44bbed"
+    },
+    {
+      "name": "matrix-history-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-desktop-linux.png",
+      "oldSha256": "855d2ad831fefd1c9cae9b703925b9294125f4af6aaebe2d2afde89ca7475498",
+      "newSha256": "10dc2b24dfd69a383f7eb9bc05b94c5f69580de67f7fe663525cb9ac51a6c082"
+    },
+    {
+      "name": "matrix-history-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        22,
+        102,
+        56
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-owner-mobile-linux.png",
+      "oldSha256": "53bb39b080c051cdc659440f571b3c95fdfd51f85131483cd5903744405fa096",
+      "newSha256": "572c5ce65189ed0367f18ecf2f8792c7168959902a615be66728c25c63725799"
+    },
+    {
+      "name": "matrix-history-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-desktop-linux.png",
+      "oldSha256": "855d2ad831fefd1c9cae9b703925b9294125f4af6aaebe2d2afde89ca7475498",
+      "newSha256": "10dc2b24dfd69a383f7eb9bc05b94c5f69580de67f7fe663525cb9ac51a6c082"
+    },
+    {
+      "name": "matrix-history-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        22,
+        102,
+        56
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-history-user-mobile-linux.png",
+      "oldSha256": "53bb39b080c051cdc659440f571b3c95fdfd51f85131483cd5903744405fa096",
+      "newSha256": "572c5ce65189ed0367f18ecf2f8792c7168959902a615be66728c25c63725799"
+    },
+    {
+      "name": "matrix-keys-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-desktop-linux.png",
+      "oldSha256": "57031a3fb6e63b01c6b5efcd8f0ec813461d8ff9d7bb54a8da911fadab155c18",
+      "newSha256": "3502e4b2624a39c372eed0b120cf762df70046b5afd838cf99ed9c83c4467703"
+    },
+    {
+      "name": "matrix-keys-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-owner-mobile-linux.png",
+      "oldSha256": "0e4481e1c9531dd3c9948b552e905028ea5e17709d72e240dcb44ea00836a905",
+      "newSha256": "46a304fe6ce47eadcec7a65971927c6bc0d0fbabdbcf9d2ccfd8de0d2bdf1699"
+    },
+    {
+      "name": "matrix-keys-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        535
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-desktop-linux.png",
+      "oldSha256": "57031a3fb6e63b01c6b5efcd8f0ec813461d8ff9d7bb54a8da911fadab155c18",
+      "newSha256": "3502e4b2624a39c372eed0b120cf762df70046b5afd838cf99ed9c83c4467703"
+    },
+    {
+      "name": "matrix-keys-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-keys-user-mobile-linux.png",
+      "oldSha256": "0e4481e1c9531dd3c9948b552e905028ea5e17709d72e240dcb44ea00836a905",
+      "newSha256": "46a304fe6ce47eadcec7a65971927c6bc0d0fbabdbcf9d2ccfd8de0d2bdf1699"
+    },
+    {
+      "name": "matrix-login-anonymous-desktop-actual.png",
+      "size": [
+        1440,
+        1024
+      ],
+      "priorSize": [
+        1440,
+        942
+      ],
+      "changedBounds": null,
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-desktop-linux.png",
+      "oldSha256": "2205a3d49bb995428bcc2f040f75871d9080c72b17638736e2bddbfbb1636574",
+      "newSha256": "4b1f24aed039b58ccea610d7308bfadf316fc85c62144bcce88ad96e28433cd6"
+    },
+    {
+      "name": "matrix-login-anonymous-mobile-actual.png",
+      "size": [
+        390,
+        1112
+      ],
+      "priorSize": [
+        390,
+        1024
+      ],
+      "changedBounds": null,
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-login-anonymous-mobile-linux.png",
+      "oldSha256": "337dc23c88dcf9ad8a094d23aa37f50acc5018e140bb947863c1dc93342d4a0e",
+      "newSha256": "85cea0612b25ecbc100975387b5cb3a45d241e8f03c97ff72ee1970b1a34cf3e"
+    },
+    {
+      "name": "matrix-settings-owner-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        576
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-desktop-linux.png",
+      "oldSha256": "b3906ddc963b589ca9f44a3d591c1b3a189e143c910b8b8b93a5d0e1d79a7494",
+      "newSha256": "9f88a67b12c4b8af4f39af40f78fc8ec423c0e5ee00978fb9cb1507ba4adec6a"
+    },
+    {
+      "name": "matrix-settings-owner-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-owner-mobile-linux.png",
+      "oldSha256": "c58a0e5f68ade848daedf26681ba39133259790cbe8601351de17c7acacfb849",
+      "newSha256": "19973451d6e6ab7054fafc281b1b493d342c25a6fff40d2c342453c02e5b446e"
+    },
+    {
+      "name": "matrix-settings-user-desktop-actual.png",
+      "size": [
+        1440,
+        900
+      ],
+      "priorSize": [
+        1440,
+        900
+      ],
+      "changedBounds": [
+        21,
+        33,
+        334,
+        576
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-desktop-linux.png",
+      "oldSha256": "76bb7a276467bdc53aeff0cdd1507c1c6ce0d86710b120d658a546d476872398",
+      "newSha256": "fbcf4d090434a7958e55e8390af7cc2fcc49a70e05f9a65855118fc3e5340576"
+    },
+    {
+      "name": "matrix-settings-user-mobile-actual.png",
+      "size": [
+        390,
+        844
+      ],
+      "priorSize": [
+        390,
+        844
+      ],
+      "changedBounds": [
+        62,
+        19,
+        102,
+        53
+      ],
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-settings-user-mobile-linux.png",
+      "oldSha256": "72001a8e0cad3f056e3fd0ea2b1427f170cf9e64b14f2a5eaedcc4ad7a186537",
+      "newSha256": "35ee330fe7121ff85e64fcaf234fda927a9c7c2a4539ba695db66b59569416f3"
+    },
+    {
+      "name": "matrix-setup-anonymous-desktop-actual.png",
+      "size": [
+        1440,
+        1024
+      ],
+      "priorSize": [
+        1440,
+        942
+      ],
+      "changedBounds": null,
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-desktop-linux.png",
+      "oldSha256": "f975243c63570885b89c27b42f9a112ca6f0a16741ab20115c710400e705c5cc",
+      "newSha256": "7d772c5c205a6c1c0ee8f42114a02fa0f8dc4cec5689dfc38007d3ed6a8e6c44"
+    },
+    {
+      "name": "matrix-setup-anonymous-mobile-actual.png",
+      "size": [
+        390,
+        1190
+      ],
+      "priorSize": [
+        390,
+        1102
+      ],
+      "changedBounds": null,
+      "baseline": "apps/ui/test/e2e/ui-matrix/matrix.spec.ts-snapshots/matrix-setup-anonymous-mobile-linux.png",
+      "oldSha256": "8394cc809a73052030c73d6e86ba574868e5901ddcce011e72d1d8689799c306",
+      "newSha256": "94b84e4423afc666043f88bfdc71e7726ba030a21e1dc5ddbe5bb73e5769a11a"
+    }
+  ]
+}
