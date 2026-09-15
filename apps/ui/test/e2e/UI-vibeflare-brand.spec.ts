@@ -54,7 +54,9 @@ for (const theme of ['dark', 'light'] as const) {
         }
         await expect.poll(() => page.locator('.vf-brand img').evaluateAll(images => images.every(image => (image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
         await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute('href', '/assets/brand/v-2518955dd2b5ee99/spargax-mark-32.png');
-        await expect(page.locator('.vf-brand').first()).toHaveAccessibleName('VibeFlare home');
+        const visibleBrand = page.locator('.vf-brand:visible');
+        await expect(visibleBrand).toHaveCount(1);
+        await expect(visibleBrand).toHaveAccessibleName('VibeFlare home');
         await assertNoOverflow(page);
         expect(errors).toEqual([]);
         expect(failedAssets).toEqual([]);
