@@ -1,4 +1,4 @@
-import geometry from './spargax-dots.json';
+import geometry from './spargax-dots.json' with { type: 'json' };
 /** Sampled geometry from the owner-supplied Spargax mark, not a redrawn symbol.
  * Finite spring interaction adapted from VibeFlare's MIT-licensed dot engine.
  */
