@@ -27,7 +27,14 @@ const fakeAI = {
     // Hermetic media responses exercise the real image/embedding/audio routes
     // and real local D1/R2 persistence without external inference.
     if (_model === '@cf/test/e2e-image') return Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL1sAAAAASUVORK5CYII='), c => c.charCodeAt(0)).buffer;
-    if (_model === '@cf/test/e2e-embedding') return { data: (input.text as string[]).map(() => [0.125, -0.25, 0.5, 0.75]) };
+    if (_model === '@cf/test/e2e-embedding') return {
+      data: (input.text as string[]).map(text =>
+        text === 'refund policy' ? [1, 0, 0, 0]
+          : text === 'How can I get my money back?' ? [0.9, 0.1, 0, 0]
+            : text === 'Our office opens at 9 AM.' ? [0, 1, 0, 0]
+              : [0.125, -0.25, 0.5, 0.75]
+      ),
+    };
     if (_model === '@cf/test/e2e-audio') return { text: 'A transcript saved in conversation history.' };
     if (_model === '@cf/deepgram/flux') throw new Error('8006: @cf/deepgram/flux only supports websocket connections');
     if (_model === '@cf/deepgram/nova-3') {

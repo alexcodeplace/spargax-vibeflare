@@ -15,9 +15,10 @@ export interface AudioTranscribePanelProps {
   ensureChat?: (title: string, signal: AbortSignal) => Promise<string>;
   onSaved?: (id: string, signal: AbortSignal) => Promise<void>;
   onBusyChange?: (busy: boolean) => void;
+  onCompleted?: () => void;
 }
 
-export function AudioTranscribePanel({ model, inputOnly = false, history, ensureChat, onSaved, onBusyChange }: AudioTranscribePanelProps) {
+export function AudioTranscribePanel({ model, inputOnly = false, history, ensureChat, onSaved, onBusyChange, onCompleted }: AudioTranscribePanelProps) {
   const [loading, setLoading] = useState(false);
   const ownChatId = useRef<string | null>(null);
   const [ownHistory, setOwnHistory] = useState<NonNullable<AudioTranscribePanelProps['history']>>([]);
@@ -59,7 +60,7 @@ export function AudioTranscribePanel({ model, inputOnly = false, history, ensure
         refreshChats();
       }
       if (controller.signal.aborted) return;
-      notifyQuotaChanged(); setFile(null);
+      notifyQuotaChanged(); setFile(null); setLoading(false); onBusyChange?.(false); active.current = null; onCompleted?.();
     } catch (cause) {
       if (mounted.current) setError(controller.signal.aborted ? 'Transcription stopped. Your file is still selected for another try.' : cause instanceof Error ? cause.message : 'Transcription failed. Try another file or model.');
     } finally {
